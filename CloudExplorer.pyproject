@@ -1,5 +1,6 @@
 {
     "files": [
+        "FileList.qml",
         "main.py",
         "main.qml"
     ]
