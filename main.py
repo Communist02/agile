@@ -9,8 +9,11 @@ from PySide6.QtGui import QIcon, QGuiApplication, QAction, QPixmap, QCursor
 from PySide6.QtWidgets import QMainWindow, QApplication, QDialog, QMenu, QFileDialog, QTreeWidget, QTreeWidgetItem, QPushButton
 
 from rclone_python import rclone
+from rclone.rclone import Rclone
 
 import main_window
+
+rc = Rclone('MiB')
 
 
 class MainWindow(QMainWindow):
@@ -39,6 +42,10 @@ class MainWindow(QMainWindow):
         self.ui.file_view.customContextMenuRequested.connect(
             self.show_context_menu_tree)
 
+        self.ui.disk_list.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.ui.disk_list.customContextMenuRequested.connect(
+            self.show_context_menu_disk)
+
         self.ui.actionExit.triggered.connect(lambda: self.close())
         self.ui.button_exit_dir.clicked.connect(self.exit_folder)
         self.ui.openMenuButton.clicked.connect(self.menu_open)
@@ -54,7 +61,7 @@ class MainWindow(QMainWindow):
         self.current_disk = disk_name
         self.ui.file_view.clear()
 
-        tree = rclone.ls(f'{disk_name}{path_dir}')
+        tree = rc.lsjson(f'"{disk_name}{path_dir}"')
         self.disk_paths[disk_name] = path_dir
 
         # print(tree)
@@ -84,10 +91,7 @@ class MainWindow(QMainWindow):
             modified = modified.replace('T', ' ').replace('Z', ' ')
             tree[i] = {"name": name, "size": size,
                        "modified": modified, "path": path, "is_dir": is_dir, "type": type}
-            tree_item = QTreeWidgetItem(
-                [name, size, modified, type])
-            if is_dir:
-                tree_item.setFlags(tree_item.flags() | Qt.ItemIsSelectable)
+            tree_item = QTreeWidgetItem([name, size, modified, type])
             self.ui.file_view.addTopLevelItem(tree_item)
         # print(tree)
 
@@ -114,28 +118,30 @@ class MainWindow(QMainWindow):
                     self.temp_dir = rclone.tempfile.mkdtemp(
                         prefix='cloud_explorer-')
                 if os.name == 'nt':
-                    new_file = self.temp_dir + '\\' + item.text(0)
-                    print(new_file)
-                    print(f'{self.current_disk}{file_path}')
-                    rclone.copyto(f'{self.current_disk}{file_path}', new_file)
-                    os.startfile(new_file)
+                    rc.copy(f'"{self.current_disk}{file_path}"',
+                            f'"{self.temp_dir}"')
+                    self.temp_dir + '\\' + item.text(0)
                 else:
-                    new_file = self.temp_dir + '/' + file_path
-                    print(new_file)
-                    rclone.copyto(f'{self.current_disk}{file_path}', new_file)
-                    subprocess.call(['xdg-open', new_file])
+                    rc.copy(f'"{self.current_disk}{file_path}"',
+                            f'"{self.temp_dir}"')
+                    subprocess.call(
+                        ['xdg-open', self.temp_dir + '/' + item.text(0)])
 
     def download_file(self, file_name: str):
-        download_path = QFileDialog.getSaveFileName(dir=file_name)
-        if download_path is not None and download_path != '' and download_path[0] != '':
-            new_file = download_path[0]
+        download_path = QFileDialog.getExistingDirectory()
+        if download_path is not None and download_path != '':
             if self.disk_paths[self.current_disk] != '':
                 file_path = self.disk_paths[self.current_disk] + \
                     '/' + file_name
             else:
                 file_path = file_name
-            print(new_file)
-            rclone.copyto(f'{self.current_disk}{file_path}', new_file)
+            print(f'"{self.current_disk}{file_path}"', 'to', download_path)
+            rc.copy(f'"{self.current_disk}{file_path}"', f'"{download_path}"')
+
+    def mount_disk(self, disk_name):
+        mount_path = QFileDialog.getExistingDirectory()
+        if mount_path is not None and mount_path != '':
+            rc.mount(f'"{disk_name}"', f'"{mount_path}"')
 
     def exit_folder(self):
         if self.current_disk != '' and self.disk_paths[self.current_disk] != '':
@@ -167,6 +173,38 @@ class MainWindow(QMainWindow):
         action = QAction(window)
         action.setText('Copy')
         # action.triggered.connect(lambda: self.download_file(0))
+        menu.addAction(action)
+
+        action = QAction(window)
+        action.setText('Rename')
+        # action.triggered.connect(lambda: self.download_file(0))
+        menu.addAction(action)
+
+        action = QAction(window)
+        action.setText('Delete')
+        # action.triggered.connect(lambda: self.download_file(0))
+        menu.addAction(action)
+
+        menu.exec(QCursor.pos())
+
+    def show_context_menu_disk(self, point):
+        index = self.ui.disk_list.indexAt(point)
+
+        if not index.isValid():
+            return
+
+        item = self.ui.disk_list.itemAt(point)
+
+        menu = QMenu()
+
+        action = QAction(window)
+        action.setText('Open')
+        action.triggered.connect(lambda: self.open_disk(item))
+        menu.addAction(action)
+
+        action = QAction(window)
+        action.setText('Mount')
+        action.triggered.connect(lambda: self.mount_disk(item.text()))
         menu.addAction(action)
 
         action = QAction(window)
