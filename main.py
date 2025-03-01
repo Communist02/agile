@@ -13,7 +13,7 @@ from rclone.rclone import Rclone
 
 import main_window
 
-rc = Rclone('MiB')
+rc = Rclone('MiB', True)
 
 
 class MainWindow(QMainWindow):
@@ -120,7 +120,7 @@ class MainWindow(QMainWindow):
                 if os.name == 'nt':
                     rc.copy(f'"{self.current_disk}{file_path}"',
                             f'"{self.temp_dir}"')
-                    self.temp_dir + '\\' + item.text(0)
+                    os.startfile(self.temp_dir + '\\' + item.text(0))
                 else:
                     rc.copy(f'"{self.current_disk}{file_path}"',
                             f'"{self.temp_dir}"')
@@ -135,7 +135,6 @@ class MainWindow(QMainWindow):
                     '/' + file_name
             else:
                 file_path = file_name
-            print(f'"{self.current_disk}{file_path}"', 'to', download_path)
             rc.copy(f'"{self.current_disk}{file_path}"', f'"{download_path}"')
 
     def mount_disk(self, disk_name):
