@@ -28,8 +28,11 @@ class MainWindow(QMainWindow):
         self.ui = main_window.Ui_MainWindow()
         self.ui.setupUi(self)
 
-        self.ui.disk_list.itemClicked.connect(self.open_disk)
+        self.ui.file_view.header().resizeSection(0, 300)
+        self.ui.file_view.header().resizeSection(1, 80)
+        self.ui.file_view.header().resizeSection(2, 120)
 
+        self.ui.disk_list.itemClicked.connect(self.open_disk)
         self.ui.file_view.itemDoubleClicked.connect(self.open_item)
 
         self.ui.file_view.setContextMenuPolicy(Qt.CustomContextMenu)
@@ -38,10 +41,14 @@ class MainWindow(QMainWindow):
 
         self.ui.actionExit.triggered.connect(lambda: self.close())
         self.ui.button_exit_dir.clicked.connect(self.exit_folder)
+        self.ui.openMenuButton.clicked.connect(self.menu_open)
 
         self.disks = rclone.get_remotes()
         for disk in self.disks:
             self.ui.disk_list.addItem(disk)
+
+    def menu_open(self):
+        self.ui.disk_list.setVisible(not self.ui.disk_list.isVisible())
 
     def open_folder(self, disk_name: str, path_dir: str = ''):
         self.current_disk = disk_name

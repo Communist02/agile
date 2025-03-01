@@ -19,7 +19,8 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
 from PySide6.QtWidgets import (QApplication, QHBoxLayout, QHeaderView, QListWidget,
     QListWidgetItem, QMainWindow, QMenu, QMenuBar,
     QPushButton, QSizePolicy, QSpacerItem, QStatusBar,
-    QTreeWidget, QTreeWidgetItem, QVBoxLayout, QWidget)
+    QToolButton, QTreeWidget, QTreeWidgetItem, QVBoxLayout,
+    QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -38,6 +39,11 @@ class Ui_MainWindow(object):
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.openMenuButton = QToolButton(self.centralwidget)
+        self.openMenuButton.setObjectName(u"openMenuButton")
+
+        self.horizontalLayout.addWidget(self.openMenuButton)
+
         self.pushButton_2 = QPushButton(self.centralwidget)
         self.pushButton_2.setObjectName(u"pushButton_2")
 
@@ -88,7 +94,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 1033, 23))
+        self.menubar.setGeometry(QRect(0, 0, 1033, 33))
         self.menuClient = QMenu(self.menubar)
         self.menuClient.setObjectName(u"menuClient")
         self.menuOther = QMenu(self.menubar)
@@ -114,6 +120,7 @@ class Ui_MainWindow(object):
         self.actionAdd_disk.setText(QCoreApplication.translate("MainWindow", u"Add disk", None))
         self.actionExit.setText(QCoreApplication.translate("MainWindow", u"Exit", None))
         self.actionAbout.setText(QCoreApplication.translate("MainWindow", u"About", None))
+        self.openMenuButton.setText(QCoreApplication.translate("MainWindow", u"\u2630", None))
         self.pushButton_2.setText(QCoreApplication.translate("MainWindow", u"\u1438", None))
         self.pushButton_3.setText(QCoreApplication.translate("MainWindow", u"\u1433", None))
         self.button_exit_dir.setText(QCoreApplication.translate("MainWindow", u"\u1431", None))
