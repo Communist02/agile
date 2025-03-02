@@ -16,7 +16,6 @@ import main_window
 import new_remote_window
 
 rc = Rclone('MB', True)
-# rclone.create_remote('qwertyq', remote_type=remote_types.RemoteTypes.http, url="http://127.0.0.1:8000/")
 
 
 class NewRemoteWindow(QDialog):
@@ -26,16 +25,41 @@ class NewRemoteWindow(QDialog):
         self.ui.setupUi(self)
 
         self.ui.buttonBox.accepted.connect(self.new_remote)
+        self.ui.buttonBox.rejected.connect(self.close)
 
     def new_remote(self):
         name = self.ui.lineEdit_name.text().strip()
 
         match self.ui.tabWidget.currentIndex():
             case 0:
-                pass
+                rclone.create_remote(
+                    name, remote_type=remote_types.RemoteTypes.drive)
+                self.close()
+            case 1:
+                rclone.create_remote(
+                    name, remote_type=remote_types.RemoteTypes.yandex)
+                self.close()
+            case 2:
+                rclone.create_remote(name,
+                                     remote_type=remote_types.RemoteTypes.ftp,
+                                     host=self.ui.lineEdit_ftp_host.text().strip(),
+                                     user=self.ui.lineEdit_ftp_login.text().strip(),
+                                     port=self.ui.lineEdit_ftp_port.text().strip(),
+                                     tls=str(
+                                         self.ui.checkBox_ftp_tls.isChecked()).lower()
+                                     )
+                if self.ui.lineEdit_ftp_password.text().strip() != '':
+                    rclone.config('password', name, 'pass',
+                                  self.ui.lineEdit_ftp_password.text().strip())
+                self.close()
             case 4:
-                rclone.create_remote(name, remote_type=remote_types.RemoteTypes.http, url=self.ui.lineEdit_url.text().strip())
-
+                rclone.create_remote(
+                    name, remote_type=remote_types.RemoteTypes.http, url=self.ui.lineEdit_url.text().strip())
+                self.close()
+            case 5:
+                rclone.create_remote(
+                    name, remote_type=remote_types.RemoteTypes.local)
+                self.close()
 
 
 class MainWindow(QMainWindow):
@@ -58,7 +82,8 @@ class MainWindow(QMainWindow):
         self.ui.file_view.header().resizeSection(2, 120)
 
         self.ui.actionExit.triggered.connect(self.close)
-        self.ui.action_new_remote.triggered.connect(self.open_new_remote_window)
+        self.ui.action_new_remote.triggered.connect(
+            self.open_new_remote_window)
 
         self.ui.disk_list.itemClicked.connect(self.open_remote)
         self.ui.file_view.itemDoubleClicked.connect(self.open_item)
@@ -71,12 +96,10 @@ class MainWindow(QMainWindow):
         self.ui.disk_list.customContextMenuRequested.connect(
             self.show_context_menu_remote)
 
-
         self.ui.button_exit_dir.clicked.connect(self.exit_folder)
         self.ui.openMenuButton.clicked.connect(self.menu_open)
 
         self.update_remotes()
-
 
     def update_remotes(self):
         remotes = rclone.get_remotes()
@@ -133,7 +156,8 @@ class MainWindow(QMainWindow):
             tree, key=lambda element: element['is_dir'], reverse=True)
 
         for file in tree:
-            tree_item = QTreeWidgetItem([file['name'], file['size'], file['modified'], file['type']])
+            tree_item = QTreeWidgetItem(
+                [file['name'], file['size'], file['modified'], file['type']])
             self.ui.file_view.addTopLevelItem(tree_item)
 
     def open_remote(self, item):
@@ -173,7 +197,8 @@ class MainWindow(QMainWindow):
                     '/' + file_name
             else:
                 file_path = file_name
-            rc.copy(f'"{self.current_remote}{file_path}"', f'"{download_path}"')
+            rc.copy(f'"{self.current_remote}{file_path}"',
+                    f'"{download_path}"')
 
     def mount_remote(self, name):
         mount_path = QFileDialog.getExistingDirectory()
