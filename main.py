@@ -9,11 +9,11 @@ from PySide6.QtGui import QIcon, QGuiApplication, QAction, QPixmap, QCursor
 from PySide6.QtWidgets import QMainWindow, QApplication, QDialog, QMenu, QFileDialog, QTreeWidget, QTreeWidgetItem, QPushButton
 
 from rclone_python import rclone
-from rclone.rclone import Rclone
+from rclone import Rclone
 
 import main_window
 
-rc = Rclone('MiB', True)
+rc = Rclone('MB', True)
 
 
 class MainWindow(QMainWindow):
@@ -91,12 +91,14 @@ class MainWindow(QMainWindow):
             modified = modified.replace('T', ' ').replace('Z', ' ')
             tree[i] = {"name": name, "size": size,
                        "modified": modified, "path": path, "is_dir": is_dir, "type": type}
-            tree_item = QTreeWidgetItem([name, size, modified, type])
-            self.ui.file_view.addTopLevelItem(tree_item)
         # print(tree)
 
         tree = sorted(
             tree, key=lambda element: element['is_dir'], reverse=True)
+
+        for file in tree:
+            tree_item = QTreeWidgetItem([file['name'], file['size'], file['modified'], file['type']])
+            self.ui.file_view.addTopLevelItem(tree_item)
 
     def open_disk(self, item):
         for i in range(self.ui.path_list.count()):
