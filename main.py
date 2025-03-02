@@ -9,19 +9,41 @@ from PySide6.QtGui import QIcon, QGuiApplication, QAction, QPixmap, QCursor
 from PySide6.QtWidgets import QMainWindow, QApplication, QDialog, QMenu, QFileDialog, QTreeWidget, QTreeWidgetItem, QPushButton
 
 from rclone_python import rclone
+from rclone_python import remote_types
 from rclone import Rclone
 
 import main_window
+import new_remote_window
 
 rc = Rclone('MB', True)
+# rclone.create_remote('qwertyq', remote_type=remote_types.RemoteTypes.http, url="http://127.0.0.1:8000/")
+
+
+class NewRemoteWindow(QDialog):
+    def __init__(self):
+        super(NewRemoteWindow, self).__init__()
+        self.ui = new_remote_window.Ui_NewRemoteWindow()
+        self.ui.setupUi(self)
+
+        self.ui.buttonBox.accepted.connect(self.new_remote)
+
+    def new_remote(self):
+        name = self.ui.lineEdit_name.text().strip()
+
+        match self.ui.tabWidget.currentIndex():
+            case 0:
+                pass
+            case 4:
+                rclone.create_remote(name, remote_type=remote_types.RemoteTypes.http, url=self.ui.lineEdit_url.text().strip())
+
 
 
 class MainWindow(QMainWindow):
     download_path = str(Path.home() / "Downloads")
-    disk_paths = {}
+    remotes_paths = {}
 
     files = []
-    current_disk = ''
+    current_remote = ''
 
     temp_dir = ''
     tree = []
@@ -35,7 +57,10 @@ class MainWindow(QMainWindow):
         self.ui.file_view.header().resizeSection(1, 80)
         self.ui.file_view.header().resizeSection(2, 120)
 
-        self.ui.disk_list.itemClicked.connect(self.open_disk)
+        self.ui.actionExit.triggered.connect(self.close)
+        self.ui.action_new_remote.triggered.connect(self.open_new_remote_window)
+
+        self.ui.disk_list.itemClicked.connect(self.open_remote)
         self.ui.file_view.itemDoubleClicked.connect(self.open_item)
 
         self.ui.file_view.setContextMenuPolicy(Qt.CustomContextMenu)
@@ -44,25 +69,36 @@ class MainWindow(QMainWindow):
 
         self.ui.disk_list.setContextMenuPolicy(Qt.CustomContextMenu)
         self.ui.disk_list.customContextMenuRequested.connect(
-            self.show_context_menu_disk)
+            self.show_context_menu_remote)
 
-        self.ui.actionExit.triggered.connect(lambda: self.close())
+
         self.ui.button_exit_dir.clicked.connect(self.exit_folder)
         self.ui.openMenuButton.clicked.connect(self.menu_open)
 
-        self.disks = rclone.get_remotes()
-        for disk in self.disks:
-            self.ui.disk_list.addItem(disk)
+        self.update_remotes()
+
+
+    def update_remotes(self):
+        remotes = rclone.get_remotes()
+        self.ui.disk_list.clear()
+        for remote in remotes:
+            self.ui.disk_list.addItem(remote)
+
+    def open_new_remote_window(self):
+        open_win = NewRemoteWindow()
+        open_win.setModal(True)
+        open_win.exec()
+        self.update_remotes()
 
     def menu_open(self):
         self.ui.disk_list.setVisible(not self.ui.disk_list.isVisible())
 
-    def open_folder(self, disk_name: str, path_dir: str = ''):
-        self.current_disk = disk_name
+    def open_folder(self, remote_name: str, path_dir: str = ''):
+        self.current_remote = remote_name
         self.ui.file_view.clear()
 
-        tree = rc.lsjson(f'"{disk_name}{path_dir}"')
-        self.disk_paths[disk_name] = path_dir
+        tree = rc.lsjson(f'"{remote_name}{path_dir}"')
+        self.remotes_paths[remote_name] = path_dir
 
         # print(tree)
         for i in range(len(tree)):
@@ -100,31 +136,31 @@ class MainWindow(QMainWindow):
             tree_item = QTreeWidgetItem([file['name'], file['size'], file['modified'], file['type']])
             self.ui.file_view.addTopLevelItem(tree_item)
 
-    def open_disk(self, item):
+    def open_remote(self, item):
         for i in range(self.ui.path_list.count()):
             self.ui.path_list.itemAt(i).widget().deleteLater()
         self.ui.path_list.addWidget(QPushButton(item.text()))
         self.open_folder(item.text())
 
     def open_item(self, item: QTreeWidgetItem):
-        if self.current_disk:
-            if self.disk_paths[self.current_disk] != '':
-                file_path = self.disk_paths[self.current_disk] + \
+        if self.current_remote:
+            if self.remotes_paths[self.current_remote] != '':
+                file_path = self.remotes_paths[self.current_remote] + \
                     '/' + item.text(0)
             else:
                 file_path = item.text(0)
             if item.text(3) == 'inode/directory':
-                self.open_folder(self.current_disk, file_path)
+                self.open_folder(self.current_remote, file_path)
             else:
                 if self.temp_dir == '':
                     self.temp_dir = rclone.tempfile.mkdtemp(
                         prefix='cloud_explorer-')
                 if os.name == 'nt':
-                    rc.copy(f'"{self.current_disk}{file_path}"',
+                    rc.copy(f'"{self.current_remote}{file_path}"',
                             f'"{self.temp_dir}"')
                     os.startfile(self.temp_dir + '\\' + item.text(0))
                 else:
-                    rc.copy(f'"{self.current_disk}{file_path}"',
+                    rc.copy(f'"{self.current_remote}{file_path}"',
                             f'"{self.temp_dir}"')
                     subprocess.call(
                         ['xdg-open', self.temp_dir + '/' + item.text(0)])
@@ -132,23 +168,27 @@ class MainWindow(QMainWindow):
     def download_file(self, file_name: str):
         download_path = QFileDialog.getExistingDirectory()
         if download_path is not None and download_path != '':
-            if self.disk_paths[self.current_disk] != '':
-                file_path = self.disk_paths[self.current_disk] + \
+            if self.remotes_paths[self.current_remote] != '':
+                file_path = self.remotes_paths[self.current_remote] + \
                     '/' + file_name
             else:
                 file_path = file_name
-            rc.copy(f'"{self.current_disk}{file_path}"', f'"{download_path}"')
+            rc.copy(f'"{self.current_remote}{file_path}"', f'"{download_path}"')
 
-    def mount_disk(self, disk_name):
+    def mount_remote(self, name):
         mount_path = QFileDialog.getExistingDirectory()
         if mount_path is not None and mount_path != '':
-            rc.mount(f'"{disk_name}"', f'"{mount_path}"')
+            rc.mount(f'"{name}"', f'"{mount_path}"')
 
     def exit_folder(self):
-        if self.current_disk != '' and self.disk_paths[self.current_disk] != '':
-            path_dir = f'{self.disk_paths[self.current_disk]}'
+        if self.current_remote != '' and self.remotes_paths[self.current_remote] != '':
+            path_dir = f'{self.remotes_paths[self.current_remote]}'
             path = '/'.join(path_dir.split('/')[:-1])
-            self.open_folder(self.current_disk, path)
+            self.open_folder(self.current_remote, path)
+
+    def delete_remote(self, name: str):
+        rc.config('delete', name[:-1])
+        self.update_remotes()
 
     def show_context_menu_tree(self, point):
         index = self.ui.file_view.indexAt(point)
@@ -188,7 +228,7 @@ class MainWindow(QMainWindow):
 
         menu.exec(QCursor.pos())
 
-    def show_context_menu_disk(self, point):
+    def show_context_menu_remote(self, point):
         index = self.ui.disk_list.indexAt(point)
 
         if not index.isValid():
@@ -200,12 +240,12 @@ class MainWindow(QMainWindow):
 
         action = QAction(window)
         action.setText('Open')
-        action.triggered.connect(lambda: self.open_disk(item))
+        action.triggered.connect(lambda: self.open_remote(item))
         menu.addAction(action)
 
         action = QAction(window)
         action.setText('Mount')
-        action.triggered.connect(lambda: self.mount_disk(item.text()))
+        action.triggered.connect(lambda: self.mount_remote(item.text()))
         menu.addAction(action)
 
         action = QAction(window)
@@ -215,7 +255,7 @@ class MainWindow(QMainWindow):
 
         action = QAction(window)
         action.setText('Delete')
-        # action.triggered.connect(lambda: self.download_file(0))
+        action.triggered.connect(lambda: self.delete_remote(item.text()))
         menu.addAction(action)
 
         menu.exec(QCursor.pos())

@@ -116,7 +116,7 @@
     <property name="title">
      <string>Client</string>
     </property>
-    <addaction name="actionAdd_disk"/>
+    <addaction name="action_new_remote"/>
     <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuOther">
@@ -129,9 +129,9 @@
    <addaction name="menuOther"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <action name="actionAdd_disk">
+  <action name="action_new_remote">
    <property name="text">
-    <string>Add disk</string>
+    <string>New remote</string>
    </property>
   </action>
   <action name="actionExit">

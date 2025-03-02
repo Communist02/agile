@@ -27,8 +27,8 @@ class Ui_MainWindow(object):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
         MainWindow.resize(1033, 771)
-        self.actionAdd_disk = QAction(MainWindow)
-        self.actionAdd_disk.setObjectName(u"actionAdd_disk")
+        self.action_new_remote = QAction(MainWindow)
+        self.action_new_remote.setObjectName(u"action_new_remote")
         self.actionExit = QAction(MainWindow)
         self.actionExit.setObjectName(u"actionExit")
         self.actionAbout = QAction(MainWindow)
@@ -106,7 +106,7 @@ class Ui_MainWindow(object):
 
         self.menubar.addAction(self.menuClient.menuAction())
         self.menubar.addAction(self.menuOther.menuAction())
-        self.menuClient.addAction(self.actionAdd_disk)
+        self.menuClient.addAction(self.action_new_remote)
         self.menuClient.addAction(self.actionExit)
         self.menuOther.addAction(self.actionAbout)
 
@@ -117,7 +117,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"Cloud Explorer", None))
-        self.actionAdd_disk.setText(QCoreApplication.translate("MainWindow", u"Add disk", None))
+        self.action_new_remote.setText(QCoreApplication.translate("MainWindow", u"New remote", None))
         self.actionExit.setText(QCoreApplication.translate("MainWindow", u"Exit", None))
         self.actionAbout.setText(QCoreApplication.translate("MainWindow", u"About", None))
         self.openMenuButton.setText(QCoreApplication.translate("MainWindow", u"\u2630", None))
