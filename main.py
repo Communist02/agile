@@ -6,7 +6,7 @@ from pathlib import Path
 
 from PySide6.QtCore import Qt, QTimer, QPoint
 from PySide6.QtGui import QIcon, QGuiApplication, QAction, QPixmap, QCursor
-from PySide6.QtWidgets import QMainWindow, QApplication, QDialog, QMenu, QFileDialog, QTreeWidget, QTreeWidgetItem, QPushButton
+from PySide6.QtWidgets import QMainWindow, QApplication, QDialog, QMenu, QFileDialog, QTreeWidget, QTreeWidgetItem, QPushButton, QMessageBox
 
 from rclone_python import rclone
 from rclone_python import remote_types
@@ -19,7 +19,7 @@ rc = Rclone('MB', True)
 
 
 class NewRemoteWindow(QDialog):
-    def __init__(self):
+    def __init__(self, edit_mode=False, remote_name=None):
         super(NewRemoteWindow, self).__init__()
         self.ui = new_remote_window.Ui_NewRemoteWindow()
         self.ui.setupUi(self)
@@ -27,39 +27,73 @@ class NewRemoteWindow(QDialog):
         self.ui.buttonBox.accepted.connect(self.new_remote)
         self.ui.buttonBox.rejected.connect(self.close)
 
+        if edit_mode:
+            self.setWindowTitle(f'Edit {remote_name}')
+            index = rc.config('show', remote_name).find('type = ')
+            type = rc.config('show', remote_name).replace('type = ', '')[index:].split('\n')[0]
+            match type:
+                case 'drive':
+                    self.ui.tabWidget.setCurrentIndex(0)
+                case 'yandex':
+                    self.ui.tabWidget.setCurrentIndex(1)
+                case 'ftp':
+                    self.ui.tabWidget.setCurrentIndex(2)
+                case 'webdav':
+                    self.ui.tabWidget.setCurrentIndex(3)
+                case 'http':
+                    self.ui.tabWidget.setCurrentIndex(4)
+                case 'local':
+                    self.ui.tabWidget.setCurrentIndex(5)
+
+            self.ui.lineEdit_name.setText(remote_name[:-1])
+            self.ui.tabWidget.tabBar().setVisible(False)
+
     def new_remote(self):
         name = self.ui.lineEdit_name.text().strip()
-
-        match self.ui.tabWidget.currentIndex():
-            case 0:
-                rclone.create_remote(
-                    name, remote_type=remote_types.RemoteTypes.drive)
-                self.close()
-            case 1:
-                rclone.create_remote(
-                    name, remote_type=remote_types.RemoteTypes.yandex)
-                self.close()
-            case 2:
-                rclone.create_remote(name,
-                                     remote_type=remote_types.RemoteTypes.ftp,
-                                     host=self.ui.lineEdit_ftp_host.text().strip(),
-                                     user=self.ui.lineEdit_ftp_login.text().strip(),
-                                     port=self.ui.lineEdit_ftp_port.text().strip(),
-                                     tls=str(
-                                         self.ui.checkBox_ftp_tls.isChecked()).lower()
-                                     )
-                if self.ui.lineEdit_ftp_password.text().strip() != '':
-                    rclone.config('password', name, 'pass',
+        if name != '':
+            match self.ui.tabWidget.currentIndex():
+                case 0:
+                    rclone.create_remote(
+                        name, remote_type=remote_types.RemoteTypes.drive)
+                    self.close()
+                case 1:
+                    rclone.create_remote(
+                        name, remote_type=remote_types.RemoteTypes.yandex)
+                    self.close()
+                case 2:
+                    rclone.create_remote(name,
+                                         remote_type=remote_types.RemoteTypes.ftp,
+                                         host=self.ui.lineEdit_ftp_host.text().strip(),
+                                         user=self.ui.lineEdit_ftp_login.text().strip(),
+                                         port=self.ui.lineEdit_ftp_port.text().strip(),
+                                         tls=str(self.ui.checkBox_ftp_tls.isChecked()).lower())
+                    if self.ui.lineEdit_ftp_password.text().strip() != '':
+                        rc.config('password', name, 'pass',
                                   self.ui.lineEdit_ftp_password.text().strip())
-                self.close()
-            case 4:
-                rclone.create_remote(
-                    name, remote_type=remote_types.RemoteTypes.http, url=self.ui.lineEdit_url.text().strip())
-                self.close()
-            case 5:
-                rclone.create_remote(
-                    name, remote_type=remote_types.RemoteTypes.local)
-                self.close()
+                    self.close()
+                case 3:
+                    rclone.create_remote(name,
+                                         remote_type=remote_types.RemoteTypes.webdav,
+                                         url=self.ui.lineEdit_webdav_url.text().strip(),
+                                         user=self.ui.lineEdit_webdav_login.text().strip()
+                                         )
+                    if self.ui.lineEdit_webdav_password.text().strip() != '':
+                        rc.config('password', name, 'pass',
+                                  self.ui.lineEdit_webdav_password.text().strip())
+                    self.close()
+                case 4:
+                    rclone.create_remote(
+                        name, remote_type=remote_types.RemoteTypes.http, url=self.ui.lineEdit_url.text().strip())
+                    self.close()
+                case 5:
+                    rclone.create_remote(
+                        name, remote_type=remote_types.RemoteTypes.local)
+                    self.close()
+        else:
+            alert = QMessageBox()
+            alert.setWindowTitle('Enter name')
+            alert.setText('Enter name for new remote')
+            alert.exec()
 
 
 class MainWindow(QMainWindow):
@@ -215,6 +249,12 @@ class MainWindow(QMainWindow):
         rc.config('delete', name[:-1])
         self.update_remotes()
 
+    def edit_remote(self, name: str):
+        open_win = NewRemoteWindow(edit_mode=True, remote_name=name)
+        open_win.setModal(True)
+        open_win.exec()
+        self.update_remotes()
+
     def show_context_menu_tree(self, point):
         index = self.ui.file_view.indexAt(point)
 
@@ -266,6 +306,11 @@ class MainWindow(QMainWindow):
         action = QAction(window)
         action.setText('Open')
         action.triggered.connect(lambda: self.open_remote(item))
+        menu.addAction(action)
+
+        action = QAction(window)
+        action.setText('Edit')
+        action.triggered.connect(lambda: self.edit_remote(item.text()))
         menu.addAction(action)
 
         action = QAction(window)

@@ -174,9 +174,60 @@ class Ui_NewRemoteWindow(object):
         self.verticalLayout_3.addItem(self.verticalSpacer_2)
 
         self.tabWidget.addTab(self.tab_ftp, "")
-        self.tab_webdaw = QWidget()
-        self.tab_webdaw.setObjectName(u"tab_webdaw")
-        self.tabWidget.addTab(self.tab_webdaw, "")
+        self.tab_webdav = QWidget()
+        self.tab_webdav.setObjectName(u"tab_webdav")
+        self.verticalLayout_10 = QVBoxLayout(self.tab_webdav)
+        self.verticalLayout_10.setObjectName(u"verticalLayout_10")
+        self.label_7 = QLabel(self.tab_webdav)
+        self.label_7.setObjectName(u"label_7")
+
+        self.verticalLayout_10.addWidget(self.label_7)
+
+        self.lineEdit_webdav_url = QLineEdit(self.tab_webdav)
+        self.lineEdit_webdav_url.setObjectName(u"lineEdit_webdav_url")
+
+        self.verticalLayout_10.addWidget(self.lineEdit_webdav_url)
+
+        self.horizontalLayout = QHBoxLayout()
+        self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.verticalLayout_11 = QVBoxLayout()
+        self.verticalLayout_11.setObjectName(u"verticalLayout_11")
+        self.label_8 = QLabel(self.tab_webdav)
+        self.label_8.setObjectName(u"label_8")
+
+        self.verticalLayout_11.addWidget(self.label_8)
+
+        self.lineEdit_webdav_login = QLineEdit(self.tab_webdav)
+        self.lineEdit_webdav_login.setObjectName(u"lineEdit_webdav_login")
+
+        self.verticalLayout_11.addWidget(self.lineEdit_webdav_login)
+
+
+        self.horizontalLayout.addLayout(self.verticalLayout_11)
+
+        self.verticalLayout_13 = QVBoxLayout()
+        self.verticalLayout_13.setObjectName(u"verticalLayout_13")
+        self.label_9 = QLabel(self.tab_webdav)
+        self.label_9.setObjectName(u"label_9")
+
+        self.verticalLayout_13.addWidget(self.label_9)
+
+        self.lineEdit_webdav_password = QLineEdit(self.tab_webdav)
+        self.lineEdit_webdav_password.setObjectName(u"lineEdit_webdav_password")
+
+        self.verticalLayout_13.addWidget(self.lineEdit_webdav_password)
+
+
+        self.horizontalLayout.addLayout(self.verticalLayout_13)
+
+
+        self.verticalLayout_10.addLayout(self.horizontalLayout)
+
+        self.verticalSpacer_5 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+
+        self.verticalLayout_10.addItem(self.verticalSpacer_5)
+
+        self.tabWidget.addTab(self.tab_webdav, "")
         self.tab_http = QWidget()
         self.tab_http.setObjectName(u"tab_http")
         self.verticalLayout_2 = QVBoxLayout(self.tab_http)
@@ -211,7 +262,7 @@ class Ui_NewRemoteWindow(object):
 
         self.retranslateUi(NewRemoteWindow)
 
-        self.tabWidget.setCurrentIndex(5)
+        self.tabWidget.setCurrentIndex(0)
 
 
         QMetaObject.connectSlotsByName(NewRemoteWindow)
@@ -234,7 +285,10 @@ class Ui_NewRemoteWindow(object):
         self.radioButton_ftp_false.setText(QCoreApplication.translate("NewRemoteWindow", u"Implict", None))
         self.radioButton_ftp_true.setText(QCoreApplication.translate("NewRemoteWindow", u"Explict", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_ftp), QCoreApplication.translate("NewRemoteWindow", u"FTP", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_webdaw), QCoreApplication.translate("NewRemoteWindow", u"WebDAV", None))
+        self.label_7.setText(QCoreApplication.translate("NewRemoteWindow", u"URL", None))
+        self.label_8.setText(QCoreApplication.translate("NewRemoteWindow", u"Login", None))
+        self.label_9.setText(QCoreApplication.translate("NewRemoteWindow", u"Password", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_webdav), QCoreApplication.translate("NewRemoteWindow", u"WebDAV", None))
         self.label.setText(QCoreApplication.translate("NewRemoteWindow", u"URL", None))
         self.lineEdit_url.setText(QCoreApplication.translate("NewRemoteWindow", u"http://127.0.0.1:8000/", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_http), QCoreApplication.translate("NewRemoteWindow", u"http", None))
