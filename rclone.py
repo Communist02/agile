@@ -99,14 +99,14 @@ class Rclone(CheckRclone):
                 elif 'error' in s:
                     pbar.write(s)
 
-    def _process(self, subcommand, from_='', to='', progress=True, _execute=False, *args):
+    def _process(self, subcommand, arg1='', arg2='', arg3='', arg4='', progress=True, _execute=False, *args):
         if subcommand not in ['copy', 'move', 'sync', 'bisync', 'copyto', 'copyurl'] or _execute:
             progress = False
             P = ''
         else:
             P = '-P'
 
-        if subcommand in ['copy', 'move'] and from_ and not to:
+        if subcommand in ['copy', 'move'] and arg1 and not arg2:
             raise MissingDestination(
                 'The command requires passing a destination.')
 
@@ -115,7 +115,7 @@ class Rclone(CheckRclone):
 
         _args = ' '.join(args)
 
-        _command = f'{self.rclone} {subcommand} {from_} {to} {P} {_args}'
+        _command = f'{self.rclone} {subcommand} {arg1} {arg2} {arg3} {arg4} {P} {_args}'
 
         if self.debug:
             logger.debug(_command)
@@ -123,7 +123,7 @@ class Rclone(CheckRclone):
         p = subprocess.Popen(_command, shell=True,
                              stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         if progress:
-            while self._stream_process(p, from_):
+            while self._stream_process(p, arg1):
                 time.sleep(0.1)
 
         OUT = p.communicate()[0].decode()
@@ -135,7 +135,7 @@ class Rclone(CheckRclone):
                 OUT.split('Total size: ')[1].split(' (')[1].split(')')
                 [0].split(' Byte')[0])
             return {'total_objects': total_objects, 'total_size': total_size}
-        elif subcommand == 'lsjson':
+        elif subcommand == 'lsjson' or subcommand == 'config' and arg1 == 'dump':
             return json.loads(OUT)
         elif subcommand == 'lsf':
             return OUT.rstrip().split('\n')
@@ -147,7 +147,7 @@ class Rclone(CheckRclone):
             return OUT
 
     def execute(self, command):
-        return self._process(subcommand=command, from_='', to='', progress=False, _execute=True)
+        return self._process(subcommand=command, arg1='', arg2='', arg3='', arg4='', progress=False, _execute=True)
 
     def delete(*args, **kwargs):
         raise NotImplementedError(

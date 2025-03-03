@@ -19,18 +19,19 @@ rc = Rclone('MB', True)
 
 
 class NewRemoteWindow(QDialog):
-    def __init__(self, edit_mode=False, remote_name=None):
+    def __init__(self, edit_mode: bool = False, remote_name: str = None):
         super(NewRemoteWindow, self).__init__()
         self.ui = new_remote_window.Ui_NewRemoteWindow()
         self.ui.setupUi(self)
 
-        self.ui.buttonBox.accepted.connect(self.new_remote)
+        self.ui.buttonBox.accepted.connect(
+            lambda: self.new_remote(edit_mode, remote_name))
         self.ui.buttonBox.rejected.connect(self.close)
 
         if edit_mode:
             self.setWindowTitle(f'Edit {remote_name}')
-            index = rc.config('show', remote_name).find('type = ')
-            type = rc.config('show', remote_name).replace('type = ', '')[index:].split('\n')[0]
+            config = rc.config('dump')
+            type = config[remote_name[:-1]]['type']
             match type:
                 case 'drive':
                     self.ui.tabWidget.setCurrentIndex(0)
@@ -38,19 +39,35 @@ class NewRemoteWindow(QDialog):
                     self.ui.tabWidget.setCurrentIndex(1)
                 case 'ftp':
                     self.ui.tabWidget.setCurrentIndex(2)
+                    host = config[remote_name[:-1]]['host']
+                    port = config[remote_name[:-1]]['port']
+                    user = config[remote_name[:-1]]['user']
+                    tls = bool(config[remote_name[:-1]]['tls'] == 'true')
+                    self.ui.lineEdit_ftp_host.setText(host)
+                    self.ui.lineEdit_ftp_port.setText(port)
+                    self.ui.lineEdit_ftp_login.setText(user)
+                    self.ui.checkBox_ftp_tls.setChecked(tls)
                 case 'webdav':
                     self.ui.tabWidget.setCurrentIndex(3)
+                    url = config[remote_name[:-1]]['url']
+                    user = config[remote_name[:-1]]['user']
+                    self.ui.lineEdit_webdav_url.setText(url)
+                    self.ui.lineEdit_webdav_login.setText(user)
                 case 'http':
                     self.ui.tabWidget.setCurrentIndex(4)
+                    url = config[remote_name[:-1]]['url']
+                    self.ui.lineEdit_url.setText(url)
                 case 'local':
                     self.ui.tabWidget.setCurrentIndex(5)
 
             self.ui.lineEdit_name.setText(remote_name[:-1])
             self.ui.tabWidget.tabBar().setVisible(False)
 
-    def new_remote(self):
+    def new_remote(self, edit_mode: bool = False, remote_name: str = None):
         name = self.ui.lineEdit_name.text().strip()
         if name != '':
+            if edit_mode:
+                rc.config('delete', remote_name[:-1])
             match self.ui.tabWidget.currentIndex():
                 case 0:
                     rclone.create_remote(
@@ -64,8 +81,8 @@ class NewRemoteWindow(QDialog):
                     rclone.create_remote(name,
                                          remote_type=remote_types.RemoteTypes.ftp,
                                          host=self.ui.lineEdit_ftp_host.text().strip(),
-                                         user=self.ui.lineEdit_ftp_login.text().strip(),
                                          port=self.ui.lineEdit_ftp_port.text().strip(),
+                                         user=self.ui.lineEdit_ftp_login.text().strip(),
                                          tls=str(self.ui.checkBox_ftp_tls.isChecked()).lower())
                     if self.ui.lineEdit_ftp_password.text().strip() != '':
                         rc.config('password', name, 'pass',
@@ -194,7 +211,7 @@ class MainWindow(QMainWindow):
                 [file['name'], file['size'], file['modified'], file['type']])
             self.ui.file_view.addTopLevelItem(tree_item)
 
-    def open_remote(self, item):
+    def open_remote(self, item: QTreeWidgetItem):
         for i in range(self.ui.path_list.count()):
             self.ui.path_list.itemAt(i).widget().deleteLater()
         self.ui.path_list.addWidget(QPushButton(item.text()))
@@ -234,7 +251,7 @@ class MainWindow(QMainWindow):
             rc.copy(f'"{self.current_remote}{file_path}"',
                     f'"{download_path}"')
 
-    def mount_remote(self, name):
+    def mount_remote(self, name: str):
         mount_path = QFileDialog.getExistingDirectory()
         if mount_path is not None and mount_path != '':
             rc.mount(f'"{name}"', f'"{mount_path}"')
