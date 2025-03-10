@@ -1,3 +1,5 @@
 PySide6
 rclone-python
 rclone
+loguru
+tqdm
