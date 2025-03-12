@@ -15,10 +15,10 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QAbstractButton, QApplication, QCheckBox, QDialog,
-    QDialogButtonBox, QGroupBox, QHBoxLayout, QLabel,
-    QLineEdit, QRadioButton, QSizePolicy, QSpacerItem,
-    QTabWidget, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QAbstractButton, QApplication, QCheckBox, QComboBox,
+    QDialog, QDialogButtonBox, QGroupBox, QHBoxLayout,
+    QLabel, QLineEdit, QRadioButton, QSizePolicy,
+    QSpacerItem, QTabWidget, QVBoxLayout, QWidget)
 
 class Ui_NewRemoteWindow(object):
     def setupUi(self, NewRemoteWindow):
@@ -223,6 +223,23 @@ class Ui_NewRemoteWindow(object):
 
         self.verticalLayout_10.addLayout(self.horizontalLayout)
 
+        self.label_10 = QLabel(self.tab_webdav)
+        self.label_10.setObjectName(u"label_10")
+
+        self.verticalLayout_10.addWidget(self.label_10)
+
+        self.comboBox_webdav_vendor = QComboBox(self.tab_webdav)
+        self.comboBox_webdav_vendor.addItem("")
+        self.comboBox_webdav_vendor.addItem("")
+        self.comboBox_webdav_vendor.addItem("")
+        self.comboBox_webdav_vendor.addItem("")
+        self.comboBox_webdav_vendor.addItem("")
+        self.comboBox_webdav_vendor.addItem("")
+        self.comboBox_webdav_vendor.addItem("")
+        self.comboBox_webdav_vendor.setObjectName(u"comboBox_webdav_vendor")
+
+        self.verticalLayout_10.addWidget(self.comboBox_webdav_vendor)
+
         self.verticalSpacer_5 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.verticalLayout_10.addItem(self.verticalSpacer_5)
@@ -288,10 +305,19 @@ class Ui_NewRemoteWindow(object):
         self.label_7.setText(QCoreApplication.translate("NewRemoteWindow", u"URL", None))
         self.label_8.setText(QCoreApplication.translate("NewRemoteWindow", u"Login", None))
         self.label_9.setText(QCoreApplication.translate("NewRemoteWindow", u"Password", None))
+        self.label_10.setText(QCoreApplication.translate("NewRemoteWindow", u"Option vendor", None))
+        self.comboBox_webdav_vendor.setItemText(0, QCoreApplication.translate("NewRemoteWindow", u"Other site/service or software", None))
+        self.comboBox_webdav_vendor.setItemText(1, QCoreApplication.translate("NewRemoteWindow", u"Fastmail Files", None))
+        self.comboBox_webdav_vendor.setItemText(2, QCoreApplication.translate("NewRemoteWindow", u"Nextcloud", None))
+        self.comboBox_webdav_vendor.setItemText(3, QCoreApplication.translate("NewRemoteWindow", u"Owncloud", None))
+        self.comboBox_webdav_vendor.setItemText(4, QCoreApplication.translate("NewRemoteWindow", u"Sharepoint Online, authenticated by Microsoft account", None))
+        self.comboBox_webdav_vendor.setItemText(5, QCoreApplication.translate("NewRemoteWindow", u"Sharepoint with NTLM authentication, usually self-hosted or on-premises", None))
+        self.comboBox_webdav_vendor.setItemText(6, QCoreApplication.translate("NewRemoteWindow", u"rclone WebDAV server to serve a remote over HTTP via the WebDAV protocol", None))
+
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_webdav), QCoreApplication.translate("NewRemoteWindow", u"WebDAV", None))
         self.label.setText(QCoreApplication.translate("NewRemoteWindow", u"URL", None))
         self.lineEdit_url.setText(QCoreApplication.translate("NewRemoteWindow", u"http://127.0.0.1:8000/", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_http), QCoreApplication.translate("NewRemoteWindow", u"http", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_http), QCoreApplication.translate("NewRemoteWindow", u"HTTP", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_local), QCoreApplication.translate("NewRemoteWindow", u"Local", None))
     # retranslateUi
 

@@ -6,7 +6,7 @@ from pathlib import Path
 
 from PySide6.QtCore import Qt, QTimer, QPoint
 from PySide6.QtGui import QIcon, QGuiApplication, QAction, QPixmap, QCursor
-from PySide6.QtWidgets import QMainWindow, QApplication, QDialog, QMenu, QFileDialog, QTreeWidget, QTreeWidgetItem, QPushButton, QMessageBox
+from PySide6.QtWidgets import QMainWindow, QApplication, QDialog, QMenu, QFileDialog, QSizePolicy, QTreeWidget, QTreeWidgetItem, QPushButton, QMessageBox
 
 from rclone_python import rclone
 from rclone_python import remote_types
@@ -89,10 +89,12 @@ class NewRemoteWindow(QDialog):
                                   self.ui.lineEdit_ftp_password.text().strip())
                     self.close()
                 case 3:
+                    vendors = ['other', 'fastmail', 'nextcloud', 'owncloud', 'sharepoint', 'sharepoint-ntlm', 'rclone']
                     rclone.create_remote(name,
                                          remote_type=remote_types.RemoteTypes.webdav,
                                          url=self.ui.lineEdit_webdav_url.text().strip(),
-                                         user=self.ui.lineEdit_webdav_login.text().strip()
+                                         user=self.ui.lineEdit_webdav_login.text().strip(),
+                                         vendor=vendors[self.ui.comboBox_webdav_vendor.currentIndex()]
                                          )
                     if self.ui.lineEdit_webdav_password.text().strip() != '':
                         rc.config('password', name, 'pass',
@@ -214,7 +216,13 @@ class MainWindow(QMainWindow):
     def open_remote(self, item: QTreeWidgetItem):
         for i in range(self.ui.path_list.count()):
             self.ui.path_list.itemAt(i).widget().deleteLater()
-        self.ui.path_list.addWidget(QPushButton(item.text()))
+
+        button = QPushButton(item.text())
+        button.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+        self.ui.path_list.addWidget(button)
+        button = QPushButton()
+        # button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        self.ui.path_list.addWidget(QPushButton())
         self.open_folder(item.text())
 
     def open_item(self, item: QTreeWidgetItem):

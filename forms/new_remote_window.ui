@@ -267,6 +267,52 @@
         </layout>
        </item>
        <item>
+        <widget class="QLabel" name="label_10">
+         <property name="text">
+          <string>Option vendor</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comboBox_webdav_vendor">
+         <item>
+          <property name="text">
+           <string extracomment="other">Other site/service or software</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string extracomment="fastmail">Fastmail Files</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string extracomment="nextcloud">Nextcloud</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string extracomment="owncloud">Owncloud</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string extracomment="sharepoint">Sharepoint Online, authenticated by Microsoft account</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string extracomment="sharepoint-ntlm">Sharepoint with NTLM authentication, usually self-hosted or on-premises</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string extracomment="rclone">rclone WebDAV server to serve a remote over HTTP via the WebDAV protocol</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item>
         <spacer name="verticalSpacer_5">
          <property name="orientation">
           <enum>Qt::Orientation::Vertical</enum>
@@ -283,7 +329,7 @@
      </widget>
      <widget class="QWidget" name="tab_http">
       <attribute name="title">
-       <string>http</string>
+       <string>HTTP</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>

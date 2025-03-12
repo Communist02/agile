@@ -16,9 +16,9 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QIcon, QImage, QKeySequence, QLinearGradient,
     QPainter, QPalette, QPixmap, QRadialGradient,
     QTransform)
-from PySide6.QtWidgets import (QApplication, QHBoxLayout, QHeaderView, QListWidget,
-    QListWidgetItem, QMainWindow, QMenu, QMenuBar,
-    QPushButton, QSizePolicy, QSpacerItem, QStatusBar,
+from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QHeaderView,
+    QListWidget, QListWidgetItem, QMainWindow, QMenu,
+    QMenuBar, QPushButton, QSizePolicy, QStatusBar,
     QToolButton, QTreeWidget, QTreeWidgetItem, QVBoxLayout,
     QWidget)
 
@@ -27,6 +27,9 @@ class Ui_MainWindow(object):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
         MainWindow.resize(1033, 771)
+        MainWindow.setStyleSheet(u"#path_list_frame QPushButton {\n"
+"	border: 0px solid;\n"
+"}")
         self.action_new_remote = QAction(MainWindow)
         self.action_new_remote.setObjectName(u"action_new_remote")
         self.actionExit = QAction(MainWindow)
@@ -46,27 +49,42 @@ class Ui_MainWindow(object):
 
         self.pushButton_2 = QPushButton(self.centralwidget)
         self.pushButton_2.setObjectName(u"pushButton_2")
+        self.pushButton_2.setMaximumSize(QSize(40, 16777215))
 
         self.horizontalLayout.addWidget(self.pushButton_2)
 
         self.pushButton_3 = QPushButton(self.centralwidget)
         self.pushButton_3.setObjectName(u"pushButton_3")
+        self.pushButton_3.setMaximumSize(QSize(40, 16777215))
 
         self.horizontalLayout.addWidget(self.pushButton_3)
 
         self.button_exit_dir = QPushButton(self.centralwidget)
         self.button_exit_dir.setObjectName(u"button_exit_dir")
+        self.button_exit_dir.setMaximumSize(QSize(40, 16777215))
 
         self.horizontalLayout.addWidget(self.button_exit_dir)
 
+        self.path_list_frame = QFrame(self.centralwidget)
+        self.path_list_frame.setObjectName(u"path_list_frame")
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.path_list_frame.sizePolicy().hasHeightForWidth())
+        self.path_list_frame.setSizePolicy(sizePolicy)
+        self.path_list_frame.setFrameShape(QFrame.Shape.StyledPanel)
+        self.path_list_frame.setFrameShadow(QFrame.Shadow.Raised)
+        self.verticalLayout_2 = QVBoxLayout(self.path_list_frame)
+        self.verticalLayout_2.setSpacing(0)
+        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
+        self.verticalLayout_2.setContentsMargins(-1, 0, -1, 0)
         self.path_list = QHBoxLayout()
         self.path_list.setObjectName(u"path_list")
 
-        self.horizontalLayout.addLayout(self.path_list)
+        self.verticalLayout_2.addLayout(self.path_list)
 
-        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
-        self.horizontalLayout.addItem(self.horizontalSpacer)
+        self.horizontalLayout.addWidget(self.path_list_frame)
 
 
         self.verticalLayout.addLayout(self.horizontalLayout)
@@ -75,11 +93,11 @@ class Ui_MainWindow(object):
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
         self.disk_list = QListWidget(self.centralwidget)
         self.disk_list.setObjectName(u"disk_list")
-        sizePolicy = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.disk_list.sizePolicy().hasHeightForWidth())
-        self.disk_list.setSizePolicy(sizePolicy)
+        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+        sizePolicy1.setHorizontalStretch(0)
+        sizePolicy1.setVerticalStretch(0)
+        sizePolicy1.setHeightForWidth(self.disk_list.sizePolicy().hasHeightForWidth())
+        self.disk_list.setSizePolicy(sizePolicy1)
 
         self.horizontalLayout_2.addWidget(self.disk_list)
 
