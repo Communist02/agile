@@ -6,7 +6,7 @@ from pathlib import Path
 
 from PySide6.QtCore import Qt, QTimer, QPoint
 from PySide6.QtGui import QIcon, QGuiApplication, QAction, QPixmap, QCursor
-from PySide6.QtWidgets import QMainWindow, QApplication, QDialog, QMenu, QFileDialog, QSizePolicy, QTreeWidget, QTreeWidgetItem, QPushButton, QMessageBox
+from PySide6.QtWidgets import QMainWindow, QApplication, QDialog, QMenu, QFileDialog, QTreeWidget, QTreeWidgetItem, QPushButton, QMessageBox, QLabel
 
 from rclone_python import rclone
 from rclone_python import remote_types
@@ -89,12 +89,10 @@ class NewRemoteWindow(QDialog):
                                   self.ui.lineEdit_ftp_password.text().strip())
                     self.close()
                 case 3:
-                    vendors = ['other', 'fastmail', 'nextcloud', 'owncloud', 'sharepoint', 'sharepoint-ntlm', 'rclone']
                     rclone.create_remote(name,
                                          remote_type=remote_types.RemoteTypes.webdav,
                                          url=self.ui.lineEdit_webdav_url.text().strip(),
-                                         user=self.ui.lineEdit_webdav_login.text().strip(),
-                                         vendor=vendors[self.ui.comboBox_webdav_vendor.currentIndex()]
+                                         user=self.ui.lineEdit_webdav_login.text().strip()
                                          )
                     if self.ui.lineEdit_webdav_password.text().strip() != '':
                         rc.config('password', name, 'pass',
@@ -127,9 +125,10 @@ class MainWindow(QMainWindow):
 
     def __init__(self):
         super(MainWindow, self).__init__()
+        self.cache = {}
         self.ui = main_window.Ui_MainWindow()
         self.ui.setupUi(self)
-
+      
         self.ui.file_view.header().resizeSection(0, 300)
         self.ui.file_view.header().resizeSection(1, 80)
         self.ui.file_view.header().resizeSection(2, 120)
@@ -169,9 +168,21 @@ class MainWindow(QMainWindow):
     def menu_open(self):
         self.ui.disk_list.setVisible(not self.ui.disk_list.isVisible())
 
+    def clear_cache(self, remote_name, path):
+        if remote_name in self.cache and path in self.cache[remote_name]:
+            del self.cache[remote_name][path]
+    
     def open_folder(self, remote_name: str, path_dir: str = ''):
         self.current_remote = remote_name
         self.ui.file_view.clear()
+
+        if remote_name in self.cache and path_dir in self.cache[remote_name]:
+            tree = self.cache[remote_name][path_dir] 
+        else:
+            tree = rc.lsjson(f'"{remote_name}{path_dir}"') 
+            if remote_name not in self.cache:
+                self.cache[remote_name] = {}
+            self.cache[remote_name][path_dir] = tree 
 
         tree = rc.lsjson(f'"{remote_name}{path_dir}"')
         self.remotes_paths[remote_name] = path_dir
@@ -213,17 +224,58 @@ class MainWindow(QMainWindow):
                 [file['name'], file['size'], file['modified'], file['type']])
             self.ui.file_view.addTopLevelItem(tree_item)
 
+    def navigate_to_path(self, path):
+        self.open_folder(self.current_remote, path)
+        for i in reversed(range(self.ui.path_list.count())):
+            widget = self.ui.path_list.itemAt(i).widget()
+            if isinstance(widget, QPushButton) and widget.text() == path.split("/")[-1]:  
+                break  
+            widget.deleteLater()
+
+    def display_files(self, tree):
+        for file in sorted(tree, key=lambda element: element['IsDir'], reverse=True):
+            size = file["Size"]
+            name = file["Name"]
+            modified = file["ModTime"].replace('T', ' ').replace('Z', ' ')
+            is_dir = file["IsDir"]
+            type = file["MimeType"]
+        
+            if is_dir:
+                size = ''
+            else:
+                sizes = ['bytes', 'KB', 'MB', 'GB', 'TB']
+                index = 0
+                for _ in range(4):
+                    if size >= 1024:
+                        size = round(float(size) / 1024, 2)
+                        index += 1
+                size = f'{size} {sizes[index]}'
+
+            tree_item = QTreeWidgetItem([name, size, modified, type])
+            self.ui.file_view.addTopLevelItem(tree_item)
+
+    def load_cached_remote(self, remote_name):
+        self.current_remote = remote_name
+        self.ui.file_view.clear()
+
+        if remote_name in self.cache and '' in self.cache[remote_name]:  
+            tree = self.cache[remote_name]['']
+            self.display_files(tree)
+        else:
+            self.open_folder(remote_name) 
+
     def open_remote(self, item: QTreeWidgetItem):
+        remote_name = item.text()
         for i in range(self.ui.path_list.count()):
             self.ui.path_list.itemAt(i).widget().deleteLater()
-
-        button = QPushButton(item.text())
-        button.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
-        self.ui.path_list.addWidget(button)
-        button = QPushButton()
-        # button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
-        self.ui.path_list.addWidget(QPushButton())
-        self.open_folder(item.text())
+        remote_button = QPushButton(remote_name)
+        remote_button.clicked.connect(lambda: self.load_cached_remote(remote_name))
+        self.ui.path_list.addWidget(remote_button)
+        
+        if remote_name in self.cache and '' in self.cache[remote_name]:  
+            self.load_cached_remote(remote_name)
+        else:
+            self.open_folder(remote_name)
 
     def open_item(self, item: QTreeWidgetItem):
         if self.current_remote:
@@ -233,6 +285,12 @@ class MainWindow(QMainWindow):
             else:
                 file_path = item.text(0)
             if item.text(3) == 'inode/directory':
+                arrow_label = QLabel("/") 
+                arrow_label.setAlignment(Qt.AlignCenter)
+                self.ui.path_list.addWidget(arrow_label)
+                file_button = QPushButton(item.text(0))
+                file_button.clicked.connect(lambda checked=False, p=file_path: self.navigate_to_path(p))
+                self.ui.path_list.addWidget(file_button)
                 self.open_folder(self.current_remote, file_path)
             else:
                 if self.temp_dir == '':
@@ -247,6 +305,11 @@ class MainWindow(QMainWindow):
                             f'"{self.temp_dir}"')
                     subprocess.call(
                         ['xdg-open', self.temp_dir + '/' + item.text(0)])
+                arrow_label = QLabel("/") 
+                arrow_label.setAlignment(Qt.AlignCenter) 
+                self.ui.path_list.addWidget(arrow_label)
+                file_button = QPushButton(item.text(0))
+                self.ui.path_list.addWidget(file_button)
 
     def download_file(self, file_name: str):
         download_path = QFileDialog.getExistingDirectory()
@@ -268,6 +331,9 @@ class MainWindow(QMainWindow):
         if self.current_remote != '' and self.remotes_paths[self.current_remote] != '':
             path_dir = f'{self.remotes_paths[self.current_remote]}'
             path = '/'.join(path_dir.split('/')[:-1])
+            if self.ui.path_list.count() > 1:
+                self.ui.path_list.itemAt(self.ui.path_list.count() - 1).widget().deleteLater()
+                self.ui.path_list.itemAt(self.ui.path_list.count() - 2).widget().deleteLater()
             self.open_folder(self.current_remote, path)
 
     def delete_remote(self, name: str):
