@@ -51,8 +51,26 @@ class NewRemoteWindow(QDialog):
                     self.ui.tabWidget.setCurrentIndex(3)
                     url = config[remote_name[:-1]]['url']
                     user = config[remote_name[:-1]]['user']
+                    vendor = config[remote_name[:-1]].setdefault('vendor', 'other')
                     self.ui.lineEdit_webdav_url.setText(url)
                     self.ui.lineEdit_webdav_login.setText(user)
+                    match vendor:
+                        case 'fastmail':
+                            vendor = 1
+                        case 'nextcloud':
+                            vendor = 2
+                        case 'owncloud':
+                            vendor = 3
+                        case 'sharepoint':
+                            vendor = 4
+                        case 'sharepoint-ntlm':
+                            vendor = 5
+                        case 'rclone':
+                            vendor = 6
+                        case _:
+                            vendor = 0
+                        
+                    self.ui.comboBox_webdav_vendor.setCurrentIndex(vendor)
                 case 'http':
                     self.ui.tabWidget.setCurrentIndex(4)
                     url = config[remote_name[:-1]]['url']
