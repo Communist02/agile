@@ -16,19 +16,20 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QIcon, QImage, QKeySequence, QLinearGradient,
     QPainter, QPalette, QPixmap, QRadialGradient,
     QTransform)
-from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QHeaderView,
+from PySide6.QtWidgets import (QApplication, QDockWidget, QHBoxLayout, QHeaderView,
     QListWidget, QListWidgetItem, QMainWindow, QMenu,
     QMenuBar, QPushButton, QSizePolicy, QSpacerItem,
-    QStatusBar, QToolButton, QTreeWidget, QTreeWidgetItem,
-    QVBoxLayout, QWidget)
+    QStatusBar, QTreeWidget, QTreeWidgetItem, QVBoxLayout,
+    QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
         MainWindow.resize(1033, 771)
-        MainWindow.setStyleSheet(u"#path_list_frame1 QPushButton {\n"
+        MainWindow.setStyleSheet(u"#path_list_frame QPushButton {\n"
 "	border: 0px;\n"
+"	margin: 6px;\n"
 "}")
         self.action_new_remote = QAction(MainWindow)
         self.action_new_remote.setObjectName(u"action_new_remote")
@@ -75,25 +76,23 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout.addWidget(self.button_exit_dir)
 
-        self.openMenuButton = QToolButton(self.centralwidget)
+        self.openMenuButton = QPushButton(self.centralwidget)
         self.openMenuButton.setObjectName(u"openMenuButton")
         self.openMenuButton.setMinimumSize(QSize(34, 34))
         self.openMenuButton.setMaximumSize(QSize(34, 34))
 
         self.horizontalLayout.addWidget(self.openMenuButton)
 
-        self.path_list_frame = QFrame(self.centralwidget)
-        self.path_list_frame.setObjectName(u"path_list_frame")
+        self.path_list_widget = QWidget(self.centralwidget)
+        self.path_list_widget.setObjectName(u"path_list_widget")
         sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         sizePolicy1.setHorizontalStretch(0)
         sizePolicy1.setVerticalStretch(0)
-        sizePolicy1.setHeightForWidth(self.path_list_frame.sizePolicy().hasHeightForWidth())
-        self.path_list_frame.setSizePolicy(sizePolicy1)
-        self.path_list_frame.setMinimumSize(QSize(0, 34))
-        self.path_list_frame.setMaximumSize(QSize(16777215, 34))
-        self.path_list_frame.setFrameShape(QFrame.Shape.StyledPanel)
-        self.path_list_frame.setFrameShadow(QFrame.Shadow.Raised)
-        self.horizontalLayout_3 = QHBoxLayout(self.path_list_frame)
+        sizePolicy1.setHeightForWidth(self.path_list_widget.sizePolicy().hasHeightForWidth())
+        self.path_list_widget.setSizePolicy(sizePolicy1)
+        self.path_list_widget.setMinimumSize(QSize(0, 34))
+        self.path_list_widget.setMaximumSize(QSize(16777215, 34))
+        self.horizontalLayout_3 = QHBoxLayout(self.path_list_widget)
         self.horizontalLayout_3.setSpacing(3)
         self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
         self.horizontalLayout_3.setContentsMargins(0, 0, 0, 0)
@@ -107,7 +106,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_3.addItem(self.horizontalSpacer)
 
 
-        self.horizontalLayout.addWidget(self.path_list_frame)
+        self.horizontalLayout.addWidget(self.path_list_widget)
 
 
         self.verticalLayout.addLayout(self.horizontalLayout)
@@ -144,6 +143,21 @@ class Ui_MainWindow(object):
         self.statusbar = QStatusBar(MainWindow)
         self.statusbar.setObjectName(u"statusbar")
         MainWindow.setStatusBar(self.statusbar)
+        self.dockWidget = QDockWidget(MainWindow)
+        self.dockWidget.setObjectName(u"dockWidget")
+        self.dockWidgetContents_5 = QWidget()
+        self.dockWidgetContents_5.setObjectName(u"dockWidgetContents_5")
+        self.verticalLayout_2 = QVBoxLayout(self.dockWidgetContents_5)
+        self.verticalLayout_2.setSpacing(0)
+        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
+        self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
+        self.tasks = QTreeWidget(self.dockWidgetContents_5)
+        self.tasks.setObjectName(u"tasks")
+
+        self.verticalLayout_2.addWidget(self.tasks)
+
+        self.dockWidget.setWidget(self.dockWidgetContents_5)
+        MainWindow.addDockWidget(Qt.DockWidgetArea.BottomDockWidgetArea, self.dockWidget)
 
         self.menubar.addAction(self.menuClient.menuAction())
         self.menubar.addAction(self.menuOther.menuAction())
@@ -172,5 +186,14 @@ class Ui_MainWindow(object):
         ___qtreewidgetitem.setText(0, QCoreApplication.translate("MainWindow", u"Name", None));
         self.menuClient.setTitle(QCoreApplication.translate("MainWindow", u"Client", None))
         self.menuOther.setTitle(QCoreApplication.translate("MainWindow", u"Other", None))
+        ___qtreewidgetitem1 = self.tasks.headerItem()
+        ___qtreewidgetitem1.setText(7, QCoreApplication.translate("MainWindow", u"Estimated", None));
+        ___qtreewidgetitem1.setText(6, QCoreApplication.translate("MainWindow", u"Speed", None));
+        ___qtreewidgetitem1.setText(5, QCoreApplication.translate("MainWindow", u"Progress", None));
+        ___qtreewidgetitem1.setText(4, QCoreApplication.translate("MainWindow", u"Size", None));
+        ___qtreewidgetitem1.setText(3, QCoreApplication.translate("MainWindow", u"Status", None));
+        ___qtreewidgetitem1.setText(2, QCoreApplication.translate("MainWindow", u"Destination", None));
+        ___qtreewidgetitem1.setText(1, QCoreApplication.translate("MainWindow", u"Source", None));
+        ___qtreewidgetitem1.setText(0, QCoreApplication.translate("MainWindow", u"Operation", None));
     # retranslateUi
 

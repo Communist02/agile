@@ -1,4 +1,6 @@
 # This Python file uses the following encoding: utf-8
+import asyncio
+import shutil
 import sys
 import os
 import subprocess
@@ -7,15 +9,18 @@ from pathlib import Path
 from PySide6.QtCore import Qt, QTimer, QPoint
 from PySide6.QtGui import QIcon, QGuiApplication, QAction, QPixmap, QCursor
 from PySide6.QtWidgets import QMainWindow, QApplication, QDialog, QMenu, QFileDialog, QSizePolicy, QTreeWidget, QTreeWidgetItem, QPushButton, QMessageBox, QLabel
+import PySide6.QtAsyncio as QtAsyncio
 
 from rclone_python import rclone
 from rclone_python import remote_types
 from rclone import Rclone
+from rclone_async import Rclone_async
 
 import main_window
 import new_remote_window
 
 rc = Rclone('MB', True)
+rc_async = Rclone_async(True)
 
 
 class NewRemoteWindow(QDialog):
@@ -51,7 +56,8 @@ class NewRemoteWindow(QDialog):
                     self.ui.tabWidget.setCurrentIndex(3)
                     url = config[remote_name[:-1]]['url']
                     user = config[remote_name[:-1]]['user']
-                    vendor = config[remote_name[:-1]].setdefault('vendor', 'other')
+                    vendor = config[remote_name[:-1]
+                                    ].setdefault('vendor', 'other')
                     self.ui.lineEdit_webdav_url.setText(url)
                     self.ui.lineEdit_webdav_login.setText(user)
                     match vendor:
@@ -69,7 +75,7 @@ class NewRemoteWindow(QDialog):
                             vendor = 6
                         case _:
                             vendor = 0
-                        
+
                     self.ui.comboBox_webdav_vendor.setCurrentIndex(vendor)
                 case 'http':
                     self.ui.tabWidget.setCurrentIndex(4)
@@ -107,12 +113,14 @@ class NewRemoteWindow(QDialog):
                                   self.ui.lineEdit_ftp_password.text().strip())
                     self.close()
                 case 3:
-                    vendors = ['other', 'fastmail', 'nextcloud', 'owncloud', 'sharepoint', 'sharepoint-ntlm', 'rclone']
+                    vendors = ['other', 'fastmail', 'nextcloud',
+                               'owncloud', 'sharepoint', 'sharepoint-ntlm', 'rclone']
                     rclone.create_remote(name,
                                          remote_type=remote_types.RemoteTypes.webdav,
                                          url=self.ui.lineEdit_webdav_url.text().strip(),
                                          user=self.ui.lineEdit_webdav_login.text().strip(),
-                                         vendor=vendors[self.ui.comboBox_webdav_vendor.currentIndex()]
+                                         vendor=vendors[self.ui.comboBox_webdav_vendor.currentIndex(
+                                         )]
                                          )
                     if self.ui.lineEdit_webdav_password.text().strip() != '':
                         rc.config('password', name, 'pass',
@@ -133,17 +141,62 @@ class NewRemoteWindow(QDialog):
             alert.exec()
 
 
+class Task():
+    def __init__(self, operation, source, destination, full_size=0):
+        self.operation = operation
+        self.source = source
+        self.destination = destination
+        self.status = ''
+        self.size = ''
+        self.full_size = full_size
+        self.progress = ''
+        self.speed = ''
+        self.estimated = ''
+
+    def set_full_size(self, size: float):
+        self.full_size = size
+
+    def set_size(self, size: float):
+        sizes = ['B', 'KB', 'MB', 'GB', 'TB']
+        index = 0
+        full_size = self.full_size
+
+        for _ in range(4):
+            if full_size >= 1024:
+                full_size = round(float(full_size) / 1024, 2)
+                size = round(float(size) / 1024, 2)
+                index += 1
+
+        self.size = f'{size} / {full_size} {sizes[index]}'
+        if full_size != 0:
+            self.progress = f'{round((size / full_size) * 100)}%'
+        else:
+            self.progress = '0%'
+
+    def set_speed(self, speed: float):
+        sizes = ['B/s', 'KB/s', 'MB/s', 'GB/s', 'TB/s']
+        index = 0
+
+        for _ in range(4):
+            if speed >= 1024:
+                speed = speed / 1024
+                index += 1
+
+        self.speed = f'{round(speed, 2)} {sizes[index]}'
+
+    def set_estimated(self, estimated: str):
+        self.estimated = estimated
+
+
 class MainWindow(QMainWindow):
     download_path: str = str(Path.home() / "Downloads")
     remotes_paths = {}
-
     files: list = []
     current_remote: str = ''
-
     temp_dir: str = ''
     tree: list = []
-
     cache: dict = {}
+    tasks: list[Task] = []
 
     def __init__(self):
         super(MainWindow, self).__init__()
@@ -174,6 +227,36 @@ class MainWindow(QMainWindow):
 
         self.update_remotes()
 
+        self.timer = QTimer(interval=500)
+        self.timer.timeout.connect(self.timer_update)
+        self.timer.start()
+
+    def timer_update(self):
+        # self.ui.tasks.clear()
+        for i in range(len(self.tasks)):
+            if i >= self.ui.tasks.topLevelItemCount():
+                self.ui.tasks.addTopLevelItem(QTreeWidgetItem())
+            item = self.ui.tasks.topLevelItem(i)
+            item.setText(0, self.tasks[i].operation)
+            item.setText(1, self.tasks[i].source)
+            item.setText(2, self.tasks[i].destination)
+            item.setText(3, self.tasks[i].status)
+
+            self.tasks[i].set_full_size(rc_async.tasks[i]['full_size'])
+            self.tasks[i].set_size(rc_async.tasks[i]['size'])
+            self.tasks[i].set_speed(rc_async.tasks[i]['speed'])
+            self.tasks[i].set_estimated(rc_async.tasks[i]['estimated'])
+
+            item.setText(4, self.tasks[i].size)
+            item.setText(5, self.tasks[i].progress)
+            item.setText(6, self.tasks[i].speed)
+            item.setText(7, self.tasks[i].estimated)
+
+    def closeEvent(self, event):
+        if self.temp_dir != '':
+            shutil.rmtree(self.temp_dir)
+        return super().closeEvent(event)
+
     def update_remotes(self):
         remotes = rclone.get_remotes()
         self.ui.disk_list.clear()
@@ -202,7 +285,9 @@ class MainWindow(QMainWindow):
             self.ui.path_list.itemAt(i).widget().deleteLater()
 
         button = QPushButton(remote_name)
-        button.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding)
+        button.setSizePolicy(QSizePolicy.Policy.Fixed,
+                             QSizePolicy.Policy.Expanding)
+        button.setFlat(True)
         button.clicked.connect(lambda t, a=remote_name: self.open_folder(a))
         self.ui.path_list.addWidget(button)
 
@@ -215,8 +300,11 @@ class MainWindow(QMainWindow):
                 # arrow_label.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
                 self.ui.path_list.addWidget(arrow_label)
                 button = QPushButton(name)
-                button.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding)
-                button.clicked.connect(lambda t, a=self.current_remote, b=temp_path[:-1]: self.open_folder(a, b))
+                button.setSizePolicy(
+                    QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding)
+                button.setFlat(True)
+                button.clicked.connect(
+                    lambda t, a=self.current_remote, b=temp_path[:-1]: self.open_folder(a, b))
                 self.ui.path_list.addWidget(button)
 
         if remote_name in self.cache and path_dir in self.cache[remote_name]:
@@ -225,13 +313,13 @@ class MainWindow(QMainWindow):
             tree = rc.lsjson(f'"{remote_name}{path_dir}"')
 
             for i in range(len(tree)):
-                sizes = ['bytes', 'KB', 'MB', 'GB', 'TB']
+                sizes = ['B', 'KB', 'MB', 'GB', 'TB']
                 index = 0
-                size = tree[i]["Size"]
-                name = tree[i]["Name"]
-                modified = tree[i]["ModTime"]
-                is_dir = tree[i]["IsDir"]
-                type = tree[i]["MimeType"]
+                size = tree[i]['Size']
+                name = tree[i]['Name']
+                modified = tree[i]['ModTime']
+                is_dir = tree[i]['IsDir']
+                type = tree[i]['MimeType']
 
                 if is_dir:
                     size = ''
@@ -243,13 +331,13 @@ class MainWindow(QMainWindow):
                     size = f'{size} {sizes[index]}'
 
                 if path_dir != '':
-                    path = path_dir + "/" + tree[i]["Path"]
+                    path = path_dir + '/' + tree[i]['Path']
                 else:
-                    path = tree[i]["Path"]
+                    path = tree[i]['Path']
 
                 modified = modified.replace('T', ' ').replace('Z', ' ')
-                tree[i] = {"name": name, "size": size,
-                        "modified": modified, "path": path, "is_dir": is_dir, "type": type}
+                tree[i] = {'name': name, 'size': size, 'modified': modified,
+                           'path': path, 'is_dir': is_dir, 'type': type}
             if remote_name in self.cache:
                 self.cache[remote_name][path_dir] = tree
             else:
@@ -263,8 +351,6 @@ class MainWindow(QMainWindow):
                 [file['name'], file['size'], file['modified'], file['type']])
             self.ui.file_view.addTopLevelItem(tree_item)
 
-
-
     def open_remote(self, item: QTreeWidgetItem):
         for i in range(self.ui.path_list.count()):
             self.ui.path_list.itemAt(i).widget().deleteLater()
@@ -273,7 +359,8 @@ class MainWindow(QMainWindow):
     def open_item(self, item: QTreeWidgetItem):
         if self.current_remote:
             if self.remotes_paths[self.current_remote] != '':
-                file_path = self.remotes_paths[self.current_remote] + '/' + item.text(0)
+                file_path = self.remotes_paths[self.current_remote] + \
+                    '/' + item.text(0)
             else:
                 file_path = item.text(0)
             if item.text(3) == 'inode/directory':
@@ -300,8 +387,12 @@ class MainWindow(QMainWindow):
                     '/' + file_name
             else:
                 file_path = file_name
-            rc.copy(f'"{self.current_remote}{file_path}"',
-                    f'"{download_path}"')
+
+            self.tasks.append(Task(
+                operation='Download', source=f'{self.current_remote}{file_path}', destination=download_path))
+            task = asyncio.create_task(rc_async.copy(
+                f'"{self.current_remote}{file_path}"', f'"{download_path}"'))
+            task
 
     def mount_remote(self, name: str):
         if os.name == 'nt':
@@ -408,4 +499,4 @@ if __name__ == "__main__":
     window = MainWindow()
 
     window.show()
-    sys.exit(app.exec())
+    sys.exit(QtAsyncio.run())
