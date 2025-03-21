@@ -47,11 +47,12 @@ class Rclone_async(CheckRclone):
         self.debug = debug
 
     async def _stream_process(self, p: subprocess.Popen[bytes]):
-        self.tasks.append({'size': 0, 'speed': 0, 'estimated': 0, 'status': 'Executing'})
+        self.tasks.append({'size': 0, 'speed': 0, 'estimated': '-', 'full_size': 0, 'is_done': False})
         index = len(self.tasks) - 1
+        loop = asyncio.get_running_loop()
 
         while True:
-            line = p.stdout.readline()
+            line = await loop.run_in_executor(None, p.stdout.readline)
             if not line:
                 break
             s: str = line.decode()
@@ -106,8 +107,7 @@ class Rclone_async(CheckRclone):
                     break
             elif 'error' in s:
                 print(s)
-            await asyncio.sleep(0.1)
-        self.tasks[index]['status'] = 'Done'
+        self.tasks[index]['is_done'] = True
 
     async def _process(self, subcommand, arg1='', arg2='', arg3='', arg4='', progress=False, _execute=False, *args):
         if subcommand in ['copy', 'move', 'sync', 'bisync', 'copyto', 'copyurl'] and not _execute:

@@ -173,8 +173,11 @@ class Task():
         else:
             self.progress = '0%'
 
-    def set_status(self, status):
-        self.status = status
+    def set_status(self, is_done: bool):
+        if is_done:
+            self.status = 'Done'
+        else:
+            self.status = 'Running'
 
     def set_speed(self, speed: float):
         sizes = ['B/s', 'KB/s', 'MB/s', 'GB/s', 'TB/s']
@@ -248,7 +251,7 @@ class MainWindow(QMainWindow):
             self.tasks[i].set_size(rc_async.tasks[i]['size'])
             self.tasks[i].set_speed(rc_async.tasks[i]['speed'])
             self.tasks[i].set_estimated(rc_async.tasks[i]['estimated'])
-            self.tasks[i].set_status(rc_async.tasks[i]['status'])
+            self.tasks[i].set_status(rc_async.tasks[i]['is_done'])
 
             item.setText(3, self.tasks[i].status)
             item.setText(4, self.tasks[i].size)
