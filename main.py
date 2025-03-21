@@ -395,9 +395,8 @@ class MainWindow(QMainWindow):
             self.tasks.append(Task(
                 operation='Download', source=f'{self.current_remote}{file_path}', destination=download_path))
             self.ui.dock_tasks.show()
-            task = asyncio.create_task(rc_async.copy(
+            asyncio.ensure_future(rc_async.copy(
                 f'"{self.current_remote}{file_path}"', f'"{download_path}"'))
-            task
 
     def mount_remote(self, name: str):
         if os.name == 'nt':
