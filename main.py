@@ -142,13 +142,13 @@ class NewRemoteWindow(QDialog):
 
 
 class Task():
-    def __init__(self, operation, source, destination, full_size=0):
+    def __init__(self, operation, source, destination):
         self.operation = operation
         self.source = source
         self.destination = destination
-        self.status = ''
+        self.status = 'Executing'
         self.size = ''
-        self.full_size = full_size
+        self.full_size = 0
         self.progress = ''
         self.speed = ''
         self.estimated = ''
@@ -172,6 +172,9 @@ class Task():
             self.progress = f'{round((size / full_size) * 100)}%'
         else:
             self.progress = '0%'
+
+    def set_status(self, status):
+        self.status = status
 
     def set_speed(self, speed: float):
         sizes = ['B/s', 'KB/s', 'MB/s', 'GB/s', 'TB/s']
@@ -240,13 +243,14 @@ class MainWindow(QMainWindow):
             item.setText(0, self.tasks[i].operation)
             item.setText(1, self.tasks[i].source)
             item.setText(2, self.tasks[i].destination)
-            item.setText(3, self.tasks[i].status)
 
             self.tasks[i].set_full_size(rc_async.tasks[i]['full_size'])
             self.tasks[i].set_size(rc_async.tasks[i]['size'])
             self.tasks[i].set_speed(rc_async.tasks[i]['speed'])
             self.tasks[i].set_estimated(rc_async.tasks[i]['estimated'])
+            self.tasks[i].set_status(rc_async.tasks[i]['status'])
 
+            item.setText(3, self.tasks[i].status)
             item.setText(4, self.tasks[i].size)
             item.setText(5, self.tasks[i].progress)
             item.setText(6, self.tasks[i].speed)
@@ -390,6 +394,7 @@ class MainWindow(QMainWindow):
 
             self.tasks.append(Task(
                 operation='Download', source=f'{self.current_remote}{file_path}', destination=download_path))
+            self.ui.dock_tasks.show()
             task = asyncio.create_task(rc_async.copy(
                 f'"{self.current_remote}{file_path}"', f'"{download_path}"'))
             task

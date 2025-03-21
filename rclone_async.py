@@ -49,7 +49,7 @@ class Rclone_async(CheckRclone):
     async def _stream_process(self, p: subprocess.Popen[bytes]):
         warnings.filterwarnings('ignore', message='clamping frac to range')
 
-        self.tasks.append({'size': 0, 'speed': 0, 'estimated': 0})
+        self.tasks.append({'size': 0, 'speed': 0, 'estimated': 0, 'status': 'Executing'})
         index = len(self.tasks) - 1
 
         while True:
@@ -104,10 +104,12 @@ class Rclone_async(CheckRclone):
                 self.tasks[index]['full_size'] = full_size
                 self.tasks[index]['speed'] = speed
                 self.tasks[index]['estimated'] = estimated
-                # print(self.tasks)
+                if full_size != 0 and current_size == full_size:
+                    break
             elif 'error' in s:
                 print(s)
             await asyncio.sleep(0.1)
+        self.tasks[index]['status'] = 'Done'
 
     async def _process(self, subcommand, arg1='', arg2='', arg3='', arg4='', progress=False, _execute=False, *args):
         if subcommand in ['copy', 'move', 'sync', 'bisync', 'copyto', 'copyurl'] and not _execute:
