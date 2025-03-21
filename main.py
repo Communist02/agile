@@ -7,7 +7,7 @@ from pathlib import Path
 
 from PySide6.QtCore import Qt, QTimer, QPoint
 from PySide6.QtGui import QIcon, QGuiApplication, QAction, QPixmap, QCursor
-from PySide6.QtWidgets import QMainWindow, QApplication, QDialog, QMenu, QFileDialog, QSizePolicy, QTreeWidget, QTreeWidgetItem, QPushButton, QMessageBox, QLabel
+from PySide6.QtWidgets import QMainWindow, QApplication, QDialog, QMenu, QFileDialog, QProgressBar, QSizePolicy, QTreeWidget, QTreeWidgetItem, QPushButton, QMessageBox, QLabel
 import PySide6.QtAsyncio as QtAsyncio
 
 from rclone_python import rclone
@@ -148,7 +148,7 @@ class Task():
         self.status = 'Executing'
         self.size = ''
         self.full_size = 0
-        self.progress = ''
+        self.progress = 0
         self.speed = ''
         self.estimated = ''
 
@@ -168,9 +168,9 @@ class Task():
 
         self.size = f'{size} / {full_size} {sizes[index]}'
         if full_size != 0:
-            self.progress = f'{round((size / full_size) * 100)}%'
+            self.progress = round((size / full_size) * 100)
         else:
-            self.progress = '0%'
+            self.progress = 0
 
     def set_status(self, is_done: bool):
         if is_done:
@@ -240,8 +240,11 @@ class MainWindow(QMainWindow):
         # self.ui.tasks.clear()
         for i in range(len(self.tasks)):
             if i >= self.ui.tasks.topLevelItemCount():
-                self.ui.tasks.addTopLevelItem(QTreeWidgetItem())
-            item = self.ui.tasks.topLevelItem(i)
+                item = QTreeWidgetItem()
+                self.ui.tasks.addTopLevelItem(item)
+            else:
+                item = self.ui.tasks.topLevelItem(i)
+
             item.setText(0, self.tasks[i].operation)
             item.setText(1, self.tasks[i].source)
             item.setText(2, self.tasks[i].destination)
@@ -254,7 +257,8 @@ class MainWindow(QMainWindow):
 
             item.setText(3, self.tasks[i].status)
             item.setText(4, self.tasks[i].size)
-            item.setText(5, self.tasks[i].progress)
+            self.ui.tasks.setItemWidget(
+                item, 5, QProgressBar(value=self.tasks[i].progress))
             item.setText(6, self.tasks[i].speed)
             item.setText(7, self.tasks[i].estimated)
 
@@ -366,7 +370,8 @@ class MainWindow(QMainWindow):
         if self.temp_dir == '':
             self.temp_dir = rclone.tempfile.mkdtemp(
                 prefix='cloud_explorer-')
-        self.tasks.append(Task(operation='Opening', source=f'{self.current_remote}{file_path}', destination='Temp'))
+        self.tasks.append(Task(
+            operation='Opening', source=f'{self.current_remote}{file_path}', destination='Temp'))
         self.ui.dock_tasks.show()
         await rc_async.copy(f'"{self.current_remote}{file_path}"', f'"{self.temp_dir}"')
         if os.name == 'nt':
@@ -385,7 +390,6 @@ class MainWindow(QMainWindow):
                 self.open_folder(self.current_remote, file_path)
             else:
                 asyncio.ensure_future(self.open_file(file_path, item.text(0)))
-                
 
     def download_file(self, file_name: str):
         download_path = QFileDialog.getExistingDirectory()
