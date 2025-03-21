@@ -174,6 +174,9 @@ class Task():
 
     def set_status(self, is_done: bool):
         if is_done:
+            self.progress = 100
+            self.speed = '-'
+            self.estimated = '-'
             self.status = 'Done'
         else:
             self.status = 'Running'
