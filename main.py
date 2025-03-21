@@ -1,4 +1,3 @@
-# This Python file uses the following encoding: utf-8
 import asyncio
 import shutil
 import sys
@@ -363,6 +362,18 @@ class MainWindow(QMainWindow):
             self.ui.path_list.itemAt(i).widget().deleteLater()
         self.open_folder(item.text())
 
+    async def open_file(self, file_path: str, file_name: str):
+        if self.temp_dir == '':
+            self.temp_dir = rclone.tempfile.mkdtemp(
+                prefix='cloud_explorer-')
+        self.tasks.append(Task(operation='Opening', source=f'{self.current_remote}{file_path}', destination='Temp'))
+        self.ui.dock_tasks.show()
+        await rc_async.copy(f'"{self.current_remote}{file_path}"', f'"{self.temp_dir}"')
+        if os.name == 'nt':
+            os.startfile(self.temp_dir + '\\' + file_name)
+        else:
+            subprocess.call(['xdg-open', self.temp_dir + '/' + file_name])
+
     def open_item(self, item: QTreeWidgetItem):
         if self.current_remote:
             if self.remotes_paths[self.current_remote] != '':
@@ -373,18 +384,8 @@ class MainWindow(QMainWindow):
             if item.text(3) == 'inode/directory':
                 self.open_folder(self.current_remote, file_path)
             else:
-                if self.temp_dir == '':
-                    self.temp_dir = rclone.tempfile.mkdtemp(
-                        prefix='cloud_explorer-')
-                if os.name == 'nt':
-                    rc.copy(f'"{self.current_remote}{file_path}"',
-                            f'"{self.temp_dir}"')
-                    os.startfile(self.temp_dir + '\\' + item.text(0))
-                else:
-                    rc.copy(f'"{self.current_remote}{file_path}"',
-                            f'"{self.temp_dir}"')
-                    subprocess.call(
-                        ['xdg-open', self.temp_dir + '/' + item.text(0)])
+                asyncio.ensure_future(self.open_file(file_path, item.text(0)))
+                
 
     def download_file(self, file_name: str):
         download_path = QFileDialog.getExistingDirectory()
