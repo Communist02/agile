@@ -36,9 +36,10 @@ class CheckRclone:
 
 
 class Rclone_async(CheckRclone):
-    def __init__(self, debug=False):
+    tasks: list = []
+
+    def __init__(self, debug: bool=False):
         self.rclone = shutil.which('rclone')
-        self.tasks = []
         self.debug = debug
 
     async def _stream_process(self, p: subprocess.Popen[bytes]):

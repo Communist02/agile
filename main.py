@@ -17,6 +17,7 @@ from rclone_async import Rclone_async
 
 import main_window
 import new_remote_window
+import rclone_async
 
 rc = Rclone('MB', True)
 rc_async = Rclone_async(True)
@@ -221,6 +222,7 @@ class MainWindow(QMainWindow):
 
         self.ui.disk_list.itemClicked.connect(self.open_remote)
         self.ui.file_view.itemDoubleClicked.connect(self.open_item)
+        self.ui.tasks.itemDoubleClicked.connect(self.open_task_dir)
 
         self.ui.file_view.setContextMenuPolicy(Qt.CustomContextMenu)
         self.ui.file_view.customContextMenuRequested.connect(
@@ -229,6 +231,10 @@ class MainWindow(QMainWindow):
         self.ui.disk_list.setContextMenuPolicy(Qt.CustomContextMenu)
         self.ui.disk_list.customContextMenuRequested.connect(
             self.show_context_menu_remote)
+        
+        self.ui.tasks.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.ui.tasks.customContextMenuRequested.connect(
+            self.show_context_menu_task)
 
         self.ui.button_exit_dir.clicked.connect(self.exit_folder)
         self.ui.openMenuButton.clicked.connect(self.menu_open)
@@ -285,7 +291,7 @@ class MainWindow(QMainWindow):
     def menu_open(self):
         self.ui.disk_list.setVisible(not self.ui.disk_list.isVisible())
 
-    def clear_cache(self, remote_name, path):
+    def clear_cache(self, remote_name: str, path: str):
         if remote_name in self.cache and path in self.cache[remote_name]:
             del self.cache[remote_name][path]
 
@@ -374,7 +380,7 @@ class MainWindow(QMainWindow):
             self.temp_dir = rclone.tempfile.mkdtemp(
                 prefix='cloud_explorer-')
         self.tasks.append(Task(
-            operation='Opening', source=f'{self.current_remote}{file_path}', destination='Temp'))
+            operation='Opening', source=f'{self.current_remote}{file_path}', destination=self.temp_dir))
         self.ui.dock_tasks.show()
         await rc_async.copy(f'"{self.current_remote}{file_path}"', f'"{self.temp_dir}"')
         if os.name == 'nt':
@@ -432,6 +438,17 @@ class MainWindow(QMainWindow):
         open_win.setModal(True)
         open_win.exec()
         self.update_remotes()
+
+    def open_task_dir(self, item: QTreeWidgetItem):
+        if os.name == 'nt':
+            os.startfile(item.text(2))
+        else:
+            subprocess.call(['xdg-open', item.text(2)])
+    
+    def clear_task(self, index: int):
+        del self.tasks[index]
+        del rc_async.tasks[index]
+        self.ui.tasks.takeTopLevelItem(index)
 
     def show_context_menu_tree(self, point):
         index = self.ui.file_view.indexAt(point)
@@ -505,6 +522,29 @@ class MainWindow(QMainWindow):
         action.setText('Delete')
         action.triggered.connect(lambda: self.delete_remote(item.text()))
         menu.addAction(action)
+
+        menu.exec(QCursor.pos())
+
+    def show_context_menu_task(self, point):
+        index = self.ui.tasks.indexAt(point)
+
+        if not index.isValid():
+            return
+
+        item = self.ui.tasks.itemAt(point)
+
+        menu = QMenu()
+
+        action = QAction(window)
+        action.setText('Open folder')
+        action.triggered.connect(lambda: self.open_task_dir(item))
+        menu.addAction(action)
+
+        if item.text(3) == 'Done':
+            action = QAction(window)
+            action.setText('Clear')
+            action.triggered.connect(lambda: self.clear_task(index.row()))
+            menu.addAction(action)
 
         menu.exec(QCursor.pos())
 
