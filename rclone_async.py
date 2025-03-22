@@ -2,12 +2,7 @@ import asyncio
 import shutil
 import subprocess
 import json
-from turtle import speed
-import warnings
 from pathlib import Path
-from glob import glob
-from tqdm.asyncio import tqdm
-from loguru import logger
 
 
 class MissingDestination(Exception):
@@ -27,12 +22,12 @@ class CheckRclone:
                 with open(pyrclonec) as f:
                     rclone = f.read().rstrip()
             else:
-                logger.warning(
+                print(
                     'Could not find rclone in your PATH. Enter it manually '
                     'and the program will remember it.')
                 rclone = input('Path to rclone binary: ')
                 if not Path(rclone).exists():
-                    logger.error('The rclone path you entered does not exist.')
+                    print('The rclone path you entered does not exist.')
                     raise FileNotFoundError
                 else:
                     with open(pyrclonec, 'w') as f:
@@ -47,7 +42,8 @@ class Rclone_async(CheckRclone):
         self.debug = debug
 
     async def _stream_process(self, p: subprocess.Popen[bytes]):
-        self.tasks.append({'size': 0, 'speed': 0, 'estimated': '-', 'full_size': 0, 'is_done': False})
+        self.tasks.append(
+            {'size': 0, 'speed': 0, 'estimated': '-', 'full_size': 0, 'is_done': False})
         index = len(self.tasks) - 1
         loop = asyncio.get_running_loop()
 
@@ -123,7 +119,7 @@ class Rclone_async(CheckRclone):
             print(f"Executing: {_command}")
 
         p = subprocess.Popen(
-            _command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+            _command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
         )
 
         if progress:
