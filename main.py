@@ -1,13 +1,14 @@
 import asyncio
+import asyncio.base_futures
 import shutil
 import sys
 import os
 import subprocess
 from pathlib import Path
 
-from PySide6.QtCore import Qt, QTimer, QPoint
+from PySide6.QtCore import QMimeData, QUrl, Qt, QTimer, QPoint
 from PySide6.QtGui import QIcon, QGuiApplication, QAction, QPixmap, QCursor
-from PySide6.QtWidgets import QMainWindow, QApplication, QDialog, QMenu, QFileDialog, QProgressBar, QSizePolicy, QTreeWidget, QTreeWidgetItem, QPushButton, QMessageBox, QLabel
+from PySide6.QtWidgets import QInputDialog, QMainWindow, QApplication, QDialog, QMenu, QFileDialog, QProgressBar, QSizePolicy, QTreeWidget, QTreeWidgetItem, QPushButton, QMessageBox, QLabel
 import PySide6.QtAsyncio as QtAsyncio
 
 from rclone_python import rclone
@@ -17,7 +18,6 @@ from rclone_async import Rclone_async
 
 import main_window
 import new_remote_window
-import rclone_async
 
 rc = Rclone('MB', True)
 rc_async = Rclone_async(True)
@@ -231,7 +231,7 @@ class MainWindow(QMainWindow):
         self.ui.disk_list.setContextMenuPolicy(Qt.CustomContextMenu)
         self.ui.disk_list.customContextMenuRequested.connect(
             self.show_context_menu_remote)
-        
+
         self.ui.tasks.setContextMenuPolicy(Qt.CustomContextMenu)
         self.ui.tasks.customContextMenuRequested.connect(
             self.show_context_menu_task)
@@ -423,11 +423,54 @@ class MainWindow(QMainWindow):
             if mount_path is not None and mount_path != '':
                 rc.mount(f'"{name}"', f'"{mount_path}"')
 
+    def copy_file(self, item: QTreeWidgetItem):
+        if self.remotes_paths[self.current_remote] != '':
+            file_path = f'{self.current_remote}{self.remotes_paths[self.current_remote]}/{item.text(0)}'
+        else:
+            file_path = f'{self.current_remote}{item.text(0)}'
+        clipboard = QApplication.clipboard()
+        mimeData = QMimeData()
+        mimeData.setText(file_path)
+        url = QUrl.fromLocalFile(file_path)
+        mimeData.setUrls([url])
+        clipboard.setMimeData(mimeData)
+
+    async def paste_file(self):
+        clipboard = QApplication.clipboard()
+
+        destination_remote = self.current_remote
+        destination_path = self.remotes_paths[self.current_remote]
+
+        for url in clipboard.mimeData().urls():
+            source_path = url.toLocalFile()
+
+            self.tasks.append(Task(operation='Upload', source=source_path,
+                              destination=f'{destination_remote}{destination_path}'))
+            self.ui.dock_tasks.show()
+            await rc_async.copy(f'"{source_path}"', f'"{destination_remote}{destination_path}"')
+
+        self.clear_cache(destination_remote, destination_path)
+
+        if f'{destination_remote}{destination_path}' == f'{self.current_remote}{self.remotes_paths[self.current_remote]}':
+            self.open_folder(destination_remote, destination_path)
+
     def exit_folder(self):
         if self.current_remote != '' and self.remotes_paths[self.current_remote] != '':
             path_dir = f'{self.remotes_paths[self.current_remote]}'
             path = '/'.join(path_dir.split('/')[:-1])
             self.open_folder(self.current_remote, path)
+
+    def new_folder(self):
+        folder_name, ok = QInputDialog.getText(
+            self, "New Folder", "Enter folder name:", text="New Folder")
+
+        if ok and folder_name.strip():
+            folder_path = f'{self.current_remote}{self.remotes_paths[self.current_remote]}{folder_name.strip()}'
+            rc.mkdir(folder_path)
+            self.clear_cache(self.current_remote,
+                             self.remotes_paths[self.current_remote])
+            self.open_folder(self.current_remote,
+                             self.remotes_paths[self.current_remote])
 
     def delete_remote(self, name: str):
         rc.config('delete', name[:-1])
@@ -444,7 +487,7 @@ class MainWindow(QMainWindow):
             os.startfile(item.text(2))
         else:
             subprocess.call(['xdg-open', item.text(2)])
-    
+
     def clear_task(self, index: int):
         del self.tasks[index]
         del rc_async.tasks[index]
@@ -453,38 +496,45 @@ class MainWindow(QMainWindow):
     def show_context_menu_tree(self, point):
         index = self.ui.file_view.indexAt(point)
 
-        if not index.isValid():
-            return
-
-        item = self.ui.file_view.itemAt(point)
-        # name = item.text(0)  # The text of the node.
-
         menu = QMenu()
+        if not index.isValid():
+            action = QAction(window)
+            action.setText('New Folder')
+            action.triggered.connect(lambda: self.new_folder())
+            menu.addAction(action)
 
-        action = QAction(window)
-        action.setText('Open')
-        action.triggered.connect(lambda: self.open_item(item))
-        menu.addAction(action)
+            action = QAction(window)
+            action.setText('Paste')
+            action.triggered.connect(
+                lambda: asyncio.ensure_future(self.paste_file()))
+            menu.addAction(action)
+        else:
+            item = self.ui.file_view.itemAt(point)
 
-        action = QAction(window)
-        action.setText('Download')
-        action.triggered.connect(lambda: self.download_file(item.text(0)))
-        menu.addAction(action)
+            action = QAction(window)
+            action.setText('Open')
+            action.triggered.connect(lambda: self.open_item(item))
+            menu.addAction(action)
 
-        action = QAction(window)
-        action.setText('Copy')
-        # action.triggered.connect(lambda: self.download_file(0))
-        menu.addAction(action)
+            action = QAction(window)
+            action.setText('Download')
+            action.triggered.connect(lambda: self.download_file(item.text(0)))
+            menu.addAction(action)
 
-        action = QAction(window)
-        action.setText('Rename')
-        # action.triggered.connect(lambda: self.download_file(0))
-        menu.addAction(action)
+            action = QAction(window)
+            action.setText('Copy')
+            action.triggered.connect(lambda: self.copy_file(item))
+            menu.addAction(action)
 
-        action = QAction(window)
-        action.setText('Delete')
-        # action.triggered.connect(lambda: self.download_file(0))
-        menu.addAction(action)
+            action = QAction(window)
+            action.setText('Rename')
+            # action.triggered.connect(lambda: self.download_file(0))
+            menu.addAction(action)
+
+            action = QAction(window)
+            action.setText('Delete')
+            # action.triggered.connect(lambda: self.download_file(0))
+            menu.addAction(action)
 
         menu.exec(QCursor.pos())
 
