@@ -27,16 +27,24 @@ class Ui_MainWindow(object):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
         MainWindow.resize(1033, 771)
+        icon = QIcon(QIcon.fromTheme(u"weather-overcast"))
+        MainWindow.setWindowIcon(icon)
         MainWindow.setStyleSheet(u"#path_list_frame QPushButton {\n"
 "	border: 0px;\n"
 "	margin: 6px;\n"
 "}")
         self.action_new_remote = QAction(MainWindow)
         self.action_new_remote.setObjectName(u"action_new_remote")
+        icon1 = QIcon(QIcon.fromTheme(u"system-file-manager"))
+        self.action_new_remote.setIcon(icon1)
         self.actionExit = QAction(MainWindow)
         self.actionExit.setObjectName(u"actionExit")
+        icon2 = QIcon(QIcon.fromTheme(u"application-exit"))
+        self.actionExit.setIcon(icon2)
         self.actionAbout = QAction(MainWindow)
         self.actionAbout.setObjectName(u"actionAbout")
+        icon3 = QIcon(QIcon.fromTheme(u"help-about"))
+        self.actionAbout.setIcon(icon3)
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.verticalLayout = QVBoxLayout(self.centralwidget)
@@ -52,6 +60,8 @@ class Ui_MainWindow(object):
         self.pushButton_2.setSizePolicy(sizePolicy)
         self.pushButton_2.setMinimumSize(QSize(34, 34))
         self.pushButton_2.setMaximumSize(QSize(34, 34))
+        icon4 = QIcon(QIcon.fromTheme(u"go-previous"))
+        self.pushButton_2.setIcon(icon4)
         self.pushButton_2.setFlat(True)
 
         self.horizontalLayout.addWidget(self.pushButton_2)
@@ -62,6 +72,8 @@ class Ui_MainWindow(object):
         self.pushButton_3.setSizePolicy(sizePolicy)
         self.pushButton_3.setMinimumSize(QSize(34, 34))
         self.pushButton_3.setMaximumSize(QSize(34, 34))
+        icon5 = QIcon(QIcon.fromTheme(u"go-next"))
+        self.pushButton_3.setIcon(icon5)
         self.pushButton_3.setFlat(True)
 
         self.horizontalLayout.addWidget(self.pushButton_3)
@@ -72,6 +84,8 @@ class Ui_MainWindow(object):
         self.button_exit_dir.setSizePolicy(sizePolicy)
         self.button_exit_dir.setMinimumSize(QSize(34, 34))
         self.button_exit_dir.setMaximumSize(QSize(34, 34))
+        icon6 = QIcon(QIcon.fromTheme(u"go-up"))
+        self.button_exit_dir.setIcon(icon6)
         self.button_exit_dir.setFlat(True)
 
         self.horizontalLayout.addWidget(self.button_exit_dir)
@@ -80,6 +94,8 @@ class Ui_MainWindow(object):
         self.openMenuButton.setObjectName(u"openMenuButton")
         self.openMenuButton.setMinimumSize(QSize(34, 34))
         self.openMenuButton.setMaximumSize(QSize(34, 34))
+        icon7 = QIcon(QIcon.fromTheme(u"user-bookmarks"))
+        self.openMenuButton.setIcon(icon7)
 
         self.horizontalLayout.addWidget(self.openMenuButton)
 
@@ -125,6 +141,7 @@ class Ui_MainWindow(object):
 
         self.file_view = QTreeWidget(self.centralwidget)
         self.file_view.setObjectName(u"file_view")
+        self.file_view.setRootIsDecorated(False)
 
         self.horizontalLayout_2.addWidget(self.file_view)
 
@@ -153,6 +170,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.tasks = QTreeWidget(self.dockWidgetContents)
         self.tasks.setObjectName(u"tasks")
+        self.tasks.setRootIsDecorated(False)
 
         self.verticalLayout_2.addWidget(self.tasks)
 
@@ -175,10 +193,10 @@ class Ui_MainWindow(object):
         self.action_new_remote.setText(QCoreApplication.translate("MainWindow", u"New remote", None))
         self.actionExit.setText(QCoreApplication.translate("MainWindow", u"Exit", None))
         self.actionAbout.setText(QCoreApplication.translate("MainWindow", u"About", None))
-        self.pushButton_2.setText(QCoreApplication.translate("MainWindow", u"\u1438", None))
-        self.pushButton_3.setText(QCoreApplication.translate("MainWindow", u"\u1433", None))
-        self.button_exit_dir.setText(QCoreApplication.translate("MainWindow", u"\u1431", None))
-        self.openMenuButton.setText(QCoreApplication.translate("MainWindow", u"\u2630", None))
+        self.pushButton_2.setText("")
+        self.pushButton_3.setText("")
+        self.button_exit_dir.setText("")
+        self.openMenuButton.setText("")
         ___qtreewidgetitem = self.file_view.headerItem()
         ___qtreewidgetitem.setText(3, QCoreApplication.translate("MainWindow", u"Type", None));
         ___qtreewidgetitem.setText(2, QCoreApplication.translate("MainWindow", u"Modified", None));

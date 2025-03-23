@@ -5,6 +5,7 @@ import sys
 import os
 import subprocess
 from pathlib import Path
+from turtle import update
 
 from PySide6.QtCore import QMimeData, QUrl, Qt, QTimer, QPoint
 from PySide6.QtGui import QIcon, QGuiApplication, QAction, QPixmap, QCursor
@@ -250,6 +251,13 @@ class MainWindow(QMainWindow):
         for i in range(len(self.tasks)):
             if i >= self.ui.tasks.topLevelItemCount():
                 item = QTreeWidgetItem()
+                match self.tasks[i].operation:
+                    case 'Download':
+                        item.setIcon(0, QIcon.fromTheme('emblem-downloads'))
+                    case 'Upload':
+                        item.setIcon(0, QIcon.fromTheme('go-up'))
+                    case 'Opening':
+                        item.setIcon(0, QIcon.fromTheme('document-open'))
                 self.ui.tasks.addTopLevelItem(item)
             else:
                 item = self.ui.tasks.topLevelItem(i)
@@ -275,6 +283,27 @@ class MainWindow(QMainWindow):
         if self.temp_dir != '':
             shutil.rmtree(self.temp_dir)
         return super().closeEvent(event)
+
+    def dragEnterEvent(self, event):
+        if event.mimeData().hasUrls():
+            event.accept()
+
+    def dropEvent(self, event):
+        destination_remote = self.current_remote
+        destination_path = self.remotes_paths[self.current_remote]
+
+        for url in event.mimeData().urls():
+            source_path = url.toLocalFile()
+            if os.path.isfile(source_path) or os.path.isdir(source_path):
+                asyncio.ensure_future(self.upload_file(
+                    source_path, destination_remote, destination_path))
+
+    async def upload_file(self, source_path: str, destination_remote: str, destination_path: str):
+        self.tasks.append(Task(operation='Upload', source=source_path,
+                          destination=f'{destination_remote}{destination_path}'))
+        self.ui.dock_tasks.show()
+        await rc_async.copy(f'"{source_path}"', f'"{destination_remote}{destination_path}"')
+        await self.update_dir(destination_remote, destination_path)
 
     def update_remotes(self):
         remotes = rclone.get_remotes()
@@ -366,9 +395,12 @@ class MainWindow(QMainWindow):
             tree, key=lambda element: element['is_dir'], reverse=True)
 
         for file in tree:
-            tree_item = QTreeWidgetItem(
-                [file['name'], file['size'], file['modified'], file['type']])
-            self.ui.file_view.addTopLevelItem(tree_item)
+            item = QTreeWidgetItem([file['name'], file['size'], file['modified'], file['type']])
+            if file['is_dir']:
+                item.setIcon(0, QIcon.fromTheme('folder'))
+            else:
+                item.setIcon(0, QIcon.fromTheme('emblem-documents'))
+            self.ui.file_view.addTopLevelItem(item)
 
     def open_remote(self, item: QTreeWidgetItem):
         for i in range(self.ui.path_list.count()):
@@ -435,6 +467,12 @@ class MainWindow(QMainWindow):
         mimeData.setUrls([url])
         clipboard.setMimeData(mimeData)
 
+    async def update_dir(self, remote_name: str, path: str):
+        self.clear_cache(remote_name, path)
+
+        if f'{remote_name}{path}' == f'{self.current_remote}{self.remotes_paths[self.current_remote]}':
+            self.open_folder(remote_name, path)
+
     async def paste_file(self):
         clipboard = QApplication.clipboard()
 
@@ -443,16 +481,7 @@ class MainWindow(QMainWindow):
 
         for url in clipboard.mimeData().urls():
             source_path = url.toLocalFile()
-
-            self.tasks.append(Task(operation='Upload', source=source_path,
-                              destination=f'{destination_remote}{destination_path}'))
-            self.ui.dock_tasks.show()
-            await rc_async.copy(f'"{source_path}"', f'"{destination_remote}{destination_path}"')
-
-        self.clear_cache(destination_remote, destination_path)
-
-        if f'{destination_remote}{destination_path}' == f'{self.current_remote}{self.remotes_paths[self.current_remote]}':
-            self.open_folder(destination_remote, destination_path)
+            self.upload_file(source_path, destination_remote, destination_path)
 
     def exit_folder(self):
         if self.current_remote != '' and self.remotes_paths[self.current_remote] != '':
@@ -499,41 +528,67 @@ class MainWindow(QMainWindow):
         menu = QMenu()
         if not index.isValid():
             action = QAction(window)
-            action.setText('New Folder')
-            action.triggered.connect(lambda: self.new_folder())
+            action.setText('Paste')
+            action.setIcon(QIcon.fromTheme('edit-paste'))
+            action.triggered.connect(
+                lambda: asyncio.ensure_future(self.paste_file()))
             menu.addAction(action)
 
             action = QAction(window)
-            action.setText('Paste')
-            action.triggered.connect(
-                lambda: asyncio.ensure_future(self.paste_file()))
+            action.setText('New Folder')
+            action.setIcon(QIcon.fromTheme('folder-new'))
+            action.triggered.connect(lambda: self.new_folder())
             menu.addAction(action)
         else:
             item = self.ui.file_view.itemAt(point)
 
             action = QAction(window)
             action.setText('Open')
+            action.setIcon(QIcon.fromTheme('document-open'))
             action.triggered.connect(lambda: self.open_item(item))
             menu.addAction(action)
 
             action = QAction(window)
             action.setText('Download')
+            action.setIcon(QIcon.fromTheme('emblem-downloads'))
             action.triggered.connect(lambda: self.download_file(item.text(0)))
             menu.addAction(action)
 
+            menu.addSeparator()
+
             action = QAction(window)
             action.setText('Copy')
+            action.setIcon(QIcon.fromTheme('edit-copy'))
             action.triggered.connect(lambda: self.copy_file(item))
             menu.addAction(action)
 
             action = QAction(window)
+            action.setText('Paste')
+            action.setIcon(QIcon.fromTheme('edit-paste'))
+            action.triggered.connect(
+                lambda: asyncio.ensure_future(self.paste_file()))
+            menu.addAction(action)
+
+            menu.addSeparator()
+
+            action = QAction(window)
             action.setText('Rename')
+            action.setIcon(QIcon.fromTheme('format-text-italic'))
             # action.triggered.connect(lambda: self.download_file(0))
             menu.addAction(action)
 
             action = QAction(window)
             action.setText('Delete')
+            action.setIcon(QIcon.fromTheme('edit-delete'))
             # action.triggered.connect(lambda: self.download_file(0))
+            menu.addAction(action)
+
+            menu.addSeparator()
+
+            action = QAction(window)
+            action.setText('New Folder')
+            action.setIcon(QIcon.fromTheme('folder-new'))
+            action.triggered.connect(lambda: self.new_folder())
             menu.addAction(action)
 
         menu.exec(QCursor.pos())
@@ -550,26 +605,31 @@ class MainWindow(QMainWindow):
 
         action = QAction(window)
         action.setText('Open')
+        action.setIcon(QIcon.fromTheme('folder-open'))
         action.triggered.connect(lambda: self.open_remote(item))
         menu.addAction(action)
 
         action = QAction(window)
         action.setText('Edit')
+        action.setIcon(QIcon.fromTheme('applications-development'))
         action.triggered.connect(lambda: self.edit_remote(item.text()))
         menu.addAction(action)
 
         action = QAction(window)
         action.setText('Mount')
+        action.setIcon(QIcon.fromTheme('drive-harddisk'))
         action.triggered.connect(lambda: self.mount_remote(item.text()))
         menu.addAction(action)
 
         action = QAction(window)
         action.setText('Rename')
+        action.setIcon(QIcon.fromTheme('format-text-italic'))
         # action.triggered.connect(lambda: self.download_file(0))
         menu.addAction(action)
 
         action = QAction(window)
         action.setText('Delete')
+        action.setIcon(QIcon.fromTheme('edit-delete'))
         action.triggered.connect(lambda: self.delete_remote(item.text()))
         menu.addAction(action)
 
@@ -587,12 +647,14 @@ class MainWindow(QMainWindow):
 
         action = QAction(window)
         action.setText('Open folder')
+        action.setIcon(QIcon.fromTheme('folder-open'))
         action.triggered.connect(lambda: self.open_task_dir(item))
         menu.addAction(action)
 
         if item.text(3) == 'Done':
             action = QAction(window)
             action.setText('Clear')
+            action.setIcon(QIcon.fromTheme('edit-clear'))
             action.triggered.connect(lambda: self.clear_task(index.row()))
             menu.addAction(action)
 

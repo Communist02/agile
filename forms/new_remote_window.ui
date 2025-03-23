@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>New remote</string>
   </property>
+  <property name="windowIcon">
+   <iconset theme="weather-overcast"/>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QLineEdit" name="lineEdit_name">

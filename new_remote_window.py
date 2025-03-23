@@ -25,6 +25,8 @@ class Ui_NewRemoteWindow(object):
         if not NewRemoteWindow.objectName():
             NewRemoteWindow.setObjectName(u"NewRemoteWindow")
         NewRemoteWindow.resize(640, 480)
+        icon = QIcon(QIcon.fromTheme(u"weather-overcast"))
+        NewRemoteWindow.setWindowIcon(icon)
         self.verticalLayout = QVBoxLayout(NewRemoteWindow)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.lineEdit_name = QLineEdit(NewRemoteWindow)

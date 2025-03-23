@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>Cloud Explorer</string>
   </property>
+  <property name="windowIcon">
+   <iconset theme="weather-overcast"/>
+  </property>
   <property name="styleSheet">
    <string notr="true">#path_list_frame QPushButton {
 	border: 0px;
@@ -44,7 +47,10 @@
          </size>
         </property>
         <property name="text">
-         <string>ᐸ</string>
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset theme="go-previous"/>
         </property>
         <property name="flat">
          <bool>true</bool>
@@ -72,7 +78,10 @@
          </size>
         </property>
         <property name="text">
-         <string>ᐳ</string>
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset theme="go-next"/>
         </property>
         <property name="flat">
          <bool>true</bool>
@@ -100,7 +109,10 @@
          </size>
         </property>
         <property name="text">
-         <string>ᐱ</string>
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset theme="go-up"/>
         </property>
         <property name="flat">
          <bool>true</bool>
@@ -122,7 +134,10 @@
          </size>
         </property>
         <property name="text">
-         <string>☰</string>
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset theme="user-bookmarks"/>
         </property>
        </widget>
       </item>
@@ -197,6 +212,9 @@
       </item>
       <item>
        <widget class="QTreeWidget" name="file_view">
+        <property name="rootIsDecorated">
+         <bool>false</bool>
+        </property>
         <column>
          <property name="text">
           <string>Name</string>
@@ -272,6 +290,9 @@
      </property>
      <item>
       <widget class="QTreeWidget" name="tasks">
+       <property name="rootIsDecorated">
+        <bool>false</bool>
+       </property>
        <column>
         <property name="text">
          <string>Operation</string>
@@ -318,16 +339,25 @@
    </widget>
   </widget>
   <action name="action_new_remote">
+   <property name="icon">
+    <iconset theme="system-file-manager"/>
+   </property>
    <property name="text">
     <string>New remote</string>
    </property>
   </action>
   <action name="actionExit">
+   <property name="icon">
+    <iconset theme="application-exit"/>
+   </property>
    <property name="text">
     <string>Exit</string>
    </property>
   </action>
   <action name="actionAbout">
+   <property name="icon">
+    <iconset theme="help-about"/>
+   </property>
    <property name="text">
     <string>About</string>
    </property>
