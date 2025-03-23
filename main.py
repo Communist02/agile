@@ -401,8 +401,11 @@ class MainWindow(QMainWindow):
             if file['is_dir']:
                 item.setIcon(0, QIcon.fromTheme('folder'))
             else:
-                type_file = file['type'].split(';')[0].replace('/', '-')
-                item.setIcon(0, QIcon.fromTheme(type_file))
+                if os.name == 'nt':
+                    item.setIcon(0, QIcon.fromTheme('emblem-documents'))
+                else:
+                    type_file = file['type'].split(';')[0].replace('/', '-')
+                    item.setIcon(0, QIcon.fromTheme(type_file))
             self.ui.file_view.addTopLevelItem(item)
 
     def open_remote(self, item: QTreeWidgetItem):
