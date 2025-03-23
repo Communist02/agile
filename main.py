@@ -383,7 +383,8 @@ class MainWindow(QMainWindow):
                 else:
                     path = tree[i]['Path']
 
-                modified = modified.replace('T', ' ').replace('Z', ' ')
+                modified = modified.replace(
+                    'T', ' ').replace('Z', ' ').split('.')[0]
                 tree[i] = {'name': name, 'size': size, 'modified': modified,
                            'path': path, 'is_dir': is_dir, 'type': type}
             if remote_name in self.cache:
@@ -395,11 +396,13 @@ class MainWindow(QMainWindow):
             tree, key=lambda element: element['is_dir'], reverse=True)
 
         for file in tree:
-            item = QTreeWidgetItem([file['name'], file['size'], file['modified'], file['type']])
+            item = QTreeWidgetItem(
+                [file['name'], file['size'], file['modified'], file['type']])
             if file['is_dir']:
                 item.setIcon(0, QIcon.fromTheme('folder'))
             else:
-                item.setIcon(0, QIcon.fromTheme('emblem-documents'))
+                type_file = file['type'].split(';')[0].replace('/', '-')
+                item.setIcon(0, QIcon.fromTheme(type_file))
             self.ui.file_view.addTopLevelItem(item)
 
     def open_remote(self, item: QTreeWidgetItem):

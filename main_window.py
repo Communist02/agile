@@ -94,7 +94,7 @@ class Ui_MainWindow(object):
         self.openMenuButton.setObjectName(u"openMenuButton")
         self.openMenuButton.setMinimumSize(QSize(34, 34))
         self.openMenuButton.setMaximumSize(QSize(34, 34))
-        icon7 = QIcon(QIcon.fromTheme(u"user-bookmarks"))
+        icon7 = QIcon(QIcon.fromTheme(u"document-open"))
         self.openMenuButton.setIcon(icon7)
 
         self.horizontalLayout.addWidget(self.openMenuButton)
@@ -151,7 +151,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 1033, 33))
+        self.menubar.setGeometry(QRect(0, 0, 1033, 23))
         self.menuClient = QMenu(self.menubar)
         self.menuClient.setObjectName(u"menuClient")
         self.menuOther = QMenu(self.menubar)
@@ -196,7 +196,6 @@ class Ui_MainWindow(object):
         self.pushButton_2.setText("")
         self.pushButton_3.setText("")
         self.button_exit_dir.setText("")
-        self.openMenuButton.setText("")
         ___qtreewidgetitem = self.file_view.headerItem()
         ___qtreewidgetitem.setText(3, QCoreApplication.translate("MainWindow", u"Type", None));
         ___qtreewidgetitem.setText(2, QCoreApplication.translate("MainWindow", u"Modified", None));
