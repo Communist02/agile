@@ -301,7 +301,7 @@ class MainWindow(QMainWindow):
         self.tasks.append(Task(operation='Upload', source=source_path,
                           destination=f'{destination_remote}{destination_path}'))
         self.ui.dock_tasks.show()
-        await rc_async.copy(f'"{source_path}"', f'"{destination_remote}{destination_path}"')
+        await rc_async.copy(source_path, f'{destination_remote}{destination_path}')
         await self.update_dir(destination_remote, destination_path)
 
     def update_remotes(self):
@@ -419,7 +419,7 @@ class MainWindow(QMainWindow):
         self.tasks.append(Task(
             operation='Opening', source=f'{self.current_remote}{file_path}', destination=self.temp_dir))
         self.ui.dock_tasks.show()
-        await rc_async.copy(f'"{self.current_remote}{file_path}"', f'"{self.temp_dir}"')
+        await rc_async.copy(f'{self.current_remote}{file_path}', self.temp_dir)
         if os.name == 'nt':
             os.startfile(self.temp_dir + '\\' + file_name)
         else:
@@ -450,7 +450,7 @@ class MainWindow(QMainWindow):
                 operation='Download', source=f'{self.current_remote}{file_path}', destination=download_path))
             self.ui.dock_tasks.show()
             asyncio.ensure_future(rc_async.copy(
-                f'"{self.current_remote}{file_path}"', f'"{download_path}"'))
+                f'{self.current_remote}{file_path}', download_path))
 
     def mount_remote(self, name: str):
         if os.name == 'nt':
