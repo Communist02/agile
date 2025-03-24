@@ -495,17 +495,17 @@ class MainWindow(QMainWindow):
             path = '/'.join(path_dir.split('/')[:-1])
             self.open_folder(self.current_remote, path)
 
-    def new_folder(self):
+    async def new_folder(self):
         folder_name, ok = QInputDialog.getText(
             self, "New Folder", "Enter folder name:", text="New Folder")
 
         if ok and folder_name.strip():
-            folder_path = f'{self.current_remote}{self.remotes_paths[self.current_remote]}{folder_name.strip()}'
-            rc.mkdir(folder_path)
-            self.clear_cache(self.current_remote,
-                             self.remotes_paths[self.current_remote])
-            self.open_folder(self.current_remote,
-                             self.remotes_paths[self.current_remote])
+            if self.remotes_paths[self.current_remote] != '':
+                folder_path = f'{self.current_remote}{self.remotes_paths[self.current_remote]}/{folder_name.strip()}'
+            else:
+                folder_path = f'{self.current_remote}{self.remotes_paths[self.current_remote]}{folder_name.strip()}'
+            await rc_async.mkdir(f'"{folder_path}"')
+            await self.update_dir(self.current_remote, self.remotes_paths[self.current_remote])
 
     def delete_remote(self, name: str):
         rc.config('delete', name[:-1])
@@ -543,7 +543,7 @@ class MainWindow(QMainWindow):
             action = QAction(window)
             action.setText('New Folder')
             action.setIcon(QIcon.fromTheme('folder-new'))
-            action.triggered.connect(lambda: self.new_folder())
+            action.triggered.connect(lambda: asyncio.ensure_future(self.new_folder()))
             menu.addAction(action)
         else:
             item = self.ui.file_view.itemAt(point)
