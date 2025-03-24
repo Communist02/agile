@@ -5,7 +5,6 @@ import sys
 import os
 import subprocess
 from pathlib import Path
-from turtle import update
 
 from PySide6.QtCore import QMimeData, QUrl, Qt, QTimer, QPoint
 from PySide6.QtGui import QIcon, QGuiApplication, QAction, QPixmap, QCursor
@@ -267,7 +266,7 @@ class MainWindow(QMainWindow):
             item.setText(2, self.tasks[i].destination)
 
             self.tasks[i].set_full_size(rc_async.tasks[i]['full_size'])
-            self.tasks[i].set_size(rc_async.tasks[i]['size'])
+            self.tasks[i].set_size(rc_async.tasks[i]['current_size'])
             self.tasks[i].set_speed(rc_async.tasks[i]['speed'])
             self.tasks[i].set_estimated(rc_async.tasks[i]['estimated'])
             self.tasks[i].set_status(rc_async.tasks[i]['is_done'])
@@ -504,7 +503,7 @@ class MainWindow(QMainWindow):
                 folder_path = f'{self.current_remote}{self.remotes_paths[self.current_remote]}/{folder_name.strip()}'
             else:
                 folder_path = f'{self.current_remote}{self.remotes_paths[self.current_remote]}{folder_name.strip()}'
-            await rc_async.mkdir(f'"{folder_path}"')
+            await rc_async.mkdir(folder_path)
             await self.update_dir(self.current_remote, self.remotes_paths[self.current_remote])
 
     def delete_remote(self, name: str):
@@ -543,7 +542,8 @@ class MainWindow(QMainWindow):
             action = QAction(window)
             action.setText('New Folder')
             action.setIcon(QIcon.fromTheme('folder-new'))
-            action.triggered.connect(lambda: asyncio.ensure_future(self.new_folder()))
+            action.triggered.connect(
+                lambda: asyncio.ensure_future(self.new_folder()))
             menu.addAction(action)
         else:
             item = self.ui.file_view.itemAt(point)
@@ -594,7 +594,8 @@ class MainWindow(QMainWindow):
             action = QAction(window)
             action.setText('New Folder')
             action.setIcon(QIcon.fromTheme('folder-new'))
-            action.triggered.connect(lambda: self.new_folder())
+            action.triggered.connect(
+                lambda: asyncio.ensure_future(self.new_folder()))
             menu.addAction(action)
 
         menu.exec(QCursor.pos())

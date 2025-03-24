@@ -44,7 +44,7 @@ class Rclone_async(CheckRclone):
 
     async def _stream_process(self, p: subprocess.Popen[bytes]):
         self.tasks.append(
-            {'size': 0, 'speed': 0, 'estimated': '-', 'full_size': 0, 'is_done': False})
+            {'current_size': 0, 'speed': 0, 'estimated': '-', 'full_size': 0, 'is_done': False})
         index = len(self.tasks) - 1
         loop = asyncio.get_running_loop()
 
@@ -96,7 +96,7 @@ class Rclone_async(CheckRclone):
                     case 'TiB/s':
                         speed *= 1099511627776
 
-                self.tasks[index]['size'] = current_size
+                self.tasks[index]['current_size'] = current_size
                 self.tasks[index]['full_size'] = full_size
                 self.tasks[index]['speed'] = speed
                 self.tasks[index]['estimated'] = estimated
@@ -145,6 +145,12 @@ class Rclone_async(CheckRclone):
             return OUT.strip().split('\n')[-1]
         else:
             return OUT
+        
+    async def mkdir(self, folder_path: str):
+        return await self._process('mkdir', f'"{folder_path}"')
+    
+    async def copy(self, source_path: str, destination_path: str):
+        return await self._process('copy', f'"{source_path}"', f'"{destination_path}"')
 
     async def execute(self, command):
         return await self._process(subcommand=command, arg1='', arg2='', arg3='', arg4='', progress=False, _execute=True)
