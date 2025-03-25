@@ -198,17 +198,27 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
-       <widget class="QListWidget" name="disk_list">
+       <widget class="QTreeWidget" name="tree_remotes">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+         <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <column>
+         <property name="text">
+          <string>Name</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Type</string>
+         </property>
+        </column>
        </widget>
       </item>
       <item>
-       <widget class="QTreeWidget" name="file_view">
+       <widget class="QTreeWidget" name="tree_files">
         <property name="rootIsDecorated">
          <bool>false</bool>
         </property>
@@ -244,7 +254,7 @@
      <x>0</x>
      <y>0</y>
      <width>1033</width>
-     <height>23</height>
+     <height>33</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuClient">

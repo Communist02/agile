@@ -145,6 +145,41 @@ class Rclone_async(CheckRclone):
         else:
             return OUT
         
+    def sync_process(self, subcommand, arg1='', arg2='', arg3='', arg4='', progress=False, _execute=False, *args):
+        if subcommand in ['copy', 'move', 'sync', 'bisync', 'copyto', 'copyurl'] and not _execute:
+            progress = True
+            P = '-P'
+        else:
+            P = ''
+
+        _args = ' '.join(args)
+        _command = f'{self.rclone} {subcommand} {arg1} {arg2} {arg3} {arg4} {P} {_args}'
+
+        if self.debug:
+            print(f"Executing: {_command}")
+
+        p = subprocess.Popen(_command, shell=True, stdout=subprocess.PIPE)
+
+        OUT, _ = p.communicate()
+        OUT = OUT.decode()
+
+        if subcommand == 'size':
+            total_objects = int(OUT.split('Total objects: ')[
+                                1].split(' (')[1].split(')')[0])
+            total_size = int(OUT.split('Total size: ')[1].split(
+                ' (')[1].split(')')[0].split(' Byte')[0])
+            return {'total_objects': total_objects, 'total_size': total_size}
+        elif subcommand == 'lsjson' or subcommand == 'config' and arg1 == 'dump':
+            return json.loads(OUT)
+        elif subcommand == 'lsf':
+            return OUT.rstrip().split('\n')
+        elif _execute:
+            return OUT.rstrip().replace('\t', ' ')
+        elif subcommand == 'config' and 'file' in _command:
+            return OUT.strip().split('\n')[-1]
+        else:
+            return OUT
+        
     async def mkdir(self, folder_path: str):
         return await self._process('mkdir', f'"{folder_path}"')
     
@@ -153,6 +188,18 @@ class Rclone_async(CheckRclone):
     
     async def lsjson(self, path: str):
         return await self._process('lsjson', f'"{path}"')
+    
+    def listremotes(self, long=False) -> str | dict[str]:
+        if long:
+            remotes = self.sync_process('listremotes', '--long')
+            remotes = remotes[:-1]
+            remotes = remotes.split('\n')
+            result = []
+            for remote in remotes:
+                result.append({'name': remote.split(':')[0], 'type': remote.split(':')[-1].strip()})
+            return result
+        else:
+            return self.sync_process('listremotes')
 
     async def execute(self, command):
         return await self._process(subcommand=command, arg1='', arg2='', arg3='', arg4='', progress=False, _execute=True)

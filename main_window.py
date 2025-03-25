@@ -17,10 +17,9 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QPainter, QPalette, QPixmap, QRadialGradient,
     QTransform)
 from PySide6.QtWidgets import (QApplication, QDockWidget, QHBoxLayout, QHeaderView,
-    QListWidget, QListWidgetItem, QMainWindow, QMenu,
-    QMenuBar, QPushButton, QSizePolicy, QSpacerItem,
-    QStatusBar, QTreeWidget, QTreeWidgetItem, QVBoxLayout,
-    QWidget)
+    QMainWindow, QMenu, QMenuBar, QPushButton,
+    QSizePolicy, QSpacerItem, QStatusBar, QTreeWidget,
+    QTreeWidgetItem, QVBoxLayout, QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -129,21 +128,21 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_2 = QHBoxLayout()
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
-        self.disk_list = QListWidget(self.centralwidget)
-        self.disk_list.setObjectName(u"disk_list")
-        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+        self.tree_remotes = QTreeWidget(self.centralwidget)
+        self.tree_remotes.setObjectName(u"tree_remotes")
+        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
         sizePolicy2.setHorizontalStretch(0)
         sizePolicy2.setVerticalStretch(0)
-        sizePolicy2.setHeightForWidth(self.disk_list.sizePolicy().hasHeightForWidth())
-        self.disk_list.setSizePolicy(sizePolicy2)
+        sizePolicy2.setHeightForWidth(self.tree_remotes.sizePolicy().hasHeightForWidth())
+        self.tree_remotes.setSizePolicy(sizePolicy2)
 
-        self.horizontalLayout_2.addWidget(self.disk_list)
+        self.horizontalLayout_2.addWidget(self.tree_remotes)
 
-        self.file_view = QTreeWidget(self.centralwidget)
-        self.file_view.setObjectName(u"file_view")
-        self.file_view.setRootIsDecorated(False)
+        self.tree_files = QTreeWidget(self.centralwidget)
+        self.tree_files.setObjectName(u"tree_files")
+        self.tree_files.setRootIsDecorated(False)
 
-        self.horizontalLayout_2.addWidget(self.file_view)
+        self.horizontalLayout_2.addWidget(self.tree_files)
 
 
         self.verticalLayout.addLayout(self.horizontalLayout_2)
@@ -151,7 +150,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 1033, 23))
+        self.menubar.setGeometry(QRect(0, 0, 1033, 33))
         self.menuClient = QMenu(self.menubar)
         self.menuClient.setObjectName(u"menuClient")
         self.menuOther = QMenu(self.menubar)
@@ -196,21 +195,24 @@ class Ui_MainWindow(object):
         self.pushButton_2.setText("")
         self.pushButton_3.setText("")
         self.button_exit_dir.setText("")
-        ___qtreewidgetitem = self.file_view.headerItem()
-        ___qtreewidgetitem.setText(3, QCoreApplication.translate("MainWindow", u"Type", None));
-        ___qtreewidgetitem.setText(2, QCoreApplication.translate("MainWindow", u"Modified", None));
-        ___qtreewidgetitem.setText(1, QCoreApplication.translate("MainWindow", u"Size", None));
+        ___qtreewidgetitem = self.tree_remotes.headerItem()
+        ___qtreewidgetitem.setText(1, QCoreApplication.translate("MainWindow", u"Type", None));
         ___qtreewidgetitem.setText(0, QCoreApplication.translate("MainWindow", u"Name", None));
+        ___qtreewidgetitem1 = self.tree_files.headerItem()
+        ___qtreewidgetitem1.setText(3, QCoreApplication.translate("MainWindow", u"Type", None));
+        ___qtreewidgetitem1.setText(2, QCoreApplication.translate("MainWindow", u"Modified", None));
+        ___qtreewidgetitem1.setText(1, QCoreApplication.translate("MainWindow", u"Size", None));
+        ___qtreewidgetitem1.setText(0, QCoreApplication.translate("MainWindow", u"Name", None));
         self.menuClient.setTitle(QCoreApplication.translate("MainWindow", u"Client", None))
         self.menuOther.setTitle(QCoreApplication.translate("MainWindow", u"Other", None))
-        ___qtreewidgetitem1 = self.tasks.headerItem()
-        ___qtreewidgetitem1.setText(7, QCoreApplication.translate("MainWindow", u"Estimated", None));
-        ___qtreewidgetitem1.setText(6, QCoreApplication.translate("MainWindow", u"Speed", None));
-        ___qtreewidgetitem1.setText(5, QCoreApplication.translate("MainWindow", u"Progress", None));
-        ___qtreewidgetitem1.setText(4, QCoreApplication.translate("MainWindow", u"Size", None));
-        ___qtreewidgetitem1.setText(3, QCoreApplication.translate("MainWindow", u"Status", None));
-        ___qtreewidgetitem1.setText(2, QCoreApplication.translate("MainWindow", u"Destination", None));
-        ___qtreewidgetitem1.setText(1, QCoreApplication.translate("MainWindow", u"Source", None));
-        ___qtreewidgetitem1.setText(0, QCoreApplication.translate("MainWindow", u"Operation", None));
+        ___qtreewidgetitem2 = self.tasks.headerItem()
+        ___qtreewidgetitem2.setText(7, QCoreApplication.translate("MainWindow", u"Estimated", None));
+        ___qtreewidgetitem2.setText(6, QCoreApplication.translate("MainWindow", u"Speed", None));
+        ___qtreewidgetitem2.setText(5, QCoreApplication.translate("MainWindow", u"Progress", None));
+        ___qtreewidgetitem2.setText(4, QCoreApplication.translate("MainWindow", u"Size", None));
+        ___qtreewidgetitem2.setText(3, QCoreApplication.translate("MainWindow", u"Status", None));
+        ___qtreewidgetitem2.setText(2, QCoreApplication.translate("MainWindow", u"Destination", None));
+        ___qtreewidgetitem2.setText(1, QCoreApplication.translate("MainWindow", u"Source", None));
+        ___qtreewidgetitem2.setText(0, QCoreApplication.translate("MainWindow", u"Operation", None));
     # retranslateUi
 

@@ -213,24 +213,24 @@ class MainWindow(QMainWindow):
         self.ui = main_window.Ui_MainWindow()
         self.ui.setupUi(self)
 
-        self.ui.file_view.header().resizeSection(0, 300)
-        self.ui.file_view.header().resizeSection(1, 80)
-        self.ui.file_view.header().resizeSection(2, 120)
+        self.ui.tree_files.header().resizeSection(0, 300)
+        self.ui.tree_files.header().resizeSection(1, 80)
+        self.ui.tree_files.header().resizeSection(2, 120)
 
         self.ui.actionExit.triggered.connect(self.close)
         self.ui.action_new_remote.triggered.connect(
             self.open_new_remote_window)
 
-        self.ui.disk_list.itemClicked.connect(self.open_remote)
-        self.ui.file_view.itemDoubleClicked.connect(lambda item: self.open_item(item.text(0), item.text(3) == 'inode/directory'))
+        self.ui.tree_remotes.itemClicked.connect(self.open_remote)
+        self.ui.tree_files.itemDoubleClicked.connect(lambda item: self.open_item(item.text(0), item.text(3) == 'inode/directory'))
         self.ui.tasks.itemDoubleClicked.connect(self.open_task_dir)
 
-        self.ui.file_view.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.ui.file_view.customContextMenuRequested.connect(
+        self.ui.tree_files.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.ui.tree_files.customContextMenuRequested.connect(
             self.show_context_menu_tree)
 
-        self.ui.disk_list.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.ui.disk_list.customContextMenuRequested.connect(
+        self.ui.tree_remotes.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.ui.tree_remotes.customContextMenuRequested.connect(
             self.show_context_menu_remote)
 
         self.ui.tasks.setContextMenuPolicy(Qt.CustomContextMenu)
@@ -306,10 +306,13 @@ class MainWindow(QMainWindow):
         await self.update_dir(destination_remote, destination_path)
 
     def update_remotes(self):
-        remotes = rclone.get_remotes()
-        self.ui.disk_list.clear()
+        remotes = rc_async.listremotes(True)
+        self.ui.tree_remotes.clear()
         for remote in remotes:
-            self.ui.disk_list.addItem(remote)
+            if remote['type'] != 'local':
+                self.ui.tree_remotes.addTopLevelItem(QTreeWidgetItem([remote['name'] + ':', remote['type']]))
+            else:
+                self.ui.tree_remotes.addTopLevelItem(QTreeWidgetItem([remote['name'] + ':/', remote['type']]))
 
     def open_new_remote_window(self):
         open_win = NewRemoteWindow()
@@ -318,7 +321,7 @@ class MainWindow(QMainWindow):
         self.update_remotes()
 
     def menu_open(self):
-        self.ui.disk_list.setVisible(not self.ui.disk_list.isVisible())
+        self.ui.tree_remotes.setVisible(not self.ui.tree_remotes.isVisible())
 
     def clear_cache(self, remote_name: str, path: str):
         if remote_name in self.cache and path in self.cache[remote_name]:
@@ -362,7 +365,7 @@ class MainWindow(QMainWindow):
                 self.ui.statusbar.showMessage(f'Updating {remote_name}{path_dir}')
             else:
                 if not update:
-                    self.ui.file_view.clear()
+                    self.ui.tree_files.clear()
                 update = False
                 tree = await rc_async.lsjson(f'{remote_name}{path_dir}')
                 self.ui.statusbar.showMessage('')
@@ -403,7 +406,7 @@ class MainWindow(QMainWindow):
                 tree = sorted(
                     tree, key=lambda element: element['is_dir'], reverse=True)
 
-                self.ui.file_view.clear()
+                self.ui.tree_files.clear()
                 for file in tree:
                     item = QTreeWidgetItem(
                         [file['name'], file['size'], file['modified'], file['type']])
@@ -417,7 +420,7 @@ class MainWindow(QMainWindow):
                             type_file = file['type'].split(
                                 ';')[0].replace('/', '-')
                             item.setIcon(0, QIcon.fromTheme(type_file))
-                    self.ui.file_view.addTopLevelItem(item)
+                    self.ui.tree_files.addTopLevelItem(item)
 
             if not update:
                 break
@@ -425,7 +428,7 @@ class MainWindow(QMainWindow):
     def open_remote(self, item: QTreeWidgetItem):
         for i in range(self.ui.path_list.count()):
             self.ui.path_list.itemAt(i).widget().deleteLater()
-        asyncio.ensure_future(self.open_dir(item.text()))
+        asyncio.ensure_future(self.open_dir(item.text(0)))
 
     async def open_file(self, file_path: str, file_name: str):
         if self.temp_dir == '':
@@ -544,7 +547,7 @@ class MainWindow(QMainWindow):
         self.ui.tasks.takeTopLevelItem(index)
 
     def show_context_menu_tree(self, point):
-        index = self.ui.file_view.indexAt(point)
+        index = self.ui.tree_files.indexAt(point)
         menu = QMenu()
 
         if not index.isValid():
@@ -562,7 +565,7 @@ class MainWindow(QMainWindow):
                 lambda: asyncio.ensure_future(self.new_folder()))
             menu.addAction(action)
         else:
-            item = self.ui.file_view.itemAt(point)
+            item = self.ui.tree_files.itemAt(point)
             file_name = item.text(0)
             is_dir = item.text(3) == 'inode/directory'
 
@@ -619,12 +622,12 @@ class MainWindow(QMainWindow):
         menu.exec(QCursor.pos())
 
     def show_context_menu_remote(self, point):
-        index = self.ui.disk_list.indexAt(point)
+        index = self.ui.tree_remotes.indexAt(point)
 
         if not index.isValid():
             return
 
-        item = self.ui.disk_list.itemAt(point)
+        item = self.ui.tree_remotes.itemAt(point)
 
         menu = QMenu()
 
@@ -637,13 +640,13 @@ class MainWindow(QMainWindow):
         action = QAction(window)
         action.setText('Edit')
         action.setIcon(QIcon.fromTheme('applications-development'))
-        action.triggered.connect(lambda: self.edit_remote(item.text()))
+        action.triggered.connect(lambda: self.edit_remote(item.text(0)))
         menu.addAction(action)
 
         action = QAction(window)
         action.setText('Mount')
         action.setIcon(QIcon.fromTheme('drive-harddisk'))
-        action.triggered.connect(lambda: self.mount_remote(item.text()))
+        action.triggered.connect(lambda: self.mount_remote(item.text(0)))
         menu.addAction(action)
 
         action = QAction(window)
