@@ -323,10 +323,9 @@ class MainWindow(QMainWindow):
         if remote_name in self.cache and path in self.cache[remote_name]:
             del self.cache[remote_name][path]
 
-    def open_folder(self, remote_name: str, path_dir: str = ''):
+    async def open_dir(self, remote_name: str, path_dir: str = '', update=False):
         self.current_remote = remote_name
         self.remotes_paths[remote_name] = path_dir
-        self.ui.file_view.clear()
 
         for i in range(self.ui.path_list.count()):
             self.ui.path_list.itemAt(i).widget().deleteLater()
@@ -335,7 +334,8 @@ class MainWindow(QMainWindow):
         button.setSizePolicy(QSizePolicy.Policy.Fixed,
                              QSizePolicy.Policy.Expanding)
         button.setFlat(True)
-        button.clicked.connect(lambda t, a=remote_name: self.open_folder(a))
+        button.clicked.connect(
+            lambda t, a=remote_name: asyncio.ensure_future(self.open_dir(a)))
         self.ui.path_list.addWidget(button)
 
         temp_path = ''
@@ -344,73 +344,82 @@ class MainWindow(QMainWindow):
                 temp_path += name + '/'
                 arrow_label = QLabel("/")
                 arrow_label.setAlignment(Qt.AlignCenter)
-                # arrow_label.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
                 self.ui.path_list.addWidget(arrow_label)
                 button = QPushButton(name)
                 button.setSizePolicy(
                     QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding)
                 button.setFlat(True)
                 button.clicked.connect(
-                    lambda t, a=self.current_remote, b=temp_path[:-1]: self.open_folder(a, b))
+                    lambda t, a=self.current_remote, b=temp_path[:-1]: asyncio.ensure_future(self.open_dir(a, b)))
                 self.ui.path_list.addWidget(button)
 
-        if remote_name in self.cache and path_dir in self.cache[remote_name]:
-            tree = self.cache[remote_name][path_dir]
-        else:
-            tree = rc.lsjson(f'"{remote_name}{path_dir}"')
-
-            for i in range(len(tree)):
-                sizes = ['B', 'KB', 'MB', 'GB', 'TB']
-                index = 0
-                size = tree[i]['Size']
-                name = tree[i]['Name']
-                modified = tree[i]['ModTime']
-                is_dir = tree[i]['IsDir']
-                type = tree[i]['MimeType']
-
-                if is_dir:
-                    size = ''
-                else:
-                    for _ in range(4):
-                        if size >= 1024:
-                            size = round(float(size) / 1024, 2)
-                            index += 1
-                    size = f'{size} {sizes[index]}'
-
-                if path_dir != '':
-                    path = path_dir + '/' + tree[i]['Path']
-                else:
-                    path = tree[i]['Path']
-
-                modified = modified.replace(
-                    'T', ' ').replace('Z', ' ').split('.')[0]
-                tree[i] = {'name': name, 'size': size, 'modified': modified,
-                           'path': path, 'is_dir': is_dir, 'type': type}
-            if remote_name in self.cache:
-                self.cache[remote_name][path_dir] = tree
+        while True:
+            if remote_name in self.cache and path_dir in self.cache[remote_name] and not update:
+                tree = self.cache[remote_name][path_dir]
+                update = True
             else:
-                self.cache[remote_name] = {path_dir: tree}
+                update = False
+                tree = await rc_async.lsjson(f'{remote_name}{path_dir}')
 
-        tree = sorted(
-            tree, key=lambda element: element['is_dir'], reverse=True)
+                for i in range(len(tree)):
+                    sizes = ['B', 'KB', 'MB', 'GB', 'TB']
+                    index = 0
+                    size = tree[i]['Size']
+                    name = tree[i]['Name']
+                    modified = tree[i]['ModTime']
+                    is_dir = tree[i]['IsDir']
+                    type = tree[i]['MimeType']
 
-        for file in tree:
-            item = QTreeWidgetItem(
-                [file['name'], file['size'], file['modified'], file['type']])
-            if file['is_dir']:
-                item.setIcon(0, QIcon.fromTheme('folder'))
-            else:
-                if os.name == 'nt':
-                    item.setIcon(0, QIcon.fromTheme('emblem-documents'))
+                    if is_dir:
+                        size = ''
+                    else:
+                        for _ in range(4):
+                            if size >= 1024:
+                                size = round(float(size) / 1024, 2)
+                                index += 1
+                        size = f'{size} {sizes[index]}'
+
+                    if path_dir != '':
+                        path = path_dir + '/' + tree[i]['Path']
+                    else:
+                        path = tree[i]['Path']
+
+                    modified = modified.replace(
+                        'T', ' ').replace('Z', ' ').split('.')[0]
+                    tree[i] = {'name': name, 'size': size, 'modified': modified,
+                               'path': path, 'is_dir': is_dir, 'type': type}
+                if remote_name in self.cache:
+                    self.cache[remote_name][path_dir] = tree
                 else:
-                    type_file = file['type'].split(';')[0].replace('/', '-')
-                    item.setIcon(0, QIcon.fromTheme(type_file))
-            self.ui.file_view.addTopLevelItem(item)
+                    self.cache[remote_name] = {path_dir: tree}
+
+            if f'{self.current_remote}{self.remotes_paths[self.current_remote]}' == f'{remote_name}{path_dir}':
+                tree = sorted(
+                    tree, key=lambda element: element['is_dir'], reverse=True)
+
+                self.ui.file_view.clear()
+                for file in tree:
+                    item = QTreeWidgetItem(
+                        [file['name'], file['size'], file['modified'], file['type']])
+                    if file['is_dir']:
+                        item.setIcon(0, QIcon.fromTheme('folder'))
+                    else:
+                        if os.name == 'nt':
+                            item.setIcon(0, QIcon.fromTheme(
+                                'emblem-documents'))
+                        else:
+                            type_file = file['type'].split(
+                                ';')[0].replace('/', '-')
+                            item.setIcon(0, QIcon.fromTheme(type_file))
+                    self.ui.file_view.addTopLevelItem(item)
+
+            if not update:
+                break
 
     def open_remote(self, item: QTreeWidgetItem):
         for i in range(self.ui.path_list.count()):
             self.ui.path_list.itemAt(i).widget().deleteLater()
-        self.open_folder(item.text())
+        asyncio.ensure_future(self.open_dir(item.text()))
 
     async def open_file(self, file_path: str, file_name: str):
         if self.temp_dir == '':
@@ -433,7 +442,8 @@ class MainWindow(QMainWindow):
             else:
                 file_path = item.text(0)
             if item.text(3) == 'inode/directory':
-                self.open_folder(self.current_remote, file_path)
+                asyncio.ensure_future(self.open_dir(
+                    self.current_remote, file_path))
             else:
                 asyncio.ensure_future(self.open_file(file_path, item.text(0)))
 
@@ -476,7 +486,7 @@ class MainWindow(QMainWindow):
         self.clear_cache(remote_name, path)
 
         if f'{remote_name}{path}' == f'{self.current_remote}{self.remotes_paths[self.current_remote]}':
-            self.open_folder(remote_name, path)
+            await self.open_dir(remote_name, path)
 
     async def paste_file(self):
         clipboard = QApplication.clipboard()
@@ -492,7 +502,7 @@ class MainWindow(QMainWindow):
         if self.current_remote != '' and self.remotes_paths[self.current_remote] != '':
             path_dir = f'{self.remotes_paths[self.current_remote]}'
             path = '/'.join(path_dir.split('/')[:-1])
-            self.open_folder(self.current_remote, path)
+            asyncio.ensure_future(self.open_dir(self.current_remote, path))
 
     async def new_folder(self):
         folder_name, ok = QInputDialog.getText(

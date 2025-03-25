@@ -119,14 +119,13 @@ class Rclone_async(CheckRclone):
         if self.debug:
             print(f"Executing: {_command}")
 
-        p = subprocess.Popen(
-            _command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
-        )
+        p = subprocess.Popen(_command, shell=True, stdout=subprocess.PIPE)
 
         if progress:
             await self._stream_process(p)
 
-        OUT, _ = p.communicate()
+        loop = asyncio.get_running_loop()
+        OUT, _ = await loop.run_in_executor(None, p.communicate)
         OUT = OUT.decode()
 
         if subcommand == 'size':
@@ -135,7 +134,7 @@ class Rclone_async(CheckRclone):
             total_size = int(OUT.split('Total size: ')[1].split(
                 ' (')[1].split(')')[0].split(' Byte')[0])
             return {'total_objects': total_objects, 'total_size': total_size}
-        elif subcommand in ['lsjson', 'config'] and arg1 == 'dump':
+        elif subcommand == 'lsjson' or subcommand == 'config' and arg1 == 'dump':
             return json.loads(OUT)
         elif subcommand == 'lsf':
             return OUT.rstrip().split('\n')
@@ -151,6 +150,9 @@ class Rclone_async(CheckRclone):
     
     async def copy(self, source_path: str, destination_path: str):
         return await self._process('copy', f'"{source_path}"', f'"{destination_path}"')
+    
+    async def lsjson(self, path: str):
+        return await self._process('lsjson', f'"{path}"')
 
     async def execute(self, command):
         return await self._process(subcommand=command, arg1='', arg2='', arg3='', arg4='', progress=False, _execute=True)
