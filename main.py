@@ -4,7 +4,6 @@ import shutil
 import sys
 import os
 import subprocess
-from pathlib import Path
 
 from PySide6.QtCore import QMimeData, QUrl, Qt, QTimer
 from PySide6.QtGui import QDrag, QDragEnterEvent, QIcon, QAction, QCursor
@@ -122,7 +121,7 @@ class NewRemoteWindow(QDialog):
                                          tls=str(self.ui.checkBox_ftp_tls.isChecked()).lower())
                     if self.ui.lineEdit_ftp_password.text().strip() != '':
                         rc_async.config('password', name, 'pass',
-                                  self.ui.lineEdit_ftp_password.text().strip())
+                                        self.ui.lineEdit_ftp_password.text().strip())
                     self.close()
                 case 3:
                     vendors = ['other', 'fastmail', 'nextcloud',
@@ -136,7 +135,7 @@ class NewRemoteWindow(QDialog):
                                          )
                     if self.ui.lineEdit_webdav_password.text().strip() != '':
                         rc_async.config('password', name, 'pass',
-                                  self.ui.lineEdit_webdav_password.text().strip())
+                                        self.ui.lineEdit_webdav_password.text().strip())
                     self.close()
                 case 4:
                     rclone.create_remote(
@@ -300,7 +299,7 @@ class MainWindow(QMainWindow):
         return super().closeEvent(event)
 
     def dragEnterEvent(self, event: QDragEnterEvent):
-        if event.mimeData().hasUrls() and event.mimeData().text() != 'cloud_explorer_file_temp':
+        if event.mimeData().hasUrls() and event.mimeData().text() != '.cloud_explorer_file_temp':
             event.accept()
 
     def dropEvent(self, event):
@@ -317,21 +316,16 @@ class MainWindow(QMainWindow):
         item = self.ui.tree_files.currentItem()
         if not item:
             return
-        
-        self.download_path = ''
 
-        if self.remotes_paths[self.current_remote] != '':
-            file_path = f'{self.current_remote}{self.remotes_paths[self.current_remote]}/{item.text(0)}'
-        else:
-            file_path = f'{self.current_remote}{item.text(0)}'
+        self.download_path = ''
 
         if self.temp_dir == '':
             self.temp_dir = rclone.tempfile.mkdtemp(prefix='cloud_explorer-')
-        open(self.temp_dir + '/cloud_explorer_file_temp', 'a').close()
+        open(self.temp_dir + '/.cloud_explorer_file_temp', 'a').close()
 
         mime_data = QMimeData()
-        mime_data.setText('cloud_explorer_file_temp')
-        url = QUrl.fromLocalFile(self.temp_dir + '/cloud_explorer_file_temp')
+        mime_data.setText('.cloud_explorer_file_temp')
+        url = QUrl.fromLocalFile(self.temp_dir + '/.cloud_explorer_file_temp')
         mime_data.setUrls([url])
 
         drag: QDrag = QDrag(self)
@@ -342,11 +336,13 @@ class MainWindow(QMainWindow):
             drives = win32api.GetLogicalDriveStrings()
             drives = drives.replace('\x00', '').split('\\')[:-1]
 
-            handler = FileMonitorHandler('cloud_explorer_file_temp', item.text(0))
+            handler = FileMonitorHandler(
+                '.cloud_explorer_file_temp', item.text(0))
 
             for disk in drives:
                 observer = Observer()
-                observer.schedule(handler, disk + '\\', recursive=True)  # Рекурсивное отслеживание
+                # Рекурсивное отслеживание
+                observer.schedule(handler, disk + '\\', recursive=True)
                 try:
                     observer.start()
                     observers.append(observer)
@@ -361,7 +357,8 @@ class MainWindow(QMainWindow):
             observer.stop()
         if self.download_path != '':
             os.remove(self.download_path)
-            self.download_file(item.text(0), self.download_path[:-len('cloud_explorer_file_temp') - 1])
+            self.download_file(item.text(0), self.download_path[:-len(
+                '.cloud_explorer_file_temp') - 1], item.text(3) == 'inode/directory')
 
     async def upload_file(self, source_path: str, destination_remote: str, destination_path: str):
         self.tasks.append(Task(operation='Upload', source=source_path,
@@ -526,21 +523,29 @@ class MainWindow(QMainWindow):
             else:
                 asyncio.ensure_future(self.open_file(file_path, file_name))
 
-    def download_file(self, file_name: str, download_path: str = None):
+    def download_file(self, file_name: str, download_path: str = None, is_dir: bool = False):
         if download_path is None:
             download_path = QFileDialog.getExistingDirectory()
         if download_path is not None and download_path != '':
             if self.remotes_paths[self.current_remote] != '':
-                file_path = self.remotes_paths[self.current_remote] + \
-                    '/' + file_name
+                file_path = f'{self.remotes_paths[self.current_remote]}/{file_name}'
             else:
                 file_path = file_name
 
             self.tasks.append(Task(
                 operation='Download', source=f'{self.current_remote}{file_path}', destination=download_path))
             self.ui.dock_tasks.show()
-            asyncio.ensure_future(rc_async.copy(
-                f'{self.current_remote}{file_path}', download_path))
+
+            if not is_dir:
+                asyncio.ensure_future(rc_async.copy(
+                    f'{self.current_remote}{file_path}', download_path))
+            else:
+                if download_path != '/':
+                    asyncio.ensure_future(rc_async.copy(
+                        f'{self.current_remote}{file_path}', f'{download_path}/{file_name}'))
+                else:
+                    asyncio.ensure_future(rc_async.copy(
+                        f'{self.current_remote}{file_path}', f'{download_path}{file_name}'))
 
     def mount_remote(self, name: str):
         if os.name == 'nt':
@@ -649,7 +654,8 @@ class MainWindow(QMainWindow):
             action = QAction(window)
             action.setText('Download')
             action.setIcon(QIcon.fromTheme('emblem-downloads'))
-            action.triggered.connect(lambda: self.download_file(file_name))
+            action.triggered.connect(
+                lambda: self.download_file(file_name, is_dir=is_dir))
             menu.addAction(action)
 
             menu.addSeparator()

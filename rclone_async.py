@@ -184,7 +184,7 @@ class Rclone_async(CheckRclone):
         return await self._process('mkdir', f'"{folder_path}"')
 
     async def copy(self, source_path: str, destination_path: str):
-        return await self._process('copy', f'"{source_path}"', f'"{destination_path}"')
+        return await self._process('copy', f'"{source_path}"', f'"{destination_path}"', '--create-empty-src-dirs')
 
     async def lsjson(self, path: str):
         return await self._process('lsjson', f'"{path}"')
