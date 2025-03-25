@@ -38,7 +38,7 @@ class CheckRclone:
 class Rclone_async(CheckRclone):
     tasks: list = []
 
-    def __init__(self, debug: bool=False):
+    def __init__(self, debug: bool = False):
         self.rclone = shutil.which('rclone')
         self.debug = debug
 
@@ -144,7 +144,7 @@ class Rclone_async(CheckRclone):
             return OUT.strip().split('\n')[-1]
         else:
             return OUT
-        
+
     def sync_process(self, subcommand, arg1='', arg2='', arg3='', arg4='', progress=False, _execute=False, *args):
         if subcommand in ['copy', 'move', 'sync', 'bisync', 'copyto', 'copyurl'] and not _execute:
             progress = True
@@ -179,16 +179,16 @@ class Rclone_async(CheckRclone):
             return OUT.strip().split('\n')[-1]
         else:
             return OUT
-        
+
     async def mkdir(self, folder_path: str):
         return await self._process('mkdir', f'"{folder_path}"')
-    
+
     async def copy(self, source_path: str, destination_path: str):
         return await self._process('copy', f'"{source_path}"', f'"{destination_path}"')
-    
+
     async def lsjson(self, path: str):
         return await self._process('lsjson', f'"{path}"')
-    
+
     def listremotes(self, long=False) -> str | dict[str]:
         if long:
             remotes = self.sync_process('listremotes', '--long')
@@ -196,10 +196,17 @@ class Rclone_async(CheckRclone):
             remotes = remotes.split('\n')
             result = []
             for remote in remotes:
-                result.append({'name': remote.split(':')[0], 'type': remote.split(':')[-1].strip()})
+                result.append({'name': remote.split(
+                    ':')[0], 'type': remote.split(':')[-1].strip()})
             return result
         else:
             return self.sync_process('listremotes')
+
+    def config(self, command: str, arg1: str = '', arg2: str = ''):
+        return self.sync_process('config', command, arg1, arg2)
+    
+    def mount(self, command: str, arg1: str = '', arg2: str = ''):
+        return self.sync_process('mount', command, arg1, arg2)
 
     async def execute(self, command):
         return await self._process(subcommand=command, arg1='', arg2='', arg3='', arg4='', progress=False, _execute=True)

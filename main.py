@@ -1,6 +1,5 @@
 import asyncio
 import asyncio.base_futures
-from cProfile import label
 import shutil
 import sys
 import os
@@ -8,20 +7,32 @@ import subprocess
 from pathlib import Path
 
 from PySide6.QtCore import QMimeData, QUrl, Qt, QTimer
-from PySide6.QtGui import QDrag, QIcon, QAction, QCursor
+from PySide6.QtGui import QDrag, QDragEnterEvent, QIcon, QAction, QCursor
 from PySide6.QtWidgets import QInputDialog, QMainWindow, QApplication, QDialog, QMenu, QFileDialog, QProgressBar, QSizePolicy, QTreeWidgetItem, QPushButton, QMessageBox, QLabel
 import PySide6.QtAsyncio as QtAsyncio
 
 from rclone_python import rclone
 from rclone_python import remote_types
-from rclone import Rclone
 from rclone_async import Rclone_async
+from watchdog.observers import Observer
+from watchdog.events import FileSystemEventHandler
 
 import main_window
 import new_remote_window
+import win32api
 
-rc = Rclone('MB', True)
 rc_async = Rclone_async(True)
+
+
+class FileMonitorHandler(FileSystemEventHandler):
+    def __init__(self, target_file, file_name):
+        super().__init__()
+        self.target_file = target_file
+        self.file_name = file_name
+
+    def on_created(self, event):
+        if os.path.basename(event.src_path) == os.path.basename(self.target_file):
+            window.download_path = event.src_path
 
 
 class NewRemoteWindow(QDialog):
@@ -36,7 +47,7 @@ class NewRemoteWindow(QDialog):
 
         if edit_mode:
             self.setWindowTitle(f'Edit {remote_name}')
-            config = rc.config('dump')
+            config = rc_async.config('dump')
             type = config[remote_name[:-1]]['type']
             match type:
                 case 'drive':
@@ -92,7 +103,7 @@ class NewRemoteWindow(QDialog):
         name = self.ui.lineEdit_name.text().strip()
         if name != '':
             if edit_mode:
-                rc.config('delete', remote_name[:-1])
+                rc_async.config('delete', remote_name[:-1])
             match self.ui.tabWidget.currentIndex():
                 case 0:
                     rclone.create_remote(
@@ -110,7 +121,7 @@ class NewRemoteWindow(QDialog):
                                          user=self.ui.lineEdit_ftp_login.text().strip(),
                                          tls=str(self.ui.checkBox_ftp_tls.isChecked()).lower())
                     if self.ui.lineEdit_ftp_password.text().strip() != '':
-                        rc.config('password', name, 'pass',
+                        rc_async.config('password', name, 'pass',
                                   self.ui.lineEdit_ftp_password.text().strip())
                     self.close()
                 case 3:
@@ -124,7 +135,7 @@ class NewRemoteWindow(QDialog):
                                          )]
                                          )
                     if self.ui.lineEdit_webdav_password.text().strip() != '':
-                        rc.config('password', name, 'pass',
+                        rc_async.config('password', name, 'pass',
                                   self.ui.lineEdit_webdav_password.text().strip())
                     self.close()
                 case 4:
@@ -199,7 +210,7 @@ class Task():
 
 
 class MainWindow(QMainWindow):
-    download_path: str = str(Path.home() / "Downloads")
+    download_path: str = ''
     remotes_paths = {}
     files: list = []
     current_remote: str = ''
@@ -222,7 +233,8 @@ class MainWindow(QMainWindow):
             self.open_new_remote_window)
 
         self.ui.tree_remotes.itemClicked.connect(self.open_remote)
-        self.ui.tree_files.itemDoubleClicked.connect(lambda item: self.open_item(item.text(0), item.text(3) == 'inode/directory'))
+        self.ui.tree_files.itemDoubleClicked.connect(
+            lambda item: self.open_item(item.text(0), item.text(3) == 'inode/directory'))
         self.ui.tasks.itemDoubleClicked.connect(self.open_task_dir)
 
         self.ui.tree_files.startDrag = self.start_drag
@@ -268,26 +280,27 @@ class MainWindow(QMainWindow):
             item.setText(1, self.tasks[i].source)
             item.setText(2, self.tasks[i].destination)
 
-            self.tasks[i].set_full_size(rc_async.tasks[i]['full_size'])
-            self.tasks[i].set_size(rc_async.tasks[i]['current_size'])
-            self.tasks[i].set_speed(rc_async.tasks[i]['speed'])
-            self.tasks[i].set_estimated(rc_async.tasks[i]['estimated'])
-            self.tasks[i].set_status(rc_async.tasks[i]['is_done'])
+            if len(rc_async.tasks) > i:
+                self.tasks[i].set_full_size(rc_async.tasks[i]['full_size'])
+                self.tasks[i].set_size(rc_async.tasks[i]['current_size'])
+                self.tasks[i].set_speed(rc_async.tasks[i]['speed'])
+                self.tasks[i].set_estimated(rc_async.tasks[i]['estimated'])
+                self.tasks[i].set_status(rc_async.tasks[i]['is_done'])
 
-            item.setText(3, self.tasks[i].status)
-            item.setText(4, self.tasks[i].size)
-            self.ui.tasks.setItemWidget(
-                item, 5, QProgressBar(value=self.tasks[i].progress))
-            item.setText(6, self.tasks[i].speed)
-            item.setText(7, self.tasks[i].estimated)
+                item.setText(3, self.tasks[i].status)
+                item.setText(4, self.tasks[i].size)
+                self.ui.tasks.setItemWidget(
+                    item, 5, QProgressBar(value=self.tasks[i].progress))
+                item.setText(6, self.tasks[i].speed)
+                item.setText(7, self.tasks[i].estimated)
 
     def closeEvent(self, event):
         if self.temp_dir != '':
             shutil.rmtree(self.temp_dir)
         return super().closeEvent(event)
 
-    def dragEnterEvent(self, event):
-        if event.mimeData().hasUrls():
+    def dragEnterEvent(self, event: QDragEnterEvent):
+        if event.mimeData().hasUrls() and event.mimeData().text() != 'cloud_explorer_file_temp':
             event.accept()
 
     def dropEvent(self, event):
@@ -299,25 +312,56 @@ class MainWindow(QMainWindow):
             if os.path.isfile(source_path) or os.path.isdir(source_path):
                 asyncio.ensure_future(self.upload_file(
                     source_path, destination_remote, destination_path))
-                
+
     def start_drag(self, supportedActions):
         item = self.ui.tree_files.currentItem()
         if not item:
             return
+        
+        self.download_path = ''
 
         if self.remotes_paths[self.current_remote] != '':
             file_path = f'{self.current_remote}{self.remotes_paths[self.current_remote]}/{item.text(0)}'
         else:
             file_path = f'{self.current_remote}{item.text(0)}'
 
+        if self.temp_dir == '':
+            self.temp_dir = rclone.tempfile.mkdtemp(prefix='cloud_explorer-')
+        open(self.temp_dir + '/cloud_explorer_file_temp', 'a').close()
+
         mime_data = QMimeData()
-        mime_data.setText(file_path)
-        url = QUrl.fromLocalFile(file_path)
+        mime_data.setText('cloud_explorer_file_temp')
+        url = QUrl.fromLocalFile(self.temp_dir + '/cloud_explorer_file_temp')
         mime_data.setUrls([url])
 
         drag: QDrag = QDrag(self)
         drag.setMimeData(mime_data)
-        drag.exec(Qt.DropAction.CopyAction)
+
+        if os.name == 'nt':
+            observers = []
+            drives = win32api.GetLogicalDriveStrings()
+            drives = drives.replace('\x00', '').split('\\')[:-1]
+
+            handler = FileMonitorHandler('cloud_explorer_file_temp', item.text(0))
+
+            for disk in drives:
+                observer = Observer()
+                observer.schedule(handler, disk + '\\', recursive=True)  # Рекурсивное отслеживание
+                try:
+                    observer.start()
+                    observers.append(observer)
+                except PermissionError:
+                    pass
+
+        drag.exec(Qt.DropAction.MoveAction)
+        if os.name == 'nt':
+            for obs in observers:
+                obs.stop()
+        else:
+            observer.stop()
+        if self.download_path != '':
+            os.remove(self.download_path)
+            self.download_file(item.text(0), self.download_path[:-len('cloud_explorer_file_temp') - 1])
 
     async def upload_file(self, source_path: str, destination_remote: str, destination_path: str):
         self.tasks.append(Task(operation='Upload', source=source_path,
@@ -331,9 +375,11 @@ class MainWindow(QMainWindow):
         self.ui.tree_remotes.clear()
         for remote in remotes:
             if remote['type'] != 'local':
-                self.ui.tree_remotes.addTopLevelItem(QTreeWidgetItem([remote['name'] + ':', remote['type']]))
+                self.ui.tree_remotes.addTopLevelItem(
+                    QTreeWidgetItem([remote['name'] + ':', remote['type']]))
             else:
-                self.ui.tree_remotes.addTopLevelItem(QTreeWidgetItem([remote['name'] + ':/', remote['type']]))
+                self.ui.tree_remotes.addTopLevelItem(
+                    QTreeWidgetItem([remote['name'] + ':/', remote['type']]))
 
     def open_new_remote_window(self):
         open_win = NewRemoteWindow()
@@ -383,7 +429,8 @@ class MainWindow(QMainWindow):
             if remote_name in self.cache and path_dir in self.cache[remote_name] and not update:
                 tree = self.cache[remote_name][path_dir]
                 update = True
-                self.ui.statusbar.showMessage(f'Updating {remote_name}{path_dir}')
+                self.ui.statusbar.showMessage(
+                    f'Updating {remote_name}{path_dir}')
             else:
                 if not update:
                     self.ui.tree_files.clear()
@@ -456,8 +503,7 @@ class MainWindow(QMainWindow):
 
     async def open_file(self, file_path: str, file_name: str):
         if self.temp_dir == '':
-            self.temp_dir = rclone.tempfile.mkdtemp(
-                prefix='cloud_explorer-')
+            self.temp_dir = rclone.tempfile.mkdtemp(prefix='cloud_explorer-')
         self.tasks.append(Task(
             operation='Opening', source=f'{self.current_remote}{file_path}', destination=self.temp_dir))
         self.ui.dock_tasks.show()
@@ -480,8 +526,9 @@ class MainWindow(QMainWindow):
             else:
                 asyncio.ensure_future(self.open_file(file_path, file_name))
 
-    def download_file(self, file_name: str):
-        download_path = QFileDialog.getExistingDirectory()
+    def download_file(self, file_name: str, download_path: str = None):
+        if download_path is None:
+            download_path = QFileDialog.getExistingDirectory()
         if download_path is not None and download_path != '':
             if self.remotes_paths[self.current_remote] != '':
                 file_path = self.remotes_paths[self.current_remote] + \
@@ -497,7 +544,7 @@ class MainWindow(QMainWindow):
 
     def mount_remote(self, name: str):
         if os.name == 'nt':
-            rc.mount(f'"{name}"', f'*')
+            rc_async.mount(f'"{name}"', f'*')
         else:
             mount_path = QFileDialog.getExistingDirectory()
             if mount_path is not None and mount_path != '':
@@ -550,7 +597,7 @@ class MainWindow(QMainWindow):
             await self.update_dir(self.current_remote, self.remotes_paths[self.current_remote])
 
     def delete_remote(self, name: str):
-        rc.config('delete', name[:-1])
+        rc_async.config('delete', name[:-1])
         self.update_remotes()
 
     def edit_remote(self, name: str):
@@ -682,7 +729,7 @@ class MainWindow(QMainWindow):
         action = QAction(window)
         action.setText('Delete')
         action.setIcon(QIcon.fromTheme('edit-delete'))
-        action.triggered.connect(lambda: self.delete_remote(item.text()))
+        action.triggered.connect(lambda: self.delete_remote(item.text(0)))
         menu.addAction(action)
 
         menu.exec(QCursor.pos())

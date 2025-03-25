@@ -1,4 +1,3 @@
 PySide6
 rclone-python
-loguru
-tqdm
+watchdog
