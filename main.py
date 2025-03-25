@@ -1,14 +1,15 @@
 import asyncio
 import asyncio.base_futures
+from cProfile import label
 import shutil
 import sys
 import os
 import subprocess
 from pathlib import Path
 
-from PySide6.QtCore import QMimeData, QUrl, Qt, QTimer, QPoint
-from PySide6.QtGui import QIcon, QGuiApplication, QAction, QPixmap, QCursor
-from PySide6.QtWidgets import QInputDialog, QMainWindow, QApplication, QDialog, QMenu, QFileDialog, QProgressBar, QSizePolicy, QTreeWidget, QTreeWidgetItem, QPushButton, QMessageBox, QLabel
+from PySide6.QtCore import QMimeData, QUrl, Qt, QTimer
+from PySide6.QtGui import QIcon, QAction, QCursor
+from PySide6.QtWidgets import QInputDialog, QMainWindow, QApplication, QDialog, QMenu, QFileDialog, QProgressBar, QSizePolicy, QTreeWidgetItem, QPushButton, QMessageBox, QLabel
 import PySide6.QtAsyncio as QtAsyncio
 
 from rclone_python import rclone
@@ -221,7 +222,7 @@ class MainWindow(QMainWindow):
             self.open_new_remote_window)
 
         self.ui.disk_list.itemClicked.connect(self.open_remote)
-        self.ui.file_view.itemDoubleClicked.connect(self.open_item)
+        self.ui.file_view.itemDoubleClicked.connect(lambda item: self.open_item(item.text(0), item.text(3) == 'inode/directory'))
         self.ui.tasks.itemDoubleClicked.connect(self.open_task_dir)
 
         self.ui.file_view.setContextMenuPolicy(Qt.CustomContextMenu)
@@ -353,13 +354,18 @@ class MainWindow(QMainWindow):
                     lambda t, a=self.current_remote, b=temp_path[:-1]: asyncio.ensure_future(self.open_dir(a, b)))
                 self.ui.path_list.addWidget(button)
 
+        self.ui.statusbar.showMessage(f'Opening {remote_name}{path_dir}')
         while True:
             if remote_name in self.cache and path_dir in self.cache[remote_name] and not update:
                 tree = self.cache[remote_name][path_dir]
                 update = True
+                self.ui.statusbar.showMessage(f'Updating {remote_name}{path_dir}')
             else:
+                if not update:
+                    self.ui.file_view.clear()
                 update = False
                 tree = await rc_async.lsjson(f'{remote_name}{path_dir}')
+                self.ui.statusbar.showMessage('')
 
                 for i in range(len(tree)):
                     sizes = ['B', 'KB', 'MB', 'GB', 'TB']
@@ -434,18 +440,18 @@ class MainWindow(QMainWindow):
         else:
             subprocess.call(['xdg-open', self.temp_dir + '/' + file_name])
 
-    def open_item(self, item: QTreeWidgetItem):
+    def open_item(self, file_name: str, is_dir: bool):
         if self.current_remote:
             if self.remotes_paths[self.current_remote] != '':
                 file_path = self.remotes_paths[self.current_remote] + \
-                    '/' + item.text(0)
+                    '/' + file_name
             else:
-                file_path = item.text(0)
-            if item.text(3) == 'inode/directory':
+                file_path = file_name
+            if is_dir:
                 asyncio.ensure_future(self.open_dir(
                     self.current_remote, file_path))
             else:
-                asyncio.ensure_future(self.open_file(file_path, item.text(0)))
+                asyncio.ensure_future(self.open_file(file_path, file_name))
 
     def download_file(self, file_name: str):
         download_path = QFileDialog.getExistingDirectory()
@@ -470,11 +476,11 @@ class MainWindow(QMainWindow):
             if mount_path is not None and mount_path != '':
                 rc.mount(f'"{name}"', f'"{mount_path}"')
 
-    def copy_file(self, item: QTreeWidgetItem):
+    def copy_file(self, file_name: str):
         if self.remotes_paths[self.current_remote] != '':
-            file_path = f'{self.current_remote}{self.remotes_paths[self.current_remote]}/{item.text(0)}'
+            file_path = f'{self.current_remote}{self.remotes_paths[self.current_remote]}/{file_name}'
         else:
-            file_path = f'{self.current_remote}{item.text(0)}'
+            file_path = f'{self.current_remote}{file_name}'
         clipboard = QApplication.clipboard()
         mimeData = QMimeData()
         mimeData.setText(file_path)
@@ -539,8 +545,8 @@ class MainWindow(QMainWindow):
 
     def show_context_menu_tree(self, point):
         index = self.ui.file_view.indexAt(point)
-
         menu = QMenu()
+
         if not index.isValid():
             action = QAction(window)
             action.setText('Paste')
@@ -557,17 +563,19 @@ class MainWindow(QMainWindow):
             menu.addAction(action)
         else:
             item = self.ui.file_view.itemAt(point)
+            file_name = item.text(0)
+            is_dir = item.text(3) == 'inode/directory'
 
             action = QAction(window)
             action.setText('Open')
             action.setIcon(QIcon.fromTheme('document-open'))
-            action.triggered.connect(lambda: self.open_item(item))
+            action.triggered.connect(lambda: self.open_item(file_name, is_dir))
             menu.addAction(action)
 
             action = QAction(window)
             action.setText('Download')
             action.setIcon(QIcon.fromTheme('emblem-downloads'))
-            action.triggered.connect(lambda: self.download_file(item.text(0)))
+            action.triggered.connect(lambda: self.download_file(file_name))
             menu.addAction(action)
 
             menu.addSeparator()
@@ -575,7 +583,7 @@ class MainWindow(QMainWindow):
             action = QAction(window)
             action.setText('Copy')
             action.setIcon(QIcon.fromTheme('edit-copy'))
-            action.triggered.connect(lambda: self.copy_file(item))
+            action.triggered.connect(lambda: self.copy_file(file_name))
             menu.addAction(action)
 
             action = QAction(window)
