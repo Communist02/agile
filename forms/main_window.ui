@@ -205,6 +205,12 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="rootIsDecorated">
+         <bool>false</bool>
+        </property>
+        <property name="sortingEnabled">
+         <bool>true</bool>
+        </property>
         <column>
          <property name="text">
           <string>Name</string>
@@ -219,8 +225,20 @@
       </item>
       <item>
        <widget class="QTreeWidget" name="tree_files">
+        <property name="dragEnabled">
+         <bool>true</bool>
+        </property>
+        <property name="dragDropMode">
+         <enum>QAbstractItemView::DragDropMode::DragOnly</enum>
+        </property>
+        <property name="defaultDropAction">
+         <enum>Qt::DropAction::CopyAction</enum>
+        </property>
         <property name="rootIsDecorated">
          <bool>false</bool>
+        </property>
+        <property name="sortingEnabled">
+         <bool>true</bool>
         </property>
         <column>
          <property name="text">

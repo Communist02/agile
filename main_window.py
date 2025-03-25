@@ -16,10 +16,10 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QIcon, QImage, QKeySequence, QLinearGradient,
     QPainter, QPalette, QPixmap, QRadialGradient,
     QTransform)
-from PySide6.QtWidgets import (QApplication, QDockWidget, QHBoxLayout, QHeaderView,
-    QMainWindow, QMenu, QMenuBar, QPushButton,
-    QSizePolicy, QSpacerItem, QStatusBar, QTreeWidget,
-    QTreeWidgetItem, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QAbstractItemView, QApplication, QDockWidget, QHBoxLayout,
+    QHeaderView, QMainWindow, QMenu, QMenuBar,
+    QPushButton, QSizePolicy, QSpacerItem, QStatusBar,
+    QTreeWidget, QTreeWidgetItem, QVBoxLayout, QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -135,12 +135,18 @@ class Ui_MainWindow(object):
         sizePolicy2.setVerticalStretch(0)
         sizePolicy2.setHeightForWidth(self.tree_remotes.sizePolicy().hasHeightForWidth())
         self.tree_remotes.setSizePolicy(sizePolicy2)
+        self.tree_remotes.setRootIsDecorated(False)
+        self.tree_remotes.setSortingEnabled(True)
 
         self.horizontalLayout_2.addWidget(self.tree_remotes)
 
         self.tree_files = QTreeWidget(self.centralwidget)
         self.tree_files.setObjectName(u"tree_files")
+        self.tree_files.setDragEnabled(True)
+        self.tree_files.setDragDropMode(QAbstractItemView.DragDropMode.DragOnly)
+        self.tree_files.setDefaultDropAction(Qt.DropAction.CopyAction)
         self.tree_files.setRootIsDecorated(False)
+        self.tree_files.setSortingEnabled(True)
 
         self.horizontalLayout_2.addWidget(self.tree_files)
 

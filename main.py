@@ -8,7 +8,7 @@ import subprocess
 from pathlib import Path
 
 from PySide6.QtCore import QMimeData, QUrl, Qt, QTimer
-from PySide6.QtGui import QIcon, QAction, QCursor
+from PySide6.QtGui import QDrag, QIcon, QAction, QCursor
 from PySide6.QtWidgets import QInputDialog, QMainWindow, QApplication, QDialog, QMenu, QFileDialog, QProgressBar, QSizePolicy, QTreeWidgetItem, QPushButton, QMessageBox, QLabel
 import PySide6.QtAsyncio as QtAsyncio
 
@@ -225,6 +225,8 @@ class MainWindow(QMainWindow):
         self.ui.tree_files.itemDoubleClicked.connect(lambda item: self.open_item(item.text(0), item.text(3) == 'inode/directory'))
         self.ui.tasks.itemDoubleClicked.connect(self.open_task_dir)
 
+        self.ui.tree_files.startDrag = self.start_drag
+
         self.ui.tree_files.setContextMenuPolicy(Qt.CustomContextMenu)
         self.ui.tree_files.customContextMenuRequested.connect(
             self.show_context_menu_tree)
@@ -297,6 +299,25 @@ class MainWindow(QMainWindow):
             if os.path.isfile(source_path) or os.path.isdir(source_path):
                 asyncio.ensure_future(self.upload_file(
                     source_path, destination_remote, destination_path))
+                
+    def start_drag(self, supportedActions):
+        item = self.ui.tree_files.currentItem()
+        if not item:
+            return
+
+        if self.remotes_paths[self.current_remote] != '':
+            file_path = f'{self.current_remote}{self.remotes_paths[self.current_remote]}/{item.text(0)}'
+        else:
+            file_path = f'{self.current_remote}{item.text(0)}'
+
+        # Set up drag event with file path
+        mime_data = QMimeData()
+        url = f"file:///{file_path}"
+        mime_data.setUrls([url])  # Set file URL for explorer
+
+        drag = QDrag(self)
+        drag.setMimeData(mime_data)
+        drag.exec(Qt.DropAction.CopyAction)
 
     async def upload_file(self, source_path: str, destination_remote: str, destination_path: str):
         self.tasks.append(Task(operation='Upload', source=source_path,
@@ -410,6 +431,9 @@ class MainWindow(QMainWindow):
                 for file in tree:
                     item = QTreeWidgetItem(
                         [file['name'], file['size'], file['modified'], file['type']])
+                    item.setTextAlignment(1, Qt.AlignmentFlag.AlignRight)
+                    item.setData(0, Qt.ItemDataRole.UserRole, file['name'])
+
                     if file['is_dir']:
                         item.setIcon(0, QIcon.fromTheme('folder'))
                     else:
