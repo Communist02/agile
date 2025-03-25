@@ -310,12 +310,12 @@ class MainWindow(QMainWindow):
         else:
             file_path = f'{self.current_remote}{item.text(0)}'
 
-        # Set up drag event with file path
         mime_data = QMimeData()
-        url = f"file:///{file_path}"
-        mime_data.setUrls([url])  # Set file URL for explorer
+        mime_data.setText(file_path)
+        url = QUrl.fromLocalFile(file_path)
+        mime_data.setUrls([url])
 
-        drag = QDrag(self)
+        drag: QDrag = QDrag(self)
         drag.setMimeData(mime_data)
         drag.exec(Qt.DropAction.CopyAction)
 
@@ -509,11 +509,11 @@ class MainWindow(QMainWindow):
         else:
             file_path = f'{self.current_remote}{file_name}'
         clipboard = QApplication.clipboard()
-        mimeData = QMimeData()
-        mimeData.setText(file_path)
+        mime_data = QMimeData()
+        mime_data.setText(file_path)
         url = QUrl.fromLocalFile(file_path)
-        mimeData.setUrls([url])
-        clipboard.setMimeData(mimeData)
+        mime_data.setUrls([url])
+        clipboard.setMimeData(mime_data)
 
     async def update_dir(self, remote_name: str, path: str):
         self.clear_cache(remote_name, path)
