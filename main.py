@@ -361,8 +361,8 @@ class MainWindow(QMainWindow):
             observer.stop()
         if self.download_path != '':
             os.remove(self.download_path)
-            self.download_file(item.text(0), self.download_path[:-len(
-                '.cloud_explorer_file_temp') - 1], item.text(3) == 'inode/directory')
+            self.download_file(self.ui.tree_files.selectedItems(), self.download_path[:-len(
+                '.cloud_explorer_file_temp') - 1])
 
     async def upload_file(self, source_path: str, destination_remote: str, destination_path: str):
         self.tasks.append(Task(operation='Upload', source=source_path,
@@ -372,8 +372,9 @@ class MainWindow(QMainWindow):
 
         dest_path = destination_path
         if is_dir:
-            if destination_path != '/':
-                dest_path += '/' + source_path.replace('\\', '/').split('/')[-1]
+            if len(destination_path) > 0 and destination_path[-1] != '/':
+                dest_path += '/' + \
+                    source_path.replace('\\', '/').split('/')[-1]
             else:
                 dest_path += source_path.replace('\\', '/').split('/')[-1]
 
@@ -536,29 +537,30 @@ class MainWindow(QMainWindow):
             else:
                 asyncio.ensure_future(self.open_file(file_path, file_name))
 
-    def download_file(self, file_name: str, download_path: str = None, is_dir: bool = False):
+    def download_file(self, items: list[QTreeWidgetItem], download_path: str = None):
         if download_path is None:
             download_path = QFileDialog.getExistingDirectory()
         if download_path is not None and download_path != '':
-            if self.remotes_paths[self.current_remote] != '':
-                file_path = f'{self.remotes_paths[self.current_remote]}/{file_name}'
-            else:
-                file_path = file_name
-
-            self.tasks.append(Task(
-                operation='Download', source=f'{self.current_remote}{file_path}', destination=download_path))
-            self.ui.dock_tasks.show()
-
-            if not is_dir:
-                asyncio.ensure_future(rc.copy(
-                    f'{self.current_remote}{file_path}', download_path))
-            else:
-                if download_path != '/':
-                    asyncio.ensure_future(rc.copy(
-                        f'{self.current_remote}{file_path}', f'{download_path}/{file_name}'))
+            for item in items:
+                if self.remotes_paths[self.current_remote] != '':
+                    file_path = f'{self.remotes_paths[self.current_remote]}/{item.text(0)}'
                 else:
+                    file_path = item.text(0)
+
+                self.tasks.append(Task(
+                    operation='Download', source=f'{self.current_remote}{file_path}', destination=download_path))
+                self.ui.dock_tasks.show()
+
+                if item.text(3) != 'inode/directory':
                     asyncio.ensure_future(rc.copy(
-                        f'{self.current_remote}{file_path}', f'{download_path}{file_name}'))
+                        f'{self.current_remote}{file_path}', download_path))
+                else:
+                    if len(download_path) > 0 and (download_path[-1] != '/' or download_path[-1] != '\\'):
+                        asyncio.ensure_future(rc.copy(
+                            f'{self.current_remote}{file_path}', f'{download_path}/{item.text(0)}'))
+                    else:
+                        asyncio.ensure_future(rc.copy(
+                            f'{self.current_remote}{file_path}', f'{download_path}{item.text(0)}'))
 
     def mount_remote(self, name: str):
         if os.name == 'nt':
@@ -581,22 +583,22 @@ class MainWindow(QMainWindow):
         mime_data.setUrls([url])
         clipboard.setMimeData(mime_data)
 
-    def delete_file(self, file_name: str, is_dir: bool):
-        if self.remotes_paths[self.current_remote] != '':
-            file_path = f'{self.current_remote}{self.remotes_paths[self.current_remote]}/{file_name}'
+    def delete_file(self, items: list[QTreeWidgetItem]):
+        if len(items) == 1:
+            question = f'Are you sure you want to delete {item.text(0)} ?'
         else:
-            file_path = f'{self.current_remote}{file_name}'
-        if is_dir:
-            question = 'Are you sure you want to delete folder'
-        else:
-            question = 'Are you sure you want to delete file'
-        confirmation = QMessageBox.question(
-            self, 'Delete', f'{question} {file_name} ?')
+            question = f'Are you sure you want to delete {len(items)} files ?'
+        confirmation = QMessageBox.question(self, 'Delete', question)
         if confirmation == QMessageBox.Yes:
-            if not is_dir:
-                rc.deletefile(file_path)
-            else:
-                rc.purge(file_path)
+            for item in items:
+                if self.remotes_paths[self.current_remote] != '':
+                    file_path = f'{self.current_remote}{self.remotes_paths[self.current_remote]}/{item.text(0)}'
+                else:
+                    file_path = f'{self.current_remote}{item.text(0)}'
+                if not item.text(3) == 'inode/directory':
+                    rc.deletefile(file_path)
+                else:
+                    rc.purge(file_path)
             asyncio.ensure_future(self.update_dir(
                 self.current_remote, self.remotes_paths[self.current_remote]))
 
@@ -657,6 +659,8 @@ class MainWindow(QMainWindow):
 
     def show_context_menu_tree(self, point):
         index = self.ui.tree_files.indexAt(point)
+        selected = self.ui.tree_files.selectedItems()
+
         menu = QMenu()
 
         if not index.isValid():
@@ -688,7 +692,7 @@ class MainWindow(QMainWindow):
             action.setText('Download')
             action.setIcon(QIcon.fromTheme('emblem-downloads'))
             action.triggered.connect(
-                lambda: self.download_file(file_name, is_dir=is_dir))
+                lambda: self.download_file(selected))
             menu.addAction(action)
 
             menu.addSeparator()
@@ -718,7 +722,7 @@ class MainWindow(QMainWindow):
             action.setText('Delete')
             action.setIcon(QIcon.fromTheme('edit-delete'))
             action.triggered.connect(
-                lambda: self.delete_file(item.text(0), is_dir))
+                lambda: self.delete_file(selected))
             menu.addAction(action)
 
             menu.addSeparator()

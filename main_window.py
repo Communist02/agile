@@ -145,6 +145,7 @@ class Ui_MainWindow(object):
         self.tree_files.setDragEnabled(True)
         self.tree_files.setDragDropMode(QAbstractItemView.DragDropMode.DragOnly)
         self.tree_files.setDefaultDropAction(Qt.DropAction.CopyAction)
+        self.tree_files.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
         self.tree_files.setRootIsDecorated(False)
         self.tree_files.setSortingEnabled(True)
 

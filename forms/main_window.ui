@@ -234,6 +234,9 @@
         <property name="defaultDropAction">
          <enum>Qt::DropAction::CopyAction</enum>
         </property>
+        <property name="selectionMode">
+         <enum>QAbstractItemView::SelectionMode::ExtendedSelection</enum>
+        </property>
         <property name="rootIsDecorated">
          <bool>false</bool>
         </property>
