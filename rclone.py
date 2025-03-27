@@ -1,4 +1,5 @@
 import asyncio
+from logging import ERROR
 import shutil
 import subprocess
 import json
@@ -35,11 +36,12 @@ class CheckRclone:
             return rclone
 
 
-class Rclone_async(CheckRclone):
+class Rclone(CheckRclone):
     tasks: list = []
+    rclone = shutil.which('rclone')
+    debug = True
 
-    def __init__(self, debug: bool = False):
-        self.rclone = shutil.which('rclone')
+    def __init__(self, debug: bool = True):
         self.debug = debug
 
     async def _stream_process(self, p: subprocess.Popen[bytes]):
@@ -106,7 +108,7 @@ class Rclone_async(CheckRclone):
                 print(s)
         self.tasks[index]['is_done'] = True
 
-    async def _process(self, subcommand, arg1='', arg2='', arg3='', arg4='', progress=False, _execute=False, *args):
+    async def async_process(self, subcommand, arg1='', arg2='', arg3='', arg4='', progress=False, _execute=False, *args):
         if subcommand in ['copy', 'move', 'sync', 'bisync', 'copyto', 'copyurl'] and not _execute:
             progress = True
             P = '-P'
@@ -117,9 +119,9 @@ class Rclone_async(CheckRclone):
         _command = f'{self.rclone} {subcommand} {arg1} {arg2} {arg3} {arg4} {P} {_args}'
 
         if self.debug:
-            print(f"Executing: {_command}")
+            print(f'Executing: {_command}')
 
-        p = subprocess.Popen(_command, shell=True, stdout=subprocess.PIPE)
+        p = subprocess.Popen(_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
         if progress:
             await self._stream_process(p)
@@ -156,9 +158,9 @@ class Rclone_async(CheckRclone):
         _command = f'{self.rclone} {subcommand} {arg1} {arg2} {arg3} {arg4} {P} {_args}'
 
         if self.debug:
-            print(f"Executing: {_command}")
+            print(f'Executing: {_command}')
 
-        p = subprocess.Popen(_command, shell=True, stdout=subprocess.PIPE)
+        p = subprocess.Popen(_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
         OUT, _ = p.communicate()
         OUT = OUT.decode()
@@ -181,13 +183,13 @@ class Rclone_async(CheckRclone):
             return OUT
 
     async def mkdir(self, folder_path: str):
-        return await self._process('mkdir', f'"{folder_path}"')
+        return await self.async_process('mkdir', f'"{folder_path}"')
 
     async def copy(self, source_path: str, destination_path: str):
-        return await self._process('copy', f'"{source_path}"', f'"{destination_path}"', '--create-empty-src-dirs')
+        return await self.async_process('copy', f'"{source_path}"', f'"{destination_path}"', '--create-empty-src-dirs')
 
     async def lsjson(self, path: str):
-        return await self._process('lsjson', f'"{path}"')
+        return await self.async_process('lsjson', f'"{path}"')
 
     def listremotes(self, long=False) -> str | dict[str]:
         if long:
@@ -204,18 +206,26 @@ class Rclone_async(CheckRclone):
 
     def config(self, command: str, arg1: str = '', arg2: str = ''):
         return self.sync_process('config', command, arg1, arg2)
-    
-    def mount(self, command: str, arg1: str = '', arg2: str = ''):
-        return self.sync_process('mount', command, arg1, arg2)
+
+    def mount(self, remote_name: str, arg1: str = '', arg2: str = ''):
+        return self.sync_process('mount', f'"{remote_name}"', arg1, arg2)
 
     async def execute(self, command):
-        return await self._process(subcommand=command, arg1='', arg2='', arg3='', arg4='', progress=False, _execute=True)
+        return await self.async_process(subcommand=command, arg1='', arg2='', arg3='', arg4='', progress=False, _execute=True)
 
-    def delete(*args, **kwargs):
-        raise NotImplementedError(
-            'delete is a protected command! Use `execute()` instead.')
+    def deletefile(self, path: str):
+        return self.sync_process('deletefile', f'"{path}"')
+    
+    async def is_dir(self, path: str):
+        p = subprocess.Popen(f'{self.rclone} deletefile "{path}" --dry-run', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        loop = asyncio.get_running_loop()
+        OUT, ERROR = await loop.run_in_executor(None, p.communicate)
+        return 'ERROR :' in ERROR.decode()
+
+    def purge(self, path: str):
+        return self.sync_process('purge', f'"{path}"')
 
     def __getattr__(self, attr):
-        async def wrapper(*args, **kwargs):
-            return await self._process(attr, *args, **kwargs)
+        def wrapper(*args, **kwargs):
+            return self.sync_process(attr, *args, **kwargs)
         return wrapper

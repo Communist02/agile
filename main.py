@@ -4,6 +4,7 @@ import shutil
 import sys
 import os
 import subprocess
+from multiprocessing import Process
 
 from PySide6.QtCore import QMimeData, QUrl, Qt, QTimer
 from PySide6.QtGui import QDrag, QDragEnterEvent, QIcon, QAction, QCursor
@@ -12,7 +13,7 @@ import PySide6.QtAsyncio as QtAsyncio
 
 from rclone_python import rclone
 from rclone_python import remote_types
-from rclone_async import Rclone_async
+from rclone import Rclone
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
@@ -20,7 +21,7 @@ import main_window
 import new_remote_window
 import win32api
 
-rc_async = Rclone_async(True)
+rc = Rclone()
 
 
 class FileMonitorHandler(FileSystemEventHandler):
@@ -46,7 +47,7 @@ class NewRemoteWindow(QDialog):
 
         if edit_mode:
             self.setWindowTitle(f'Edit {remote_name}')
-            config = rc_async.config('dump')
+            config = rc.config('dump')
             type = config[remote_name[:-1]]['type']
             match type:
                 case 'drive':
@@ -102,7 +103,7 @@ class NewRemoteWindow(QDialog):
         name = self.ui.lineEdit_name.text().strip()
         if name != '':
             if edit_mode:
-                rc_async.config('delete', remote_name[:-1])
+                rc.config('delete', remote_name[:-1])
             match self.ui.tabWidget.currentIndex():
                 case 0:
                     rclone.create_remote(
@@ -120,8 +121,8 @@ class NewRemoteWindow(QDialog):
                                          user=self.ui.lineEdit_ftp_login.text().strip(),
                                          tls=str(self.ui.checkBox_ftp_tls.isChecked()).lower())
                     if self.ui.lineEdit_ftp_password.text().strip() != '':
-                        rc_async.config('password', name, 'pass',
-                                        self.ui.lineEdit_ftp_password.text().strip())
+                        rc.config('password', name, 'pass',
+                                  self.ui.lineEdit_ftp_password.text().strip())
                     self.close()
                 case 3:
                     vendors = ['other', 'fastmail', 'nextcloud',
@@ -134,8 +135,8 @@ class NewRemoteWindow(QDialog):
                                          )]
                                          )
                     if self.ui.lineEdit_webdav_password.text().strip() != '':
-                        rc_async.config('password', name, 'pass',
-                                        self.ui.lineEdit_webdav_password.text().strip())
+                        rc.config('password', name, 'pass',
+                                  self.ui.lineEdit_webdav_password.text().strip())
                     self.close()
                 case 4:
                     rclone.create_remote(
@@ -279,12 +280,12 @@ class MainWindow(QMainWindow):
             item.setText(1, self.tasks[i].source)
             item.setText(2, self.tasks[i].destination)
 
-            if len(rc_async.tasks) > i:
-                self.tasks[i].set_full_size(rc_async.tasks[i]['full_size'])
-                self.tasks[i].set_size(rc_async.tasks[i]['current_size'])
-                self.tasks[i].set_speed(rc_async.tasks[i]['speed'])
-                self.tasks[i].set_estimated(rc_async.tasks[i]['estimated'])
-                self.tasks[i].set_status(rc_async.tasks[i]['is_done'])
+            if len(rc.tasks) > i:
+                self.tasks[i].set_full_size(rc.tasks[i]['full_size'])
+                self.tasks[i].set_size(rc.tasks[i]['current_size'])
+                self.tasks[i].set_speed(rc.tasks[i]['speed'])
+                self.tasks[i].set_estimated(rc.tasks[i]['estimated'])
+                self.tasks[i].set_status(rc.tasks[i]['is_done'])
 
                 item.setText(3, self.tasks[i].status)
                 item.setText(4, self.tasks[i].size)
@@ -341,13 +342,16 @@ class MainWindow(QMainWindow):
 
             for disk in drives:
                 observer = Observer()
-                # Рекурсивное отслеживание
                 observer.schedule(handler, disk + '\\', recursive=True)
                 try:
                     observer.start()
                     observers.append(observer)
                 except PermissionError:
                     pass
+        else:
+            observer = Observer()
+            observer.schedule(handler, '/', recursive=True)
+            observer.start()
 
         drag.exec(Qt.DropAction.MoveAction)
         if os.name == 'nt':
@@ -364,11 +368,20 @@ class MainWindow(QMainWindow):
         self.tasks.append(Task(operation='Upload', source=source_path,
                           destination=f'{destination_remote}{destination_path}'))
         self.ui.dock_tasks.show()
-        await rc_async.copy(source_path, f'{destination_remote}{destination_path}')
+        is_dir = await rc.is_dir(source_path)
+
+        dest_path = destination_path
+        if is_dir:
+            if destination_path != '/':
+                dest_path += '/' + source_path.replace('\\', '/').split('/')[-1]
+            else:
+                dest_path += source_path.replace('\\', '/').split('/')[-1]
+
+        await rc.copy(source_path, f'{destination_remote}{dest_path}')
         await self.update_dir(destination_remote, destination_path)
 
     def update_remotes(self):
-        remotes = rc_async.listremotes(True)
+        remotes = rc.listremotes(True)
         self.ui.tree_remotes.clear()
         for remote in remotes:
             if remote['type'] != 'local':
@@ -432,7 +445,7 @@ class MainWindow(QMainWindow):
                 if not update:
                     self.ui.tree_files.clear()
                 update = False
-                tree = await rc_async.lsjson(f'{remote_name}{path_dir}')
+                tree = await rc.lsjson(f'{remote_name}{path_dir}')
                 self.ui.statusbar.showMessage('')
 
                 for i in range(len(tree)):
@@ -504,7 +517,7 @@ class MainWindow(QMainWindow):
         self.tasks.append(Task(
             operation='Opening', source=f'{self.current_remote}{file_path}', destination=self.temp_dir))
         self.ui.dock_tasks.show()
-        await rc_async.copy(f'{self.current_remote}{file_path}', self.temp_dir)
+        await rc.copy(f'{self.current_remote}{file_path}', self.temp_dir)
         if os.name == 'nt':
             os.startfile(self.temp_dir + '\\' + file_name)
         else:
@@ -537,19 +550,20 @@ class MainWindow(QMainWindow):
             self.ui.dock_tasks.show()
 
             if not is_dir:
-                asyncio.ensure_future(rc_async.copy(
+                asyncio.ensure_future(rc.copy(
                     f'{self.current_remote}{file_path}', download_path))
             else:
                 if download_path != '/':
-                    asyncio.ensure_future(rc_async.copy(
+                    asyncio.ensure_future(rc.copy(
                         f'{self.current_remote}{file_path}', f'{download_path}/{file_name}'))
                 else:
-                    asyncio.ensure_future(rc_async.copy(
+                    asyncio.ensure_future(rc.copy(
                         f'{self.current_remote}{file_path}', f'{download_path}{file_name}'))
 
     def mount_remote(self, name: str):
         if os.name == 'nt':
-            rc_async.mount(f'"{name}"', f'*')
+            p1 = Process(target=rc.mount, args=(name, '*'), daemon=True)
+            p1.start()
         else:
             mount_path = QFileDialog.getExistingDirectory()
             if mount_path is not None and mount_path != '':
@@ -566,6 +580,25 @@ class MainWindow(QMainWindow):
         url = QUrl.fromLocalFile(file_path)
         mime_data.setUrls([url])
         clipboard.setMimeData(mime_data)
+
+    def delete_file(self, file_name: str, is_dir: bool):
+        if self.remotes_paths[self.current_remote] != '':
+            file_path = f'{self.current_remote}{self.remotes_paths[self.current_remote]}/{file_name}'
+        else:
+            file_path = f'{self.current_remote}{file_name}'
+        if is_dir:
+            question = 'Are you sure you want to delete folder'
+        else:
+            question = 'Are you sure you want to delete file'
+        confirmation = QMessageBox.question(
+            self, 'Delete', f'{question} {file_name} ?')
+        if confirmation == QMessageBox.Yes:
+            if not is_dir:
+                rc.deletefile(file_path)
+            else:
+                rc.purge(file_path)
+            asyncio.ensure_future(self.update_dir(
+                self.current_remote, self.remotes_paths[self.current_remote]))
 
     async def update_dir(self, remote_name: str, path: str):
         self.clear_cache(remote_name, path)
@@ -598,11 +631,11 @@ class MainWindow(QMainWindow):
                 folder_path = f'{self.current_remote}{self.remotes_paths[self.current_remote]}/{folder_name.strip()}'
             else:
                 folder_path = f'{self.current_remote}{self.remotes_paths[self.current_remote]}{folder_name.strip()}'
-            await rc_async.mkdir(folder_path)
+            await rc.mkdir(folder_path)
             await self.update_dir(self.current_remote, self.remotes_paths[self.current_remote])
 
     def delete_remote(self, name: str):
-        rc_async.config('delete', name[:-1])
+        rc.config('delete', name[:-1])
         self.update_remotes()
 
     def edit_remote(self, name: str):
@@ -619,7 +652,7 @@ class MainWindow(QMainWindow):
 
     def clear_task(self, index: int):
         del self.tasks[index]
-        del rc_async.tasks[index]
+        del rc.tasks[index]
         self.ui.tasks.takeTopLevelItem(index)
 
     def show_context_menu_tree(self, point):
@@ -684,7 +717,8 @@ class MainWindow(QMainWindow):
             action = QAction(window)
             action.setText('Delete')
             action.setIcon(QIcon.fromTheme('edit-delete'))
-            # action.triggered.connect(lambda: self.download_file(0))
+            action.triggered.connect(
+                lambda: self.delete_file(item.text(0), is_dir))
             menu.addAction(action)
 
             menu.addSeparator()
@@ -724,12 +758,6 @@ class MainWindow(QMainWindow):
         action.setText('Mount')
         action.setIcon(QIcon.fromTheme('drive-harddisk'))
         action.triggered.connect(lambda: self.mount_remote(item.text(0)))
-        menu.addAction(action)
-
-        action = QAction(window)
-        action.setText('Rename')
-        action.setIcon(QIcon.fromTheme('format-text-italic'))
-        # action.triggered.connect(lambda: self.download_file(0))
         menu.addAction(action)
 
         action = QAction(window)
