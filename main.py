@@ -353,13 +353,16 @@ class MainWindow(QMainWindow):
             observer.schedule(handler, os.environ['HOME'], recursive=True)
             observer.start()
 
-        drag.setPixmap(QIcon.fromTheme('emblem-documents').pixmap(QSize(64, 64)))
+        drag.setPixmap(QIcon.fromTheme(
+            'emblem-documents').pixmap(QSize(64, 64)))
         drag.exec(Qt.DropAction.CopyAction)
+
         if os.name == 'nt':
             for obs in observers:
                 obs.stop()
         else:
             observer.stop()
+
         if self.download_path != '':
             os.remove(self.download_path)
             self.download_file(self.ui.tree_files.selectedItems(
@@ -387,11 +390,11 @@ class MainWindow(QMainWindow):
         self.ui.tree_remotes.clear()
         for remote in remotes:
             if remote['type'] != 'local':
-                self.ui.tree_remotes.addTopLevelItem(
-                    QTreeWidgetItem([remote['name'] + ':', remote['type']]))
+                item = QTreeWidgetItem([remote['name'] + ':', remote['type']])
             else:
-                self.ui.tree_remotes.addTopLevelItem(
-                    QTreeWidgetItem([remote['name'] + ':/', remote['type']]))
+                item = QTreeWidgetItem([remote['name'] + ':/', remote['type']])
+            self.ui.tree_remotes.addTopLevelItem(item)
+            item.setSizeHint(0, QSize(0, 32))
 
     def open_new_remote_window(self):
         open_win = NewRemoteWindow()
@@ -417,8 +420,8 @@ class MainWindow(QMainWindow):
         button.setSizePolicy(QSizePolicy.Policy.Fixed,
                              QSizePolicy.Policy.Expanding)
         button.setFlat(True)
-        button.clicked.connect(
-            lambda t, a=remote_name: asyncio.ensure_future(self.open_dir(a)))
+        button.clicked.connect(lambda t, remote_name=remote_name: asyncio.ensure_future(
+            self.open_dir(remote_name)))
         self.ui.path_list.addWidget(button)
 
         temp_path = ''
@@ -490,8 +493,9 @@ class MainWindow(QMainWindow):
                 for file in tree:
                     item = QTreeWidgetItem(
                         [file['name'], file['size'], file['modified'], file['type']])
-                    item.setTextAlignment(1, Qt.AlignmentFlag.AlignRight)
-                    item.setData(0, Qt.ItemDataRole.UserRole, file['name'])
+                    item.setTextAlignment(
+                        1, Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignCenter)
+                    item.setSizeHint(0, QSize(0, 32))
 
                     if file['is_dir']:
                         item.setIcon(0, QIcon.fromTheme('folder'))
