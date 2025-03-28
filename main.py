@@ -6,8 +6,8 @@ import os
 import subprocess
 from multiprocessing import Process
 
-from PySide6.QtCore import QMimeData, QPoint, QSize, QUrl, Qt, QTimer
-from PySide6.QtGui import QDrag, QDragEnterEvent, QIcon, QAction, QCursor, QPixmap
+from PySide6.QtCore import QMimeData, QSize, QUrl, Qt, QTimer
+from PySide6.QtGui import QDrag, QDragEnterEvent, QIcon, QAction, QCursor
 from PySide6.QtWidgets import QInputDialog, QMainWindow, QApplication, QDialog, QMenu, QFileDialog, QProgressBar, QSizePolicy, QSlider, QTreeWidgetItem, QPushButton, QMessageBox, QLabel
 import PySide6.QtAsyncio as QtAsyncio
 
@@ -309,15 +309,16 @@ class MainWindow(QMainWindow):
         if self.temp_dir != '':
             shutil.rmtree(self.temp_dir)
         return super().closeEvent(event)
-    
+
     def set_scale(self, index: int):
         sizes = [16, 20, 24, 28, 32, 40, 48, 64, 72, 96, 128]
-        sizes_icon = [16, 16, 16, 20, 24, 32, 42, 56, 64, 84, 112]
+        sizes_icon = [16, 16, 20, 22, 24, 32, 42, 56, 64, 84, 112]
         value = sizes[index]
         self.scale = value
         self.slider_scale.setToolTip(f'{value}px')
 
-        self.ui.tree_files.setIconSize(QSize(sizes_icon[index], sizes_icon[index]))
+        self.ui.tree_files.setIconSize(
+            QSize(sizes_icon[index], sizes_icon[index]))
         for i in range(self.ui.tree_files.topLevelItemCount()):
             item = self.ui.tree_files.topLevelItem(i)
             item.setSizeHint(0, QSize(0, value))
@@ -626,8 +627,9 @@ class MainWindow(QMainWindow):
                     rc.deletefile(file_path)
                 else:
                     rc.purge(file_path)
-            asyncio.ensure_future(self.update_dir(
-                self.current_remote, self.remotes_paths[self.current_remote]))
+                item.setHidden(True)
+                self.clear_cache(self.current_remote,
+                                 self.remotes_paths[self.current_remote])
 
     async def update_dir(self, remote_name: str, path: str):
         self.clear_cache(remote_name, path)
