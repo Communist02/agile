@@ -19,16 +19,17 @@ from watchdog.events import FileSystemEventHandler
 
 import main_window
 import new_remote_window
-import win32api
+
+if os.name == 'nt':
+    import win32api
 
 rc = Rclone()
 
 
 class FileMonitorHandler(FileSystemEventHandler):
-    def __init__(self, target_file, file_name):
+    def __init__(self, target_file):
         super().__init__()
         self.target_file = target_file
-        self.file_name = file_name
 
     def on_created(self, event):
         if os.path.basename(event.src_path) == os.path.basename(self.target_file):
@@ -332,13 +333,12 @@ class MainWindow(QMainWindow):
         drag: QDrag = QDrag(self)
         drag.setMimeData(mime_data)
 
+        handler = FileMonitorHandler('.cloud_explorer_file_temp')
+
         if os.name == 'nt':
             observers = []
             drives = win32api.GetLogicalDriveStrings()
             drives = drives.replace('\x00', '').split('\\')[:-1]
-
-            handler = FileMonitorHandler(
-                '.cloud_explorer_file_temp', item.text(0))
 
             for disk in drives:
                 observer = Observer()
@@ -350,7 +350,7 @@ class MainWindow(QMainWindow):
                     pass
         else:
             observer = Observer()
-            observer.schedule(handler, '/', recursive=True)
+            observer.schedule(handler, os.environ['HOME'], recursive=True)
             observer.start()
 
         drag.exec(Qt.DropAction.MoveAction)
@@ -361,8 +361,8 @@ class MainWindow(QMainWindow):
             observer.stop()
         if self.download_path != '':
             os.remove(self.download_path)
-            self.download_file(self.ui.tree_files.selectedItems(), self.download_path[:-len(
-                '.cloud_explorer_file_temp') - 1])
+            self.download_file(self.ui.tree_files.selectedItems(
+            ), self.download_path[:-len('.cloud_explorer_file_temp') - 1])
 
     async def upload_file(self, source_path: str, destination_remote: str, destination_path: str):
         self.tasks.append(Task(operation='Upload', source=source_path,
