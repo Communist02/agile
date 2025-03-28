@@ -6,8 +6,8 @@ import os
 import subprocess
 from multiprocessing import Process
 
-from PySide6.QtCore import QMimeData, QUrl, Qt, QTimer
-from PySide6.QtGui import QDrag, QDragEnterEvent, QIcon, QAction, QCursor
+from PySide6.QtCore import QMimeData, QPoint, QSize, QUrl, Qt, QTimer
+from PySide6.QtGui import QDrag, QDragEnterEvent, QIcon, QAction, QCursor, QPixmap
 from PySide6.QtWidgets import QInputDialog, QMainWindow, QApplication, QDialog, QMenu, QFileDialog, QProgressBar, QSizePolicy, QTreeWidgetItem, QPushButton, QMessageBox, QLabel
 import PySide6.QtAsyncio as QtAsyncio
 
@@ -353,7 +353,8 @@ class MainWindow(QMainWindow):
             observer.schedule(handler, os.environ['HOME'], recursive=True)
             observer.start()
 
-        drag.exec(Qt.DropAction.MoveAction)
+        drag.setPixmap(QIcon.fromTheme('emblem-documents').pixmap(QSize(64, 64)))
+        drag.exec(Qt.DropAction.CopyAction)
         if os.name == 'nt':
             for obs in observers:
                 obs.stop()
@@ -585,7 +586,7 @@ class MainWindow(QMainWindow):
 
     def delete_file(self, items: list[QTreeWidgetItem]):
         if len(items) == 1:
-            question = f'Are you sure you want to delete {item.text(0)} ?'
+            question = f'Are you sure you want to delete {items[0].text(0)} ?'
         else:
             question = f'Are you sure you want to delete {len(items)} files ?'
         confirmation = QMessageBox.question(self, 'Delete', question)
