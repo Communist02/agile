@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'main_window.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.8.2
+## Created by: Qt User Interface Compiler version 6.8.3
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -16,10 +16,11 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QIcon, QImage, QKeySequence, QLinearGradient,
     QPainter, QPalette, QPixmap, QRadialGradient,
     QTransform)
-from PySide6.QtWidgets import (QAbstractItemView, QApplication, QDockWidget, QHBoxLayout,
-    QHeaderView, QMainWindow, QMenu, QMenuBar,
-    QPushButton, QSizePolicy, QSpacerItem, QStatusBar,
-    QTreeWidget, QTreeWidgetItem, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QAbstractItemView, QApplication, QDockWidget, QFrame,
+    QHBoxLayout, QHeaderView, QMainWindow, QMenu,
+    QMenuBar, QPushButton, QSizePolicy, QSpacerItem,
+    QStatusBar, QTreeWidget, QTreeWidgetItem, QVBoxLayout,
+    QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -28,10 +29,6 @@ class Ui_MainWindow(object):
         MainWindow.resize(1033, 771)
         icon = QIcon(QIcon.fromTheme(u"weather-overcast"))
         MainWindow.setWindowIcon(icon)
-        MainWindow.setStyleSheet(u"#path_list_frame QPushButton {\n"
-"	border: 0px;\n"
-"	margin: 6px;\n"
-"}")
         self.action_new_remote = QAction(MainWindow)
         self.action_new_remote.setObjectName(u"action_new_remote")
         icon1 = QIcon(QIcon.fromTheme(u"system-file-manager"))
@@ -95,23 +92,28 @@ class Ui_MainWindow(object):
         self.openMenuButton.setMaximumSize(QSize(34, 34))
         icon7 = QIcon(QIcon.fromTheme(u"document-open"))
         self.openMenuButton.setIcon(icon7)
+        self.openMenuButton.setCheckable(True)
+        self.openMenuButton.setChecked(True)
+        self.openMenuButton.setFlat(True)
 
         self.horizontalLayout.addWidget(self.openMenuButton)
 
-        self.path_list_widget = QWidget(self.centralwidget)
-        self.path_list_widget.setObjectName(u"path_list_widget")
+        self.path_list_frame = QFrame(self.centralwidget)
+        self.path_list_frame.setObjectName(u"path_list_frame")
         sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         sizePolicy1.setHorizontalStretch(0)
         sizePolicy1.setVerticalStretch(0)
-        sizePolicy1.setHeightForWidth(self.path_list_widget.sizePolicy().hasHeightForWidth())
-        self.path_list_widget.setSizePolicy(sizePolicy1)
-        self.path_list_widget.setMinimumSize(QSize(0, 34))
-        self.path_list_widget.setMaximumSize(QSize(16777215, 34))
-        self.horizontalLayout_3 = QHBoxLayout(self.path_list_widget)
+        sizePolicy1.setHeightForWidth(self.path_list_frame.sizePolicy().hasHeightForWidth())
+        self.path_list_frame.setSizePolicy(sizePolicy1)
+        self.path_list_frame.setMinimumSize(QSize(0, 34))
+        self.path_list_frame.setMaximumSize(QSize(16777215, 34))
+        self.path_list_frame.setFrameShape(QFrame.Shape.StyledPanel)
+        self.horizontalLayout_3 = QHBoxLayout(self.path_list_frame)
         self.horizontalLayout_3.setSpacing(3)
         self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
         self.horizontalLayout_3.setContentsMargins(0, 0, 0, 0)
         self.path_list = QHBoxLayout()
+        self.path_list.setSpacing(0)
         self.path_list.setObjectName(u"path_list")
 
         self.horizontalLayout_3.addLayout(self.path_list)
@@ -121,7 +123,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_3.addItem(self.horizontalSpacer)
 
 
-        self.horizontalLayout.addWidget(self.path_list_widget)
+        self.horizontalLayout.addWidget(self.path_list_frame)
 
 
         self.verticalLayout.addLayout(self.horizontalLayout)
@@ -165,6 +167,7 @@ class Ui_MainWindow(object):
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QStatusBar(MainWindow)
         self.statusbar.setObjectName(u"statusbar")
+        self.statusbar.setSizeGripEnabled(False)
         MainWindow.setStatusBar(self.statusbar)
         self.dock_tasks = QDockWidget(MainWindow)
         self.dock_tasks.setObjectName(u"dock_tasks")

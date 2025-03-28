@@ -8,7 +8,7 @@ from multiprocessing import Process
 
 from PySide6.QtCore import QMimeData, QPoint, QSize, QUrl, Qt, QTimer
 from PySide6.QtGui import QDrag, QDragEnterEvent, QIcon, QAction, QCursor, QPixmap
-from PySide6.QtWidgets import QInputDialog, QMainWindow, QApplication, QDialog, QMenu, QFileDialog, QProgressBar, QSizePolicy, QTreeWidgetItem, QPushButton, QMessageBox, QLabel
+from PySide6.QtWidgets import QInputDialog, QMainWindow, QApplication, QDialog, QMenu, QFileDialog, QProgressBar, QSizePolicy, QSlider, QTreeWidgetItem, QPushButton, QMessageBox, QLabel
 import PySide6.QtAsyncio as QtAsyncio
 
 from rclone_python import rclone
@@ -219,6 +219,7 @@ class MainWindow(QMainWindow):
     tree: list = []
     cache: dict = {}
     tasks: list[Task] = []
+    scale: int = 32
 
     def __init__(self):
         super(MainWindow, self).__init__()
@@ -255,6 +256,16 @@ class MainWindow(QMainWindow):
         self.ui.button_exit_dir.clicked.connect(self.exit_folder)
         self.ui.openMenuButton.clicked.connect(self.menu_open)
 
+        self.slider_scale: QSlider = QSlider()
+        self.slider_scale.setFixedWidth(128)
+        self.slider_scale.setMinimum(0)
+        self.slider_scale.setMaximum(10)
+        self.slider_scale.setValue(4)
+        self.set_scale(4)
+        self.slider_scale.setOrientation(Qt.Orientation.Horizontal)
+        self.slider_scale.valueChanged.connect(self.set_scale)
+        self.ui.statusbar.addPermanentWidget(self.slider_scale)
+
         self.update_remotes()
 
         self.timer = QTimer(interval=500)
@@ -262,7 +273,6 @@ class MainWindow(QMainWindow):
         self.timer.start()
 
     def timer_update(self):
-        # self.ui.tasks.clear()
         for i in range(len(self.tasks)):
             if i >= self.ui.tasks.topLevelItemCount():
                 item = QTreeWidgetItem()
@@ -299,6 +309,18 @@ class MainWindow(QMainWindow):
         if self.temp_dir != '':
             shutil.rmtree(self.temp_dir)
         return super().closeEvent(event)
+    
+    def set_scale(self, index: int):
+        sizes = [16, 20, 24, 28, 32, 40, 48, 64, 72, 96, 128]
+        sizes_icon = [16, 16, 16, 20, 24, 32, 42, 56, 64, 84, 112]
+        value = sizes[index]
+        self.scale = value
+        self.slider_scale.setToolTip(f'{value}px')
+
+        self.ui.tree_files.setIconSize(QSize(sizes_icon[index], sizes_icon[index]))
+        for i in range(self.ui.tree_files.topLevelItemCount()):
+            item = self.ui.tree_files.topLevelItem(i)
+            item.setSizeHint(0, QSize(0, value))
 
     def dragEnterEvent(self, event: QDragEnterEvent):
         if event.mimeData().hasUrls() and event.mimeData().text() != '.cloud_explorer_file_temp':
@@ -495,7 +517,7 @@ class MainWindow(QMainWindow):
                         [file['name'], file['size'], file['modified'], file['type']])
                     item.setTextAlignment(
                         1, Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignCenter)
-                    item.setSizeHint(0, QSize(0, 32))
+                    item.setSizeHint(0, QSize(0, self.scale))
 
                     if file['is_dir']:
                         item.setIcon(0, QIcon.fromTheme('folder'))

@@ -16,12 +16,6 @@
   <property name="windowIcon">
    <iconset theme="weather-overcast"/>
   </property>
-  <property name="styleSheet">
-   <string notr="true">#path_list_frame QPushButton {
-	border: 0px;
-	margin: 6px;
-}</string>
-  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
@@ -136,10 +130,19 @@
         <property name="icon">
          <iconset theme="document-open"/>
         </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
       <item>
-       <widget class="QWidget" name="path_list_widget" native="true">
+       <widget class="QFrame" name="path_list_frame">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -158,6 +161,9 @@
           <height>34</height>
          </size>
         </property>
+        <property name="frameShape">
+         <enum>QFrame::Shape::StyledPanel</enum>
+        </property>
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <property name="spacing">
           <number>3</number>
@@ -175,7 +181,11 @@
           <number>0</number>
          </property>
          <item>
-          <layout class="QHBoxLayout" name="path_list"/>
+          <layout class="QHBoxLayout" name="path_list">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+          </layout>
          </item>
          <item>
           <spacer name="horizontalSpacer">
@@ -294,7 +304,11 @@
    <addaction name="menuClient"/>
    <addaction name="menuOther"/>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QStatusBar" name="statusbar">
+   <property name="sizeGripEnabled">
+    <bool>false</bool>
+   </property>
+  </widget>
   <widget class="QDockWidget" name="dock_tasks">
    <attribute name="dockWidgetArea">
     <number>8</number>
