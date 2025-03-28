@@ -219,7 +219,7 @@ class MainWindow(QMainWindow):
     tree: list = []
     cache: dict = {}
     tasks: list[Task] = []
-    scale: int = 32
+    scale: int
 
     def __init__(self):
         super(MainWindow, self).__init__()
@@ -259,9 +259,9 @@ class MainWindow(QMainWindow):
         self.slider_scale: QSlider = QSlider()
         self.slider_scale.setFixedWidth(128)
         self.slider_scale.setMinimum(0)
-        self.slider_scale.setMaximum(10)
-        self.slider_scale.setValue(4)
-        self.set_scale(4)
+        self.slider_scale.setMaximum(16)
+        self.slider_scale.setValue(2)
+        self.set_scale(2)
         self.slider_scale.setOrientation(Qt.Orientation.Horizontal)
         self.slider_scale.valueChanged.connect(self.set_scale)
         self.ui.statusbar.addPermanentWidget(self.slider_scale)
@@ -311,8 +311,8 @@ class MainWindow(QMainWindow):
         return super().closeEvent(event)
 
     def set_scale(self, index: int):
-        sizes = [16, 20, 24, 28, 32, 40, 48, 64, 72, 96, 128]
-        sizes_icon = [16, 16, 20, 22, 24, 32, 42, 56, 64, 84, 112]
+        sizes = [16, 22, 32, 48, 64, 80, 96, 112, 128, 144, 160, 176, 192, 208, 224, 240, 256]
+        sizes_icon = [16, 16, 22, 34, 48, 64, 80, 96, 112, 128, 144, 160, 176, 192, 208, 224, 240]
         value = sizes[index]
         self.scale = value
         self.slider_scale.setToolTip(f'{value}px')
