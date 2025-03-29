@@ -41,6 +41,10 @@ class Ui_MainWindow(object):
         self.actionAbout.setObjectName(u"actionAbout")
         icon3 = QIcon(QIcon.fromTheme(u"help-about"))
         self.actionAbout.setIcon(icon3)
+        self.action_list_remotes = QAction(MainWindow)
+        self.action_list_remotes.setObjectName(u"action_list_remotes")
+        self.action_list_remotes.setCheckable(True)
+        self.action_list_remotes.setChecked(True)
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.verticalLayout = QVBoxLayout(self.centralwidget)
@@ -86,17 +90,15 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout.addWidget(self.button_exit_dir)
 
-        self.openMenuButton = QPushButton(self.centralwidget)
-        self.openMenuButton.setObjectName(u"openMenuButton")
-        self.openMenuButton.setMinimumSize(QSize(34, 34))
-        self.openMenuButton.setMaximumSize(QSize(34, 34))
-        icon7 = QIcon(QIcon.fromTheme(u"document-open"))
-        self.openMenuButton.setIcon(icon7)
-        self.openMenuButton.setCheckable(True)
-        self.openMenuButton.setChecked(True)
-        self.openMenuButton.setFlat(True)
+        self.button_update = QPushButton(self.centralwidget)
+        self.button_update.setObjectName(u"button_update")
+        self.button_update.setMinimumSize(QSize(34, 34))
+        self.button_update.setMaximumSize(QSize(34, 34))
+        icon7 = QIcon(QIcon.fromTheme(u"view-refresh"))
+        self.button_update.setIcon(icon7)
+        self.button_update.setFlat(True)
 
-        self.horizontalLayout.addWidget(self.openMenuButton)
+        self.horizontalLayout.addWidget(self.button_update)
 
         self.path_list_frame = QFrame(self.centralwidget)
         self.path_list_frame.setObjectName(u"path_list_frame")
@@ -164,6 +166,8 @@ class Ui_MainWindow(object):
         self.menuClient.setObjectName(u"menuClient")
         self.menuOther = QMenu(self.menubar)
         self.menuOther.setObjectName(u"menuOther")
+        self.menuView = QMenu(self.menubar)
+        self.menuView.setObjectName(u"menuView")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QStatusBar(MainWindow)
         self.statusbar.setObjectName(u"statusbar")
@@ -187,10 +191,12 @@ class Ui_MainWindow(object):
         MainWindow.addDockWidget(Qt.DockWidgetArea.BottomDockWidgetArea, self.dock_tasks)
 
         self.menubar.addAction(self.menuClient.menuAction())
+        self.menubar.addAction(self.menuView.menuAction())
         self.menubar.addAction(self.menuOther.menuAction())
         self.menuClient.addAction(self.action_new_remote)
         self.menuClient.addAction(self.actionExit)
         self.menuOther.addAction(self.actionAbout)
+        self.menuView.addAction(self.action_list_remotes)
 
         self.retranslateUi(MainWindow)
 
@@ -202,6 +208,7 @@ class Ui_MainWindow(object):
         self.action_new_remote.setText(QCoreApplication.translate("MainWindow", u"New remote", None))
         self.actionExit.setText(QCoreApplication.translate("MainWindow", u"Exit", None))
         self.actionAbout.setText(QCoreApplication.translate("MainWindow", u"About", None))
+        self.action_list_remotes.setText(QCoreApplication.translate("MainWindow", u"List remotes", None))
         self.pushButton_2.setText("")
         self.pushButton_3.setText("")
         self.button_exit_dir.setText("")
@@ -215,6 +222,7 @@ class Ui_MainWindow(object):
         ___qtreewidgetitem1.setText(0, QCoreApplication.translate("MainWindow", u"Name", None));
         self.menuClient.setTitle(QCoreApplication.translate("MainWindow", u"Client", None))
         self.menuOther.setTitle(QCoreApplication.translate("MainWindow", u"Other", None))
+        self.menuView.setTitle(QCoreApplication.translate("MainWindow", u"View", None))
         ___qtreewidgetitem2 = self.tasks.headerItem()
         ___qtreewidgetitem2.setText(7, QCoreApplication.translate("MainWindow", u"Estimated", None));
         ___qtreewidgetitem2.setText(6, QCoreApplication.translate("MainWindow", u"Speed", None));

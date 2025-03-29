@@ -5,6 +5,7 @@ import sys
 import os
 import subprocess
 from multiprocessing import Process
+import types
 
 from PySide6.QtCore import QMimeData, QSize, QUrl, Qt, QTimer
 from PySide6.QtGui import QDrag, QDragEnterEvent, QIcon, QAction, QCursor
@@ -45,6 +46,7 @@ class NewRemoteWindow(QDialog):
         self.ui.buttonBox.accepted.connect(
             lambda: self.new_remote(edit_mode, remote_name))
         self.ui.buttonBox.rejected.connect(self.close)
+        self.ui.checkBox_ftp_tls.clicked.connect(self.set_view_ftp_tls_option)
 
         if edit_mode:
             self.setWindowTitle(f'Edit {remote_name}')
@@ -60,11 +62,16 @@ class NewRemoteWindow(QDialog):
                     host = config[remote_name[:-1]]['host']
                     port = config[remote_name[:-1]]['port']
                     user = config[remote_name[:-1]]['user']
-                    tls = bool(config[remote_name[:-1]]['tls'] == 'true')
+                    tls = config[remote_name[:-1]]['tls'] == 'true'
+                    explicit_tls = config[remote_name[:-1]]['explicit_tls'] == 'true'
+                    if tls:
+                        self.ui.radioButton_ftp_false.setEnabled(True)
+                        self.ui.radioButton_ftp_true.setEnabled(True)
                     self.ui.lineEdit_ftp_host.setText(host)
                     self.ui.lineEdit_ftp_port.setText(port)
                     self.ui.lineEdit_ftp_login.setText(user)
                     self.ui.checkBox_ftp_tls.setChecked(tls)
+                    self.ui.radioButton_ftp_true.setChecked(explicit_tls)
                 case 'webdav':
                     self.ui.tabWidget.setCurrentIndex(3)
                     url = config[remote_name[:-1]]['url']
@@ -100,6 +107,10 @@ class NewRemoteWindow(QDialog):
             self.ui.lineEdit_name.setText(remote_name[:-1])
             self.ui.tabWidget.tabBar().setVisible(False)
 
+    def set_view_ftp_tls_option(self, value):
+        self.ui.radioButton_ftp_false.setEnabled(value)
+        self.ui.radioButton_ftp_true.setEnabled(value)
+
     def new_remote(self, edit_mode: bool = False, remote_name: str = None):
         name = self.ui.lineEdit_name.text().strip()
         if name != '':
@@ -115,12 +126,20 @@ class NewRemoteWindow(QDialog):
                         name, remote_type=remote_types.RemoteTypes.yandex)
                     self.close()
                 case 2:
+                    if self.ui.checkBox_ftp_tls.isChecked():
+                        explicit_tls = str(
+                            self.ui.radioButton_ftp_true.isChecked()).lower()
+                    else:
+                        explicit_tls = 'false'
                     rclone.create_remote(name,
                                          remote_type=remote_types.RemoteTypes.ftp,
                                          host=self.ui.lineEdit_ftp_host.text().strip(),
                                          port=self.ui.lineEdit_ftp_port.text().strip(),
                                          user=self.ui.lineEdit_ftp_login.text().strip(),
-                                         tls=str(self.ui.checkBox_ftp_tls.isChecked()).lower())
+                                         tls=str(
+                                             self.ui.checkBox_ftp_tls.isChecked()).lower(),
+                                         explicit_tls=explicit_tls
+                                         )
                     if self.ui.lineEdit_ftp_password.text().strip() != '':
                         rc.config('password', name, 'pass',
                                   self.ui.lineEdit_ftp_password.text().strip())
@@ -229,10 +248,13 @@ class MainWindow(QMainWindow):
         self.ui.tree_files.header().resizeSection(0, 300)
         self.ui.tree_files.header().resizeSection(1, 80)
         self.ui.tree_files.header().resizeSection(2, 120)
+        self.ui.tree_files.header().setSortIndicator(0, Qt.SortOrder.AscendingOrder)
+        self.ui.tree_remotes.header().setSortIndicator(0, Qt.SortOrder.AscendingOrder)
 
         self.ui.actionExit.triggered.connect(self.close)
         self.ui.action_new_remote.triggered.connect(
             self.open_new_remote_window)
+        self.ui.action_list_remotes.triggered.connect(self.open_list_remotes)
 
         self.ui.tree_remotes.itemClicked.connect(self.open_remote)
         self.ui.tree_files.itemDoubleClicked.connect(
@@ -254,7 +276,8 @@ class MainWindow(QMainWindow):
             self.show_context_menu_task)
 
         self.ui.button_exit_dir.clicked.connect(self.exit_folder)
-        self.ui.openMenuButton.clicked.connect(self.menu_open)
+        self.ui.button_update.clicked.connect(lambda: asyncio.ensure_future(
+            self.update_dir(self.current_remote, self.remotes_paths[self.current_remote])))
 
         self.slider_scale: QSlider = QSlider()
         self.slider_scale.setFixedWidth(128)
@@ -311,8 +334,10 @@ class MainWindow(QMainWindow):
         return super().closeEvent(event)
 
     def set_scale(self, index: int):
-        sizes = [16, 22, 32, 48, 64, 80, 96, 112, 128, 144, 160, 176, 192, 208, 224, 240, 256]
-        sizes_icon = [16, 16, 22, 34, 48, 64, 80, 96, 112, 128, 144, 160, 176, 192, 208, 224, 240]
+        sizes = [16, 22, 32, 48, 64, 80, 96, 112, 128,
+                 144, 160, 176, 192, 208, 224, 240, 256]
+        sizes_icon = [16, 16, 22, 34, 48, 64, 80, 96,
+                      112, 128, 144, 160, 176, 192, 208, 224, 240]
         value = sizes[index]
         self.scale = value
         self.slider_scale.setToolTip(f'{value}px')
@@ -425,7 +450,7 @@ class MainWindow(QMainWindow):
         open_win.exec()
         self.update_remotes()
 
-    def menu_open(self):
+    def open_list_remotes(self):
         self.ui.tree_remotes.setVisible(not self.ui.tree_remotes.isVisible())
 
     def clear_cache(self, remote_name: str, path: str):
@@ -509,8 +534,13 @@ class MainWindow(QMainWindow):
                     self.cache[remote_name] = {path_dir: tree}
 
             if f'{self.current_remote}{self.remotes_paths[self.current_remote]}' == f'{remote_name}{path_dir}':
-                tree = sorted(
-                    tree, key=lambda element: element['is_dir'], reverse=True)
+                def lt(self, other_item):
+                    column = self.treeWidget().sortColumn()
+                    if self.text(3) == 'inode/directory' and other_item.text(3) != 'inode/directory':
+                        return True
+                    elif other_item.text(3) == 'inode/directory' and self.text(3) != 'inode/directory':
+                        return False
+                    return self.text(column).lower() < other_item.text(column).lower()
 
                 self.ui.tree_files.clear()
                 for file in tree:
@@ -519,6 +549,7 @@ class MainWindow(QMainWindow):
                     item.setTextAlignment(
                         1, Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignCenter)
                     item.setSizeHint(0, QSize(0, self.scale))
+                    item.__lt__ = types.MethodType(lt, item)
 
                     if file['is_dir']:
                         item.setIcon(0, QIcon.fromTheme('folder'))
@@ -637,7 +668,7 @@ class MainWindow(QMainWindow):
         if f'{remote_name}{path}' == f'{self.current_remote}{self.remotes_paths[self.current_remote]}':
             await self.open_dir(remote_name, path)
 
-    async def paste_file(self):
+    def paste_file(self):
         clipboard = QApplication.clipboard()
 
         destination_remote = self.current_remote
@@ -645,7 +676,8 @@ class MainWindow(QMainWindow):
 
         for url in clipboard.mimeData().urls():
             source_path = url.toLocalFile()
-            self.upload_file(source_path, destination_remote, destination_path)
+            asyncio.ensure_future(self.upload_file(
+                source_path, destination_remote, destination_path))
 
     def exit_folder(self):
         if self.current_remote != '' and self.remotes_paths[self.current_remote] != '':
@@ -696,8 +728,7 @@ class MainWindow(QMainWindow):
             action = QAction(window)
             action.setText('Paste')
             action.setIcon(QIcon.fromTheme('edit-paste'))
-            action.triggered.connect(
-                lambda: asyncio.ensure_future(self.paste_file()))
+            action.triggered.connect(lambda: self.paste_file())
             menu.addAction(action)
 
             action = QAction(window)
@@ -735,8 +766,7 @@ class MainWindow(QMainWindow):
             action = QAction(window)
             action.setText('Paste')
             action.setIcon(QIcon.fromTheme('edit-paste'))
-            action.triggered.connect(
-                lambda: asyncio.ensure_future(self.paste_file()))
+            action.triggered.connect(lambda: self.paste_file())
             menu.addAction(action)
 
             menu.addSeparator()
@@ -750,8 +780,7 @@ class MainWindow(QMainWindow):
             action = QAction(window)
             action.setText('Delete')
             action.setIcon(QIcon.fromTheme('edit-delete'))
-            action.triggered.connect(
-                lambda: self.delete_file(selected))
+            action.triggered.connect(lambda: self.delete_file(selected))
             menu.addAction(action)
 
             menu.addSeparator()

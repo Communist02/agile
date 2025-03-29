@@ -30,7 +30,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tab_google_drive">
       <attribute name="title">
@@ -191,6 +191,9 @@
             </property>
             <property name="text">
              <string>Implict</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
             </property>
            </widget>
           </item>

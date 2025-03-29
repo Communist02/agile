@@ -159,6 +159,7 @@ class Ui_NewRemoteWindow(object):
         self.radioButton_ftp_false = QRadioButton(self.groupBox)
         self.radioButton_ftp_false.setObjectName(u"radioButton_ftp_false")
         self.radioButton_ftp_false.setEnabled(False)
+        self.radioButton_ftp_false.setChecked(True)
 
         self.horizontalLayout_7.addWidget(self.radioButton_ftp_false)
 
@@ -281,7 +282,7 @@ class Ui_NewRemoteWindow(object):
 
         self.retranslateUi(NewRemoteWindow)
 
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(2)
 
 
         QMetaObject.connectSlotsByName(NewRemoteWindow)
