@@ -16,9 +16,10 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QAbstractButton, QApplication, QCheckBox, QComboBox,
-    QDialog, QDialogButtonBox, QGroupBox, QHBoxLayout,
-    QLabel, QLineEdit, QRadioButton, QSizePolicy,
-    QSpacerItem, QTabWidget, QVBoxLayout, QWidget)
+    QDialog, QDialogButtonBox, QFrame, QGroupBox,
+    QHBoxLayout, QLabel, QLineEdit, QPushButton,
+    QRadioButton, QScrollArea, QSizePolicy, QSpacerItem,
+    QTabWidget, QToolBox, QVBoxLayout, QWidget)
 
 class Ui_NewRemoteWindow(object):
     def setupUi(self, NewRemoteWindow):
@@ -36,34 +37,6 @@ class Ui_NewRemoteWindow(object):
 
         self.tabWidget = QTabWidget(NewRemoteWindow)
         self.tabWidget.setObjectName(u"tabWidget")
-        self.tab_google_drive = QWidget()
-        self.tab_google_drive.setObjectName(u"tab_google_drive")
-        self.verticalLayout_9 = QVBoxLayout(self.tab_google_drive)
-        self.verticalLayout_9.setObjectName(u"verticalLayout_9")
-        self.label_3 = QLabel(self.tab_google_drive)
-        self.label_3.setObjectName(u"label_3")
-
-        self.verticalLayout_9.addWidget(self.label_3)
-
-        self.verticalSpacer_3 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
-
-        self.verticalLayout_9.addItem(self.verticalSpacer_3)
-
-        self.tabWidget.addTab(self.tab_google_drive, "")
-        self.tab_yandex_disk = QWidget()
-        self.tab_yandex_disk.setObjectName(u"tab_yandex_disk")
-        self.verticalLayout_8 = QVBoxLayout(self.tab_yandex_disk)
-        self.verticalLayout_8.setObjectName(u"verticalLayout_8")
-        self.label_6 = QLabel(self.tab_yandex_disk)
-        self.label_6.setObjectName(u"label_6")
-
-        self.verticalLayout_8.addWidget(self.label_6)
-
-        self.verticalSpacer_4 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
-
-        self.verticalLayout_8.addItem(self.verticalSpacer_4)
-
-        self.tabWidget.addTab(self.tab_yandex_disk, "")
         self.tab_ftp = QWidget()
         self.tab_ftp.setObjectName(u"tab_ftp")
         self.verticalLayout_3 = QVBoxLayout(self.tab_ftp)
@@ -87,10 +60,10 @@ class Ui_NewRemoteWindow(object):
 
         self.verticalLayout_5 = QVBoxLayout()
         self.verticalLayout_5.setObjectName(u"verticalLayout_5")
-        self.label_port = QLabel(self.tab_ftp)
-        self.label_port.setObjectName(u"label_port")
+        self.label_16 = QLabel(self.tab_ftp)
+        self.label_16.setObjectName(u"label_16")
 
-        self.verticalLayout_5.addWidget(self.label_port)
+        self.verticalLayout_5.addWidget(self.label_16)
 
         self.lineEdit_ftp_port = QLineEdit(self.tab_ftp)
         self.lineEdit_ftp_port.setObjectName(u"lineEdit_ftp_port")
@@ -102,11 +75,6 @@ class Ui_NewRemoteWindow(object):
 
 
         self.verticalLayout_3.addLayout(self.horizontalLayout_2)
-
-        self.horizontalLayout_3 = QHBoxLayout()
-        self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
-
-        self.verticalLayout_3.addLayout(self.horizontalLayout_3)
 
         self.horizontalLayout_4 = QHBoxLayout()
         self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
@@ -177,6 +145,85 @@ class Ui_NewRemoteWindow(object):
         self.verticalLayout_3.addItem(self.verticalSpacer_2)
 
         self.tabWidget.addTab(self.tab_ftp, "")
+        self.tab_sftp = QWidget()
+        self.tab_sftp.setObjectName(u"tab_sftp")
+        self.verticalLayout_18 = QVBoxLayout(self.tab_sftp)
+        self.verticalLayout_18.setObjectName(u"verticalLayout_18")
+        self.horizontalLayout_9 = QHBoxLayout()
+        self.horizontalLayout_9.setObjectName(u"horizontalLayout_9")
+        self.verticalLayout_16 = QVBoxLayout()
+        self.verticalLayout_16.setObjectName(u"verticalLayout_16")
+        self.label_14 = QLabel(self.tab_sftp)
+        self.label_14.setObjectName(u"label_14")
+
+        self.verticalLayout_16.addWidget(self.label_14)
+
+        self.lineEdit_sftp_host = QLineEdit(self.tab_sftp)
+        self.lineEdit_sftp_host.setObjectName(u"lineEdit_sftp_host")
+
+        self.verticalLayout_16.addWidget(self.lineEdit_sftp_host)
+
+
+        self.horizontalLayout_9.addLayout(self.verticalLayout_16)
+
+        self.verticalLayout_17 = QVBoxLayout()
+        self.verticalLayout_17.setObjectName(u"verticalLayout_17")
+        self.label_15 = QLabel(self.tab_sftp)
+        self.label_15.setObjectName(u"label_15")
+
+        self.verticalLayout_17.addWidget(self.label_15)
+
+        self.lineEdit_sftp_port = QLineEdit(self.tab_sftp)
+        self.lineEdit_sftp_port.setObjectName(u"lineEdit_sftp_port")
+
+        self.verticalLayout_17.addWidget(self.lineEdit_sftp_port)
+
+
+        self.horizontalLayout_9.addLayout(self.verticalLayout_17)
+
+
+        self.verticalLayout_18.addLayout(self.horizontalLayout_9)
+
+        self.horizontalLayout_6 = QHBoxLayout()
+        self.horizontalLayout_6.setObjectName(u"horizontalLayout_6")
+        self.verticalLayout_14 = QVBoxLayout()
+        self.verticalLayout_14.setObjectName(u"verticalLayout_14")
+        self.label_12 = QLabel(self.tab_sftp)
+        self.label_12.setObjectName(u"label_12")
+
+        self.verticalLayout_14.addWidget(self.label_12)
+
+        self.lineEdit_sftp_login = QLineEdit(self.tab_sftp)
+        self.lineEdit_sftp_login.setObjectName(u"lineEdit_sftp_login")
+
+        self.verticalLayout_14.addWidget(self.lineEdit_sftp_login)
+
+
+        self.horizontalLayout_6.addLayout(self.verticalLayout_14)
+
+        self.verticalLayout_15 = QVBoxLayout()
+        self.verticalLayout_15.setObjectName(u"verticalLayout_15")
+        self.label_13 = QLabel(self.tab_sftp)
+        self.label_13.setObjectName(u"label_13")
+
+        self.verticalLayout_15.addWidget(self.label_13)
+
+        self.lineEdit_sftp_password = QLineEdit(self.tab_sftp)
+        self.lineEdit_sftp_password.setObjectName(u"lineEdit_sftp_password")
+
+        self.verticalLayout_15.addWidget(self.lineEdit_sftp_password)
+
+
+        self.horizontalLayout_6.addLayout(self.verticalLayout_15)
+
+
+        self.verticalLayout_18.addLayout(self.horizontalLayout_6)
+
+        self.verticalSpacer_7 = QSpacerItem(20, 246, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+
+        self.verticalLayout_18.addItem(self.verticalSpacer_7)
+
+        self.tabWidget.addTab(self.tab_sftp, "")
         self.tab_webdav = QWidget()
         self.tab_webdav.setObjectName(u"tab_webdav")
         self.verticalLayout_10 = QVBoxLayout(self.tab_webdav)
@@ -248,6 +295,48 @@ class Ui_NewRemoteWindow(object):
         self.verticalLayout_10.addItem(self.verticalSpacer_5)
 
         self.tabWidget.addTab(self.tab_webdav, "")
+        self.tab_google_drive = QWidget()
+        self.tab_google_drive.setObjectName(u"tab_google_drive")
+        self.verticalLayout_9 = QVBoxLayout(self.tab_google_drive)
+        self.verticalLayout_9.setObjectName(u"verticalLayout_9")
+        self.label_3 = QLabel(self.tab_google_drive)
+        self.label_3.setObjectName(u"label_3")
+
+        self.verticalLayout_9.addWidget(self.label_3)
+
+        self.verticalSpacer_3 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+
+        self.verticalLayout_9.addItem(self.verticalSpacer_3)
+
+        self.tabWidget.addTab(self.tab_google_drive, "")
+        self.tab_yandex_disk = QWidget()
+        self.tab_yandex_disk.setObjectName(u"tab_yandex_disk")
+        self.verticalLayout_8 = QVBoxLayout(self.tab_yandex_disk)
+        self.verticalLayout_8.setObjectName(u"verticalLayout_8")
+        self.label_6 = QLabel(self.tab_yandex_disk)
+        self.label_6.setObjectName(u"label_6")
+
+        self.verticalLayout_8.addWidget(self.label_6)
+
+        self.verticalSpacer_4 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+
+        self.verticalLayout_8.addItem(self.verticalSpacer_4)
+
+        self.tabWidget.addTab(self.tab_yandex_disk, "")
+        self.tab_onedrive = QWidget()
+        self.tab_onedrive.setObjectName(u"tab_onedrive")
+        self.verticalLayout_12 = QVBoxLayout(self.tab_onedrive)
+        self.verticalLayout_12.setObjectName(u"verticalLayout_12")
+        self.label_11 = QLabel(self.tab_onedrive)
+        self.label_11.setObjectName(u"label_11")
+
+        self.verticalLayout_12.addWidget(self.label_11)
+
+        self.verticalSpacer_6 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+
+        self.verticalLayout_12.addItem(self.verticalSpacer_6)
+
+        self.tabWidget.addTab(self.tab_onedrive, "")
         self.tab_http = QWidget()
         self.tab_http.setObjectName(u"tab_http")
         self.verticalLayout_2 = QVBoxLayout(self.tab_http)
@@ -270,6 +359,72 @@ class Ui_NewRemoteWindow(object):
         self.tab_local = QWidget()
         self.tab_local.setObjectName(u"tab_local")
         self.tabWidget.addTab(self.tab_local, "")
+        self.tab_alias = QWidget()
+        self.tab_alias.setObjectName(u"tab_alias")
+        self.verticalLayout_19 = QVBoxLayout(self.tab_alias)
+        self.verticalLayout_19.setObjectName(u"verticalLayout_19")
+        self.label_17 = QLabel(self.tab_alias)
+        self.label_17.setObjectName(u"label_17")
+
+        self.verticalLayout_19.addWidget(self.label_17)
+
+        self.line = QFrame(self.tab_alias)
+        self.line.setObjectName(u"line")
+        self.line.setFrameShape(QFrame.Shape.HLine)
+        self.line.setFrameShadow(QFrame.Shadow.Sunken)
+
+        self.verticalLayout_19.addWidget(self.line)
+
+        self.label_18 = QLabel(self.tab_alias)
+        self.label_18.setObjectName(u"label_18")
+
+        self.verticalLayout_19.addWidget(self.label_18)
+
+        self.lineEdit_alias_path = QLineEdit(self.tab_alias)
+        self.lineEdit_alias_path.setObjectName(u"lineEdit_alias_path")
+
+        self.verticalLayout_19.addWidget(self.lineEdit_alias_path)
+
+        self.verticalSpacer_8 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+
+        self.verticalLayout_19.addItem(self.verticalSpacer_8)
+
+        self.tabWidget.addTab(self.tab_alias, "")
+        self.tab_union = QWidget()
+        self.tab_union.setObjectName(u"tab_union")
+        self.verticalLayout_20 = QVBoxLayout(self.tab_union)
+        self.verticalLayout_20.setObjectName(u"verticalLayout_20")
+        self.pushButton_union_add = QPushButton(self.tab_union)
+        self.pushButton_union_add.setObjectName(u"pushButton_union_add")
+
+        self.verticalLayout_20.addWidget(self.pushButton_union_add)
+
+        self.scrollArea = QScrollArea(self.tab_union)
+        self.scrollArea.setObjectName(u"scrollArea")
+        self.scrollArea.setWidgetResizable(True)
+        self.scrollAreaWidgetContents = QWidget()
+        self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 596, 325))
+        self.verticalLayout_21 = QVBoxLayout(self.scrollAreaWidgetContents)
+        self.verticalLayout_21.setObjectName(u"verticalLayout_21")
+        self.toolBox = QToolBox(self.scrollAreaWidgetContents)
+        self.toolBox.setObjectName(u"toolBox")
+        self.page = QWidget()
+        self.page.setObjectName(u"page")
+        self.page.setGeometry(QRect(0, 0, 578, 247))
+        self.toolBox.addItem(self.page, u"Page 1")
+        self.page_2 = QWidget()
+        self.page_2.setObjectName(u"page_2")
+        self.page_2.setGeometry(QRect(0, 0, 98, 28))
+        self.toolBox.addItem(self.page_2, u"Page 2")
+
+        self.verticalLayout_21.addWidget(self.toolBox)
+
+        self.scrollArea.setWidget(self.scrollAreaWidgetContents)
+
+        self.verticalLayout_20.addWidget(self.scrollArea)
+
+        self.tabWidget.addTab(self.tab_union, "")
 
         self.verticalLayout.addWidget(self.tabWidget)
 
@@ -282,7 +437,8 @@ class Ui_NewRemoteWindow(object):
 
         self.retranslateUi(NewRemoteWindow)
 
-        self.tabWidget.setCurrentIndex(2)
+        self.tabWidget.setCurrentIndex(0)
+        self.toolBox.setCurrentIndex(0)
 
 
         QMetaObject.connectSlotsByName(NewRemoteWindow)
@@ -292,12 +448,8 @@ class Ui_NewRemoteWindow(object):
         NewRemoteWindow.setWindowTitle(QCoreApplication.translate("NewRemoteWindow", u"New remote", None))
         self.lineEdit_name.setText("")
         self.lineEdit_name.setPlaceholderText(QCoreApplication.translate("NewRemoteWindow", u"Enter name for new remote", None))
-        self.label_3.setText(QCoreApplication.translate("NewRemoteWindow", u"The browser will open", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_google_drive), QCoreApplication.translate("NewRemoteWindow", u"Google Drive", None))
-        self.label_6.setText(QCoreApplication.translate("NewRemoteWindow", u"The browser will open", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_yandex_disk), QCoreApplication.translate("NewRemoteWindow", u"Yandex Disk", None))
         self.label_2.setText(QCoreApplication.translate("NewRemoteWindow", u"Host", None))
-        self.label_port.setText(QCoreApplication.translate("NewRemoteWindow", u"Port", None))
+        self.label_16.setText(QCoreApplication.translate("NewRemoteWindow", u"Port", None))
         self.label_4.setText(QCoreApplication.translate("NewRemoteWindow", u"Login", None))
         self.label_5.setText(QCoreApplication.translate("NewRemoteWindow", u"Password", None))
         self.groupBox.setTitle(QCoreApplication.translate("NewRemoteWindow", u"FTPS", None))
@@ -305,6 +457,11 @@ class Ui_NewRemoteWindow(object):
         self.radioButton_ftp_false.setText(QCoreApplication.translate("NewRemoteWindow", u"Implict", None))
         self.radioButton_ftp_true.setText(QCoreApplication.translate("NewRemoteWindow", u"Explict", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_ftp), QCoreApplication.translate("NewRemoteWindow", u"FTP", None))
+        self.label_14.setText(QCoreApplication.translate("NewRemoteWindow", u"Host", None))
+        self.label_15.setText(QCoreApplication.translate("NewRemoteWindow", u"Port", None))
+        self.label_12.setText(QCoreApplication.translate("NewRemoteWindow", u"Login", None))
+        self.label_13.setText(QCoreApplication.translate("NewRemoteWindow", u"Password", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_sftp), QCoreApplication.translate("NewRemoteWindow", u"SFTP", None))
         self.label_7.setText(QCoreApplication.translate("NewRemoteWindow", u"URL", None))
         self.label_8.setText(QCoreApplication.translate("NewRemoteWindow", u"Login", None))
         self.label_9.setText(QCoreApplication.translate("NewRemoteWindow", u"Password", None))
@@ -318,9 +475,26 @@ class Ui_NewRemoteWindow(object):
         self.comboBox_webdav_vendor.setItemText(6, QCoreApplication.translate("NewRemoteWindow", u"rclone WebDAV server to serve a remote over HTTP via the WebDAV protocol", None))
 
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_webdav), QCoreApplication.translate("NewRemoteWindow", u"WebDAV", None))
+        self.label_3.setText(QCoreApplication.translate("NewRemoteWindow", u"The browser will open", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_google_drive), QCoreApplication.translate("NewRemoteWindow", u"Google Drive", None))
+        self.label_6.setText(QCoreApplication.translate("NewRemoteWindow", u"The browser will open", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_yandex_disk), QCoreApplication.translate("NewRemoteWindow", u"Yandex Disk", None))
+        self.label_11.setText(QCoreApplication.translate("NewRemoteWindow", u"The browser will open", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_onedrive), QCoreApplication.translate("NewRemoteWindow", u"Microsoft OneDrive", None))
         self.label.setText(QCoreApplication.translate("NewRemoteWindow", u"URL", None))
         self.lineEdit_url.setText(QCoreApplication.translate("NewRemoteWindow", u"http://127.0.0.1:8000/", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_http), QCoreApplication.translate("NewRemoteWindow", u"HTTP", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_local), QCoreApplication.translate("NewRemoteWindow", u"Local", None))
+        self.label_17.setText(QCoreApplication.translate("NewRemoteWindow", u"Set a new name for a remote or path", None))
+        self.label_18.setText(QCoreApplication.translate("NewRemoteWindow", u"Remote or path to alias", None))
+#if QT_CONFIG(tooltip)
+        self.lineEdit_alias_path.setToolTip(QCoreApplication.translate("NewRemoteWindow", u"Can be \"myremote:path/to/dir\", \"myremote:bucket\", \"myremote:\" or \"/local/path\"", None))
+#endif // QT_CONFIG(tooltip)
+        self.lineEdit_alias_path.setPlaceholderText(QCoreApplication.translate("NewRemoteWindow", u"Can be \"myremote:path/to/dir\", \"myremote:bucket\", \"myremote:\" or \"/local/path\"", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_alias), QCoreApplication.translate("NewRemoteWindow", u"Alias", None))
+        self.pushButton_union_add.setText(QCoreApplication.translate("NewRemoteWindow", u"Add remote", None))
+        self.toolBox.setItemText(self.toolBox.indexOf(self.page), QCoreApplication.translate("NewRemoteWindow", u"Page 1", None))
+        self.toolBox.setItemText(self.toolBox.indexOf(self.page_2), QCoreApplication.translate("NewRemoteWindow", u"Page 2", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_union), QCoreApplication.translate("NewRemoteWindow", u"Union", None))
     # retranslateUi
 

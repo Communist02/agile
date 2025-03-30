@@ -8,7 +8,7 @@ from multiprocessing import Process
 import types
 
 from PySide6.QtCore import QMimeData, QSize, QUrl, Qt, QTimer
-from PySide6.QtGui import QDrag, QDragEnterEvent, QIcon, QAction, QCursor
+from PySide6.QtGui import QDrag, QDragEnterEvent, QIcon, QAction, QCursor, QPixmap, QStyleHints
 from PySide6.QtWidgets import QInputDialog, QMainWindow, QApplication, QDialog, QMenu, QFileDialog, QProgressBar, QSizePolicy, QSlider, QTreeWidgetItem, QPushButton, QMessageBox, QLabel
 import PySide6.QtAsyncio as QtAsyncio
 
@@ -54,16 +54,17 @@ class NewRemoteWindow(QDialog):
             type = config[remote_name[:-1]]['type']
             match type:
                 case 'drive':
-                    self.ui.tabWidget.setCurrentIndex(0)
+                    self.ui.tabWidget.setCurrentIndex(3)
                 case 'yandex':
-                    self.ui.tabWidget.setCurrentIndex(1)
+                    self.ui.tabWidget.setCurrentIndex(4)
                 case 'ftp':
-                    self.ui.tabWidget.setCurrentIndex(2)
+                    self.ui.tabWidget.setCurrentIndex(0)
                     host = config[remote_name[:-1]]['host']
                     port = config[remote_name[:-1]]['port']
                     user = config[remote_name[:-1]]['user']
                     tls = config[remote_name[:-1]]['tls'] == 'true'
-                    explicit_tls = config[remote_name[:-1]]['explicit_tls'] == 'true'
+                    explicit_tls = config[remote_name[:-1]
+                                          ]['explicit_tls'] == 'true'
                     if tls:
                         self.ui.radioButton_ftp_false.setEnabled(True)
                         self.ui.radioButton_ftp_true.setEnabled(True)
@@ -73,7 +74,7 @@ class NewRemoteWindow(QDialog):
                     self.ui.checkBox_ftp_tls.setChecked(tls)
                     self.ui.radioButton_ftp_true.setChecked(explicit_tls)
                 case 'webdav':
-                    self.ui.tabWidget.setCurrentIndex(3)
+                    self.ui.tabWidget.setCurrentIndex(2)
                     url = config[remote_name[:-1]]['url']
                     user = config[remote_name[:-1]]['user']
                     vendor = config[remote_name[:-1]
@@ -95,15 +96,29 @@ class NewRemoteWindow(QDialog):
                             vendor = 6
                         case _:
                             vendor = 0
-
                     self.ui.comboBox_webdav_vendor.setCurrentIndex(vendor)
                 case 'http':
-                    self.ui.tabWidget.setCurrentIndex(4)
+                    self.ui.tabWidget.setCurrentIndex(6)
                     url = config[remote_name[:-1]]['url']
                     self.ui.lineEdit_url.setText(url)
                 case 'local':
+                    self.ui.tabWidget.setCurrentIndex(7)
+                case 'onedrive':
                     self.ui.tabWidget.setCurrentIndex(5)
-
+                case 'sftp':
+                    self.ui.tabWidget.setCurrentIndex(8)
+                    host = config[remote_name[:-1]]['host']
+                    port = config[remote_name[:-1]]['port']
+                    user = config[remote_name[:-1]]['user']
+                    self.ui.lineEdit_ftp_host.setText(host)
+                    self.ui.lineEdit_ftp_port.setText(port)
+                    self.ui.lineEdit_ftp_login.setText(user)
+                case 'alias':
+                    self.ui.tabWidget.setCurrentIndex(8)
+                    remote = config[remote_name[:-1]]['remote']
+                    self.ui.lineEdit_alias_path.setText(remote)
+                case 'union':
+                    self.ui.tabWidget.setCurrentIndex(9)
             self.ui.lineEdit_name.setText(remote_name[:-1])
             self.ui.tabWidget.tabBar().setVisible(False)
 
@@ -116,16 +131,16 @@ class NewRemoteWindow(QDialog):
         if name != '':
             if edit_mode:
                 rc.config('delete', remote_name[:-1])
-            match self.ui.tabWidget.currentIndex():
-                case 0:
+            match self.ui.tabWidget.currentWidget().objectName():
+                case 'tab_google_drive':
                     rclone.create_remote(
                         name, remote_type=remote_types.RemoteTypes.drive)
                     self.close()
-                case 1:
+                case 'tab_yandex_disk':
                     rclone.create_remote(
                         name, remote_type=remote_types.RemoteTypes.yandex)
                     self.close()
-                case 2:
+                case 'tab_ftp':
                     if self.ui.checkBox_ftp_tls.isChecked():
                         explicit_tls = str(
                             self.ui.radioButton_ftp_true.isChecked()).lower()
@@ -144,7 +159,7 @@ class NewRemoteWindow(QDialog):
                         rc.config('password', name, 'pass',
                                   self.ui.lineEdit_ftp_password.text().strip())
                     self.close()
-                case 3:
+                case 'tab_webdav':
                     vendors = ['other', 'fastmail', 'nextcloud',
                                'owncloud', 'sharepoint', 'sharepoint-ntlm', 'rclone']
                     rclone.create_remote(name,
@@ -158,13 +173,33 @@ class NewRemoteWindow(QDialog):
                         rc.config('password', name, 'pass',
                                   self.ui.lineEdit_webdav_password.text().strip())
                     self.close()
-                case 4:
+                case 'tab_http':
                     rclone.create_remote(
                         name, remote_type=remote_types.RemoteTypes.http, url=self.ui.lineEdit_url.text().strip())
                     self.close()
-                case 5:
+                case 'tab_local':
                     rclone.create_remote(
                         name, remote_type=remote_types.RemoteTypes.local)
+                    self.close()
+                case 'tab_onedrive':
+                    rclone.create_remote(
+                        name, remote_type=remote_types.RemoteTypes.onedrive)
+                    self.close()
+                case 'tab_sftp':
+                    rclone.create_remote(name,
+                                         remote_type=remote_types.RemoteTypes.sftp,
+                                         host=self.ui.lineEdit_sftp_host.text().strip(),
+                                         port=self.ui.lineEdit_sftp_port.text().strip(),
+                                         user=self.ui.lineEdit_sftp_login.text().strip()
+                                         )
+                    if self.ui.lineEdit_sftp_password.text().strip() != '':
+                        rc.config('password', name, 'pass',
+                                  self.ui.lineEdit_sftp_password.text().strip())
+                    self.close()
+                case 'tab_alias':
+                    rclone.create_remote(name, remote_type='alias', remote=self.ui.lineEdit_alias_path.text().strip())
+                    self.close()
+                case 'tab_alias':
                     self.close()
         else:
             alert = QMessageBox()
@@ -416,6 +451,23 @@ class MainWindow(QMainWindow):
             self.download_file(self.ui.tree_files.selectedItems(
             ), self.download_path[:-len('.cloud_explorer_file_temp') - 1])
 
+    def update_remotes(self):
+        remotes = rc.listremotes(True)
+        self.ui.tree_remotes.clear()
+        for remote in remotes:
+            item = QTreeWidgetItem([remote['name'] + ':', remote['type']])
+            item.setSizeHint(0, QSize(0, 32))
+            if QApplication.styleHints().colorScheme() == Qt.ColorScheme.Dark:
+                inv = '_inv'
+            else:
+                inv = ''
+
+            file = f'{os.path.dirname(__file__) + os.sep}images{os.sep}{remote['type']}{inv}.png'
+            if not os.path.isfile(file):
+                file = f'{os.path.dirname(__file__) + os.sep}images{os.sep}unknown{inv}.png'
+            item.setIcon(0, QPixmap(file))
+            self.ui.tree_remotes.addTopLevelItem(item)
+
     async def upload_file(self, source_path: str, destination_remote: str, destination_path: str):
         self.tasks.append(Task(operation='Upload', source=source_path,
                           destination=f'{destination_remote}{destination_path}'))
@@ -432,17 +484,6 @@ class MainWindow(QMainWindow):
 
         await rc.copy(source_path, f'{destination_remote}{dest_path}')
         await self.update_dir(destination_remote, destination_path)
-
-    def update_remotes(self):
-        remotes = rc.listremotes(True)
-        self.ui.tree_remotes.clear()
-        for remote in remotes:
-            if remote['type'] != 'local':
-                item = QTreeWidgetItem([remote['name'] + ':', remote['type']])
-            else:
-                item = QTreeWidgetItem([remote['name'] + ':/', remote['type']])
-            self.ui.tree_remotes.addTopLevelItem(item)
-            item.setSizeHint(0, QSize(0, 32))
 
     def open_new_remote_window(self):
         open_win = NewRemoteWindow()
