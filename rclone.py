@@ -121,7 +121,8 @@ class Rclone(CheckRclone):
         if self.debug:
             print(f'Executing: {_command}')
 
-        p = subprocess.Popen(_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        p = subprocess.Popen(_command, shell=True,
+                             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
         if progress:
             await self._stream_process(p)
@@ -160,7 +161,8 @@ class Rclone(CheckRclone):
         if self.debug:
             print(f'Executing: {_command}')
 
-        p = subprocess.Popen(_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        p = subprocess.Popen(_command, shell=True,
+                             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
         OUT, _ = p.communicate()
         OUT = OUT.decode()
@@ -210,14 +212,26 @@ class Rclone(CheckRclone):
     def mount(self, remote_name: str, arg1: str = '', arg2: str = ''):
         return self.sync_process('mount', f'"{remote_name}"', arg1, arg2)
 
+    def serve(self, serve_type: str, path: str, username: str = '', password: str = '', address: str = '', read_only: bool = False, args: str = ''):
+        if read_only:
+            args += ' --read-only'
+        if username:
+            args += f' --user {username}'
+        if password:
+            args += f' --pass {password}'
+        if address:
+            args += f' --addr {address}'
+        return self.sync_process('serve', serve_type, f'"{path}"', args)
+
     async def execute(self, command):
         return await self.async_process(subcommand=command, arg1='', arg2='', arg3='', arg4='', progress=False, _execute=True)
 
     def deletefile(self, path: str):
         return self.sync_process('deletefile', f'"{path}"')
-    
+
     async def is_dir(self, path: str):
-        p = subprocess.Popen(f'{self.rclone} deletefile "{path}" --dry-run', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        p = subprocess.Popen(f'{self.rclone} deletefile "{path}" --dry-run',
+                             shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         loop = asyncio.get_running_loop()
         OUT, ERROR = await loop.run_in_executor(None, p.communicate)
         return 'ERROR :' in ERROR.decode()

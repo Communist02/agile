@@ -28,6 +28,7 @@ class Ui_NewRemoteWindow(object):
         NewRemoteWindow.resize(640, 480)
         icon = QIcon(QIcon.fromTheme(u"weather-overcast"))
         NewRemoteWindow.setWindowIcon(icon)
+        NewRemoteWindow.setModal(True)
         self.verticalLayout = QVBoxLayout(NewRemoteWindow)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.lineEdit_name = QLineEdit(NewRemoteWindow)
@@ -102,6 +103,7 @@ class Ui_NewRemoteWindow(object):
 
         self.lineEdit_ftp_password = QLineEdit(self.tab_ftp)
         self.lineEdit_ftp_password.setObjectName(u"lineEdit_ftp_password")
+        self.lineEdit_ftp_password.setEchoMode(QLineEdit.EchoMode.Password)
 
         self.verticalLayout_7.addWidget(self.lineEdit_ftp_password)
 
@@ -210,6 +212,7 @@ class Ui_NewRemoteWindow(object):
 
         self.lineEdit_sftp_password = QLineEdit(self.tab_sftp)
         self.lineEdit_sftp_password.setObjectName(u"lineEdit_sftp_password")
+        self.lineEdit_sftp_password.setEchoMode(QLineEdit.EchoMode.Password)
 
         self.verticalLayout_15.addWidget(self.lineEdit_sftp_password)
 
@@ -264,6 +267,7 @@ class Ui_NewRemoteWindow(object):
 
         self.lineEdit_webdav_password = QLineEdit(self.tab_webdav)
         self.lineEdit_webdav_password.setObjectName(u"lineEdit_webdav_password")
+        self.lineEdit_webdav_password.setEchoMode(QLineEdit.EchoMode.Password)
 
         self.verticalLayout_13.addWidget(self.lineEdit_webdav_password)
 
@@ -401,24 +405,144 @@ class Ui_NewRemoteWindow(object):
 
         self.scrollArea = QScrollArea(self.tab_union)
         self.scrollArea.setObjectName(u"scrollArea")
+        self.scrollArea.setFrameShape(QFrame.Shape.NoFrame)
+        self.scrollArea.setFrameShadow(QFrame.Shadow.Plain)
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 596, 325))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 203, 338))
         self.verticalLayout_21 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_21.setObjectName(u"verticalLayout_21")
+        self.verticalLayout_21.setContentsMargins(0, 0, 0, 0)
         self.toolBox = QToolBox(self.scrollAreaWidgetContents)
         self.toolBox.setObjectName(u"toolBox")
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.toolBox.sizePolicy().hasHeightForWidth())
+        self.toolBox.setSizePolicy(sizePolicy)
+        self.toolBox.setFrameShape(QFrame.Shape.Box)
         self.page = QWidget()
         self.page.setObjectName(u"page")
-        self.page.setGeometry(QRect(0, 0, 578, 247))
+        self.page.setGeometry(QRect(0, 0, 350, 144))
+        self.verticalLayout_22 = QVBoxLayout(self.page)
+        self.verticalLayout_22.setObjectName(u"verticalLayout_22")
+        self.pushButton = QPushButton(self.page)
+        self.pushButton.setObjectName(u"pushButton")
+
+        self.verticalLayout_22.addWidget(self.pushButton)
+
+        self.label_19 = QLabel(self.page)
+        self.label_19.setObjectName(u"label_19")
+        sizePolicy.setHeightForWidth(self.label_19.sizePolicy().hasHeightForWidth())
+        self.label_19.setSizePolicy(sizePolicy)
+
+        self.verticalLayout_22.addWidget(self.label_19)
+
+        self.lineEdit = QLineEdit(self.page)
+        self.lineEdit.setObjectName(u"lineEdit")
+
+        self.verticalLayout_22.addWidget(self.lineEdit)
+
+        self.label_20 = QLabel(self.page)
+        self.label_20.setObjectName(u"label_20")
+
+        self.verticalLayout_22.addWidget(self.label_20)
+
+        self.comboBox = QComboBox(self.page)
+        self.comboBox.addItem("")
+        self.comboBox.addItem("")
+        self.comboBox.addItem("")
+        self.comboBox.addItem("")
+        self.comboBox.setObjectName(u"comboBox")
+
+        self.verticalLayout_22.addWidget(self.comboBox)
+
         self.toolBox.addItem(self.page, u"Page 1")
-        self.page_2 = QWidget()
-        self.page_2.setObjectName(u"page_2")
-        self.page_2.setGeometry(QRect(0, 0, 98, 28))
-        self.toolBox.addItem(self.page_2, u"Page 2")
 
         self.verticalLayout_21.addWidget(self.toolBox)
+
+        self.label_21 = QLabel(self.scrollAreaWidgetContents)
+        self.label_21.setObjectName(u"label_21")
+
+        self.verticalLayout_21.addWidget(self.label_21)
+
+        self.comboBox_2 = QComboBox(self.scrollAreaWidgetContents)
+        self.comboBox_2.addItem("")
+        self.comboBox_2.addItem("")
+        self.comboBox_2.addItem("")
+        self.comboBox_2.addItem("")
+        self.comboBox_2.addItem("")
+        self.comboBox_2.addItem("")
+        self.comboBox_2.addItem("")
+        self.comboBox_2.addItem("")
+        self.comboBox_2.addItem("")
+        self.comboBox_2.addItem("")
+        self.comboBox_2.addItem("")
+        self.comboBox_2.addItem("")
+        self.comboBox_2.addItem("")
+        self.comboBox_2.addItem("")
+        self.comboBox_2.addItem("")
+        self.comboBox_2.setObjectName(u"comboBox_2")
+        self.comboBox_2.setSizeAdjustPolicy(QComboBox.SizeAdjustPolicy.AdjustToMinimumContentsLengthWithIcon)
+
+        self.verticalLayout_21.addWidget(self.comboBox_2)
+
+        self.label_22 = QLabel(self.scrollAreaWidgetContents)
+        self.label_22.setObjectName(u"label_22")
+
+        self.verticalLayout_21.addWidget(self.label_22)
+
+        self.comboBox_3 = QComboBox(self.scrollAreaWidgetContents)
+        self.comboBox_3.addItem("")
+        self.comboBox_3.addItem("")
+        self.comboBox_3.addItem("")
+        self.comboBox_3.addItem("")
+        self.comboBox_3.addItem("")
+        self.comboBox_3.addItem("")
+        self.comboBox_3.addItem("")
+        self.comboBox_3.addItem("")
+        self.comboBox_3.addItem("")
+        self.comboBox_3.addItem("")
+        self.comboBox_3.addItem("")
+        self.comboBox_3.addItem("")
+        self.comboBox_3.addItem("")
+        self.comboBox_3.addItem("")
+        self.comboBox_3.addItem("")
+        self.comboBox_3.setObjectName(u"comboBox_3")
+        self.comboBox_3.setSizeAdjustPolicy(QComboBox.SizeAdjustPolicy.AdjustToMinimumContentsLengthWithIcon)
+
+        self.verticalLayout_21.addWidget(self.comboBox_3)
+
+        self.label_23 = QLabel(self.scrollAreaWidgetContents)
+        self.label_23.setObjectName(u"label_23")
+
+        self.verticalLayout_21.addWidget(self.label_23)
+
+        self.comboBox_4 = QComboBox(self.scrollAreaWidgetContents)
+        self.comboBox_4.addItem("")
+        self.comboBox_4.addItem("")
+        self.comboBox_4.addItem("")
+        self.comboBox_4.addItem("")
+        self.comboBox_4.addItem("")
+        self.comboBox_4.addItem("")
+        self.comboBox_4.addItem("")
+        self.comboBox_4.addItem("")
+        self.comboBox_4.addItem("")
+        self.comboBox_4.addItem("")
+        self.comboBox_4.addItem("")
+        self.comboBox_4.addItem("")
+        self.comboBox_4.addItem("")
+        self.comboBox_4.addItem("")
+        self.comboBox_4.addItem("")
+        self.comboBox_4.setObjectName(u"comboBox_4")
+        self.comboBox_4.setSizeAdjustPolicy(QComboBox.SizeAdjustPolicy.AdjustToMinimumContentsLengthWithIcon)
+
+        self.verticalLayout_21.addWidget(self.comboBox_4)
+
+        self.verticalSpacer_9 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+
+        self.verticalLayout_21.addItem(self.verticalSpacer_9)
 
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
 
@@ -436,6 +560,7 @@ class Ui_NewRemoteWindow(object):
 
 
         self.retranslateUi(NewRemoteWindow)
+        self.buttonBox.rejected.connect(NewRemoteWindow.reject)
 
         self.tabWidget.setCurrentIndex(0)
         self.toolBox.setCurrentIndex(0)
@@ -492,9 +617,71 @@ class Ui_NewRemoteWindow(object):
 #endif // QT_CONFIG(tooltip)
         self.lineEdit_alias_path.setPlaceholderText(QCoreApplication.translate("NewRemoteWindow", u"Can be \"myremote:path/to/dir\", \"myremote:bucket\", \"myremote:\" or \"/local/path\"", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_alias), QCoreApplication.translate("NewRemoteWindow", u"Alias", None))
-        self.pushButton_union_add.setText(QCoreApplication.translate("NewRemoteWindow", u"Add remote", None))
+        self.pushButton_union_add.setText(QCoreApplication.translate("NewRemoteWindow", u"Add upstream", None))
+        self.pushButton.setText(QCoreApplication.translate("NewRemoteWindow", u"Delete", None))
+        self.label_19.setText(QCoreApplication.translate("NewRemoteWindow", u"Path", None))
+#if QT_CONFIG(tooltip)
+        self.lineEdit.setToolTip(QCoreApplication.translate("NewRemoteWindow", u"Can be \"myremote:path/to/dir\", \"myremote:bucket\", \"myremote:\" or \"/local/path\"", None))
+#endif // QT_CONFIG(tooltip)
+        self.lineEdit.setPlaceholderText(QCoreApplication.translate("NewRemoteWindow", u"Can be \"myremote:path/to/dir\", \"myremote:bucket\", \"myremote:\" or \"/local/path\"", None))
+        self.label_20.setText(QCoreApplication.translate("NewRemoteWindow", u"Attributes", None))
+        self.comboBox.setItemText(0, QCoreApplication.translate("NewRemoteWindow", u"None", None))
+        self.comboBox.setItemText(1, QCoreApplication.translate("NewRemoteWindow", u"Files will only be read from here and never written", None))
+        self.comboBox.setItemText(2, QCoreApplication.translate("NewRemoteWindow", u"New files or directories won't be created here", None))
+        self.comboBox.setItemText(3, QCoreApplication.translate("NewRemoteWindow", u"Files found in different remotes will be written back here", None))
+
         self.toolBox.setItemText(self.toolBox.indexOf(self.page), QCoreApplication.translate("NewRemoteWindow", u"Page 1", None))
-        self.toolBox.setItemText(self.toolBox.indexOf(self.page_2), QCoreApplication.translate("NewRemoteWindow", u"Page 2", None))
+        self.label_21.setText(QCoreApplication.translate("NewRemoteWindow", u"Action policy (writing existing file)", None))
+        self.comboBox_2.setItemText(0, QCoreApplication.translate("NewRemoteWindow", u"epall (existing path, all): apply to all found", None))
+        self.comboBox_2.setItemText(1, QCoreApplication.translate("NewRemoteWindow", u"all (same as epall)", None))
+        self.comboBox_2.setItemText(2, QCoreApplication.translate("NewRemoteWindow", u"epff (existing path, first found): act on the first one found, by the time upstreams reply, where the relative path exists", None))
+        self.comboBox_2.setItemText(3, QCoreApplication.translate("NewRemoteWindow", u"eplfs (existing path, least free space)", None))
+        self.comboBox_2.setItemText(4, QCoreApplication.translate("NewRemoteWindow", u"eplus (existing path, least used space)", None))
+        self.comboBox_2.setItemText(5, QCoreApplication.translate("NewRemoteWindow", u"eplno (existing path, least number of objects)", None))
+        self.comboBox_2.setItemText(6, QCoreApplication.translate("NewRemoteWindow", u"epmfs (existing path, most free space)", None))
+        self.comboBox_2.setItemText(7, QCoreApplication.translate("NewRemoteWindow", u"eprand (existing path, random)", None))
+        self.comboBox_2.setItemText(8, QCoreApplication.translate("NewRemoteWindow", u"ff (first found): same as epff", None))
+        self.comboBox_2.setItemText(9, QCoreApplication.translate("NewRemoteWindow", u"lfs (least free space)", None))
+        self.comboBox_2.setItemText(10, QCoreApplication.translate("NewRemoteWindow", u"lus (least used space)", None))
+        self.comboBox_2.setItemText(11, QCoreApplication.translate("NewRemoteWindow", u"lno (least number of objects)", None))
+        self.comboBox_2.setItemText(12, QCoreApplication.translate("NewRemoteWindow", u"mfs (most free space)", None))
+        self.comboBox_2.setItemText(13, QCoreApplication.translate("NewRemoteWindow", u"newest", None))
+        self.comboBox_2.setItemText(14, QCoreApplication.translate("NewRemoteWindow", u"rand (random)", None))
+
+        self.label_22.setText(QCoreApplication.translate("NewRemoteWindow", u"Create policy (Create non-existing file)", None))
+        self.comboBox_3.setItemText(0, QCoreApplication.translate("NewRemoteWindow", u"epmfs (existing path, most free space): of all the upstreams on which the relative path exists choose the one with the most free space", None))
+        self.comboBox_3.setItemText(1, QCoreApplication.translate("NewRemoteWindow", u"all (act on all upstreams)", None))
+        self.comboBox_3.setItemText(2, QCoreApplication.translate("NewRemoteWindow", u"epff (existing path, first found): act on the first one found, by the time upstreams reply, where the relative path exists", None))
+        self.comboBox_3.setItemText(3, QCoreApplication.translate("NewRemoteWindow", u"epall (existing path, all): act on all upstreams where the relative path exists", None))
+        self.comboBox_3.setItemText(4, QCoreApplication.translate("NewRemoteWindow", u"eplfs (existing path, least free space)", None))
+        self.comboBox_3.setItemText(5, QCoreApplication.translate("NewRemoteWindow", u"eplus (existing path, least used space)", None))
+        self.comboBox_3.setItemText(6, QCoreApplication.translate("NewRemoteWindow", u"eplno (existing path, least number of objects)", None))
+        self.comboBox_3.setItemText(7, QCoreApplication.translate("NewRemoteWindow", u"eprand (existing path, random)", None))
+        self.comboBox_3.setItemText(8, QCoreApplication.translate("NewRemoteWindow", u"ff (first found): act on the first one found by the time upstreams reply", None))
+        self.comboBox_3.setItemText(9, QCoreApplication.translate("NewRemoteWindow", u"lfs (least free space)", None))
+        self.comboBox_3.setItemText(10, QCoreApplication.translate("NewRemoteWindow", u"lus (least used space)", None))
+        self.comboBox_3.setItemText(11, QCoreApplication.translate("NewRemoteWindow", u"lno (least number of objects)", None))
+        self.comboBox_3.setItemText(12, QCoreApplication.translate("NewRemoteWindow", u"mfs (most free space)", None))
+        self.comboBox_3.setItemText(13, QCoreApplication.translate("NewRemoteWindow", u"newest", None))
+        self.comboBox_3.setItemText(14, QCoreApplication.translate("NewRemoteWindow", u"rand (random)", None))
+
+        self.label_23.setText(QCoreApplication.translate("NewRemoteWindow", u"Search policy (Reading and listing file)", None))
+        self.comboBox_4.setItemText(0, QCoreApplication.translate("NewRemoteWindow", u"ff (first found): same as epff", None))
+        self.comboBox_4.setItemText(1, QCoreApplication.translate("NewRemoteWindow", u"all (same as epall)", None))
+        self.comboBox_4.setItemText(2, QCoreApplication.translate("NewRemoteWindow", u"epff (existing path, first found): act on the first one found, by the time upstreams reply, where the relative path exists", None))
+        self.comboBox_4.setItemText(3, QCoreApplication.translate("NewRemoteWindow", u"epall (existing path, all): given this order configured, act on the first one found where the relative path exists", None))
+        self.comboBox_4.setItemText(4, QCoreApplication.translate("NewRemoteWindow", u"eplfs (existing path, least free space)", None))
+        self.comboBox_4.setItemText(5, QCoreApplication.translate("NewRemoteWindow", u"eplus (existing path, least used space)", None))
+        self.comboBox_4.setItemText(6, QCoreApplication.translate("NewRemoteWindow", u"eplno (existing path, least number of objects)", None))
+        self.comboBox_4.setItemText(7, QCoreApplication.translate("NewRemoteWindow", u"epmfs (existing path, most free space)", None))
+        self.comboBox_4.setItemText(8, QCoreApplication.translate("NewRemoteWindow", u"eprand (existing path, random)", None))
+        self.comboBox_4.setItemText(9, QCoreApplication.translate("NewRemoteWindow", u"lfs (least free space)", None))
+        self.comboBox_4.setItemText(10, QCoreApplication.translate("NewRemoteWindow", u"lus (least used space)", None))
+        self.comboBox_4.setItemText(11, QCoreApplication.translate("NewRemoteWindow", u"lno (least number of objects)", None))
+        self.comboBox_4.setItemText(12, QCoreApplication.translate("NewRemoteWindow", u"mfs (most free space)", None))
+        self.comboBox_4.setItemText(13, QCoreApplication.translate("NewRemoteWindow", u"newest", None))
+        self.comboBox_4.setItemText(14, QCoreApplication.translate("NewRemoteWindow", u"rand (random)", None))
+
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_union), QCoreApplication.translate("NewRemoteWindow", u"Union", None))
     # retranslateUi
 

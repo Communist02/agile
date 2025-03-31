@@ -1,5 +1,6 @@
 import asyncio
 import asyncio.base_futures
+from email.headerregistry import Address
 import shutil
 import sys
 import os
@@ -20,6 +21,7 @@ from watchdog.events import FileSystemEventHandler
 
 import main_window
 import new_remote_window
+import new_serve_window
 
 if os.name == 'nt':
     import win32api
@@ -37,6 +39,39 @@ class FileMonitorHandler(FileSystemEventHandler):
             window.download_path = event.src_path
 
 
+class NewServeWindow(QDialog):
+    def __init__(self):
+        super(NewServeWindow, self).__init__()
+        self.ui = new_serve_window.Ui_NewServeWindow()
+        self.ui.setupUi(self)
+
+        self.ui.buttonBox.accepted.connect(lambda: self.new_serve())
+
+    def new_serve(self):
+        path = self.ui.lineEdit_path.text()
+        user = self.ui.lineEdit_username.text()
+        password = self.ui.lineEdit_password.text()
+        address = self.ui.lineEdit_address.text()
+        read_only = self.ui.checkBox_read_only.isChecked()
+        args = ''
+        if self.ui.radioButton_ftp.isChecked():
+            serve_type = 'ftp'
+        elif self.ui.radioButton_dnla.isChecked():
+            serve_type = 'dnla'
+        elif self.ui.radioButton_http.isChecked():
+            serve_type = 'http'
+        elif self.ui.radioButton_webdav.isChecked():
+            serve_type = 'webdav'
+        elif self.ui.radioButton_sftp.isChecked():
+            serve_type = 'sftp'
+            if not user or not password:
+                args += '--no-auth'
+
+        process = Process(target=rc.serve, args=(serve_type, path, user,
+                     password, address, read_only, args), daemon=True)
+        process.start()
+
+
 class NewRemoteWindow(QDialog):
     def __init__(self, edit_mode: bool = False, remote_name: str = None):
         super(NewRemoteWindow, self).__init__()
@@ -45,7 +80,6 @@ class NewRemoteWindow(QDialog):
 
         self.ui.buttonBox.accepted.connect(
             lambda: self.new_remote(edit_mode, remote_name))
-        self.ui.buttonBox.rejected.connect(self.close)
         self.ui.checkBox_ftp_tls.clicked.connect(self.set_view_ftp_tls_option)
 
         if edit_mode:
@@ -106,13 +140,13 @@ class NewRemoteWindow(QDialog):
                 case 'onedrive':
                     self.ui.tabWidget.setCurrentIndex(5)
                 case 'sftp':
-                    self.ui.tabWidget.setCurrentIndex(8)
+                    self.ui.tabWidget.setCurrentIndex(1)
                     host = config[remote_name[:-1]]['host']
                     port = config[remote_name[:-1]]['port']
                     user = config[remote_name[:-1]]['user']
-                    self.ui.lineEdit_ftp_host.setText(host)
-                    self.ui.lineEdit_ftp_port.setText(port)
-                    self.ui.lineEdit_ftp_login.setText(user)
+                    self.ui.lineEdit_sftp_host.setText(host)
+                    self.ui.lineEdit_sftp_port.setText(port)
+                    self.ui.lineEdit_sftp_login.setText(user)
                 case 'alias':
                     self.ui.tabWidget.setCurrentIndex(8)
                     remote = config[remote_name[:-1]]['remote']
@@ -197,15 +231,14 @@ class NewRemoteWindow(QDialog):
                                   self.ui.lineEdit_sftp_password.text().strip())
                     self.close()
                 case 'tab_alias':
-                    rclone.create_remote(name, remote_type='alias', remote=self.ui.lineEdit_alias_path.text().strip())
+                    rclone.create_remote(
+                        name, remote_type='alias', remote=self.ui.lineEdit_alias_path.text().strip())
                     self.close()
                 case 'tab_alias':
                     self.close()
         else:
-            alert = QMessageBox()
-            alert.setWindowTitle('Enter name')
-            alert.setText('Enter name for new remote')
-            alert.exec()
+            QMessageBox.warning(self, 'Enter name',
+                                'Enter name for new remote')
 
 
 class Task():
@@ -286,9 +319,10 @@ class MainWindow(QMainWindow):
         self.ui.tree_files.header().setSortIndicator(0, Qt.SortOrder.AscendingOrder)
         self.ui.tree_remotes.header().setSortIndicator(0, Qt.SortOrder.AscendingOrder)
 
-        self.ui.actionExit.triggered.connect(self.close)
+        self.ui.action_exit.triggered.connect(self.close)
         self.ui.action_new_remote.triggered.connect(
             self.open_new_remote_window)
+        self.ui.action_new_serve.triggered.connect(self.open_new_serve_window)
         self.ui.action_list_remotes.triggered.connect(self.open_list_remotes)
 
         self.ui.tree_remotes.itemClicked.connect(self.open_remote)
@@ -487,9 +521,12 @@ class MainWindow(QMainWindow):
 
     def open_new_remote_window(self):
         open_win = NewRemoteWindow()
-        open_win.setModal(True)
         open_win.exec()
         self.update_remotes()
+
+    def open_new_serve_window(self):
+        open_win = NewServeWindow()
+        open_win.exec()
 
     def open_list_remotes(self):
         self.ui.tree_remotes.setVisible(not self.ui.tree_remotes.isVisible())
@@ -664,8 +701,8 @@ class MainWindow(QMainWindow):
 
     def mount_remote(self, name: str):
         if os.name == 'nt':
-            p1 = Process(target=rc.mount, args=(name, '*'), daemon=True)
-            p1.start()
+            process = Process(target=rc.mount, args=(name, '*'), daemon=True)
+            process.start()
         else:
             mount_path = QFileDialog.getExistingDirectory()
             if mount_path is not None and mount_path != '':

@@ -287,13 +287,14 @@
      <string>Client</string>
     </property>
     <addaction name="action_new_remote"/>
-    <addaction name="actionExit"/>
+    <addaction name="action_new_serve"/>
+    <addaction name="action_exit"/>
    </widget>
    <widget class="QMenu" name="menuOther">
     <property name="title">
      <string>Other</string>
     </property>
-    <addaction name="actionAbout"/>
+    <addaction name="action_about"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -389,7 +390,7 @@
     <string>New remote</string>
    </property>
   </action>
-  <action name="actionExit">
+  <action name="action_exit">
    <property name="icon">
     <iconset theme="application-exit"/>
    </property>
@@ -397,7 +398,7 @@
     <string>Exit</string>
    </property>
   </action>
-  <action name="actionAbout">
+  <action name="action_about">
    <property name="icon">
     <iconset theme="help-about"/>
    </property>
@@ -414,6 +415,14 @@
    </property>
    <property name="text">
     <string>List remotes</string>
+   </property>
+  </action>
+  <action name="action_new_serve">
+   <property name="icon">
+    <iconset theme="applications-internet"/>
+   </property>
+   <property name="text">
+    <string>New serve</string>
    </property>
   </action>
  </widget>
