@@ -318,6 +318,7 @@ class MainWindow(QMainWindow):
         self.ui.tree_files.header().resizeSection(2, 120)
         self.ui.tree_files.header().setSortIndicator(0, Qt.SortOrder.AscendingOrder)
         self.ui.tree_remotes.header().setSortIndicator(0, Qt.SortOrder.AscendingOrder)
+        self.ui.tree_remotes.setIconSize(QSize(28, 28))
 
         self.ui.action_exit.triggered.connect(self.close)
         self.ui.action_new_remote.triggered.connect(

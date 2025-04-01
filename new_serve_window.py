@@ -30,31 +30,42 @@ class Ui_NewServeWindow(object):
         NewServeWindow.setModal(True)
         self.verticalLayout = QVBoxLayout(NewServeWindow)
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.radioButton_ftp = QRadioButton(NewServeWindow)
+        self.groupBox_2 = QGroupBox(NewServeWindow)
+        self.groupBox_2.setObjectName(u"groupBox_2")
+        self.horizontalLayout_2 = QHBoxLayout(self.groupBox_2)
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.radioButton_ftp = QRadioButton(self.groupBox_2)
         self.radioButton_ftp.setObjectName(u"radioButton_ftp")
         self.radioButton_ftp.setChecked(True)
 
-        self.verticalLayout.addWidget(self.radioButton_ftp)
+        self.horizontalLayout_2.addWidget(self.radioButton_ftp)
 
-        self.radioButton_dnla = QRadioButton(NewServeWindow)
+        self.radioButton_dnla = QRadioButton(self.groupBox_2)
         self.radioButton_dnla.setObjectName(u"radioButton_dnla")
 
-        self.verticalLayout.addWidget(self.radioButton_dnla)
+        self.horizontalLayout_2.addWidget(self.radioButton_dnla)
 
-        self.radioButton_http = QRadioButton(NewServeWindow)
+        self.radioButton_http = QRadioButton(self.groupBox_2)
         self.radioButton_http.setObjectName(u"radioButton_http")
 
-        self.verticalLayout.addWidget(self.radioButton_http)
+        self.horizontalLayout_2.addWidget(self.radioButton_http)
 
-        self.radioButton_webdav = QRadioButton(NewServeWindow)
+        self.radioButton_webdav = QRadioButton(self.groupBox_2)
         self.radioButton_webdav.setObjectName(u"radioButton_webdav")
 
-        self.verticalLayout.addWidget(self.radioButton_webdav)
+        self.horizontalLayout_2.addWidget(self.radioButton_webdav)
 
-        self.radioButton_sftp = QRadioButton(NewServeWindow)
+        self.radioButton_sftp = QRadioButton(self.groupBox_2)
         self.radioButton_sftp.setObjectName(u"radioButton_sftp")
 
-        self.verticalLayout.addWidget(self.radioButton_sftp)
+        self.horizontalLayout_2.addWidget(self.radioButton_sftp)
+
+        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.horizontalLayout_2.addItem(self.horizontalSpacer)
+
+
+        self.verticalLayout.addWidget(self.groupBox_2)
 
         self.label_3 = QLabel(NewServeWindow)
         self.label_3.setObjectName(u"label_3")
@@ -145,6 +156,7 @@ class Ui_NewServeWindow(object):
 
     def retranslateUi(self, NewServeWindow):
         NewServeWindow.setWindowTitle(QCoreApplication.translate("NewServeWindow", u"New serve", None))
+        self.groupBox_2.setTitle(QCoreApplication.translate("NewServeWindow", u"Protocol", None))
         self.radioButton_ftp.setText(QCoreApplication.translate("NewServeWindow", u"FTP", None))
         self.radioButton_dnla.setText(QCoreApplication.translate("NewServeWindow", u"DNLA", None))
         self.radioButton_http.setText(QCoreApplication.translate("NewServeWindow", u"HTTP", None))
