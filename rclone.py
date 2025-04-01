@@ -1,5 +1,4 @@
 import asyncio
-from logging import ERROR
 import shutil
 import subprocess
 import json
@@ -121,14 +120,14 @@ class Rclone(CheckRclone):
         if self.debug:
             print(f'Executing: {_command}')
 
-        p = subprocess.Popen(_command, shell=True,
+        process = subprocess.Popen(_command, shell=True,
                              stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
         if progress:
-            await self._stream_process(p)
+            await self._stream_process(progress)
 
         loop = asyncio.get_running_loop()
-        OUT, _ = await loop.run_in_executor(None, p.communicate)
+        OUT, _ = await loop.run_in_executor(None, process.communicate)
         OUT = OUT.decode()
 
         if subcommand == 'size':
@@ -148,7 +147,7 @@ class Rclone(CheckRclone):
         else:
             return OUT
 
-    def sync_process(self, subcommand, arg1='', arg2='', arg3='', arg4='', progress=False, _execute=False, *args):
+    def sync_process(self, subcommand, arg1='', arg2='', arg3='', arg4='', progress=False, _execute=False, communicate=True, *args):
         if subcommand in ['copy', 'move', 'sync', 'bisync', 'copyto', 'copyurl'] and not _execute:
             progress = True
             P = '-P'
@@ -161,28 +160,31 @@ class Rclone(CheckRclone):
         if self.debug:
             print(f'Executing: {_command}')
 
-        p = subprocess.Popen(_command, shell=True,
+        process = subprocess.Popen(_command, shell=True,
                              stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-        OUT, _ = p.communicate()
-        OUT = OUT.decode()
+        if communicate:
+            OUT, _ = process.communicate()
+            OUT = OUT.decode()
 
-        if subcommand == 'size':
-            total_objects = int(OUT.split('Total objects: ')[
-                                1].split(' (')[1].split(')')[0])
-            total_size = int(OUT.split('Total size: ')[1].split(
-                ' (')[1].split(')')[0].split(' Byte')[0])
-            return {'total_objects': total_objects, 'total_size': total_size}
-        elif subcommand == 'lsjson' or subcommand == 'config' and arg1 == 'dump':
-            return json.loads(OUT)
-        elif subcommand == 'lsf':
-            return OUT.rstrip().split('\n')
-        elif _execute:
-            return OUT.rstrip().replace('\t', ' ')
-        elif subcommand == 'config' and 'file' in _command:
-            return OUT.strip().split('\n')[-1]
+            if subcommand == 'size':
+                total_objects = int(OUT.split('Total objects: ')[
+                                    1].split(' (')[1].split(')')[0])
+                total_size = int(OUT.split('Total size: ')[1].split(
+                    ' (')[1].split(')')[0].split(' Byte')[0])
+                return {'total_objects': total_objects, 'total_size': total_size}
+            elif subcommand == 'lsjson' or subcommand == 'config' and arg1 == 'dump':
+                return json.loads(OUT)
+            elif subcommand == 'lsf':
+                return OUT.rstrip().split('\n')
+            elif _execute:
+                return OUT.rstrip().replace('\t', ' ')
+            elif subcommand == 'config' and 'file' in _command:
+                return OUT.strip().split('\n')[-1]
+            else:
+                return OUT
         else:
-            return OUT
+            return process
 
     async def mkdir(self, folder_path: str):
         return await self.async_process('mkdir', f'"{folder_path}"')
@@ -210,7 +212,7 @@ class Rclone(CheckRclone):
         return self.sync_process('config', command, arg1, arg2)
 
     def mount(self, remote_name: str, arg1: str = '', arg2: str = ''):
-        return self.sync_process('mount', f'"{remote_name}"', arg1, arg2)
+        return self.sync_process('mount', f'"{remote_name}"', arg1, arg2, communicate=False)
 
     def serve(self, serve_type: str, path: str, username: str = '', password: str = '', address: str = '', read_only: bool = False, args: str = ''):
         if read_only:

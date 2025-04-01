@@ -1,7 +1,6 @@
 import asyncio
-import asyncio.base_futures
-from email.headerregistry import Address
 import shutil
+import signal
 import sys
 import os
 import subprocess
@@ -9,7 +8,7 @@ from multiprocessing import Process
 import types
 
 from PySide6.QtCore import QMimeData, QSize, QUrl, Qt, QTimer
-from PySide6.QtGui import QDrag, QDragEnterEvent, QIcon, QAction, QCursor, QPixmap, QStyleHints
+from PySide6.QtGui import QDrag, QDragEnterEvent, QIcon, QAction, QCursor, QPixmap
 from PySide6.QtWidgets import QInputDialog, QMainWindow, QApplication, QDialog, QMenu, QFileDialog, QProgressBar, QSizePolicy, QSlider, QTreeWidgetItem, QPushButton, QMessageBox, QLabel
 import PySide6.QtAsyncio as QtAsyncio
 
@@ -68,7 +67,7 @@ class NewServeWindow(QDialog):
                 args += '--no-auth'
 
         process = Process(target=rc.serve, args=(serve_type, path, user,
-                     password, address, read_only, args), daemon=True)
+                                                 password, address, read_only, args), daemon=True)
         process.start()
 
 
@@ -242,7 +241,7 @@ class NewRemoteWindow(QDialog):
 
 
 class Task():
-    def __init__(self, operation, source, destination):
+    def __init__(self, operation: str, source: str = '', destination: str = '', process: subprocess.Popen = None):
         self.operation = operation
         self.source = source
         self.destination = destination
@@ -252,6 +251,7 @@ class Task():
         self.progress = 0
         self.speed = ''
         self.estimated = ''
+        self.process = process
 
     def set_full_size(self, size: float):
         self.full_size = size
@@ -376,6 +376,8 @@ class MainWindow(QMainWindow):
                         item.setIcon(0, QIcon.fromTheme('go-up'))
                     case 'Opening':
                         item.setIcon(0, QIcon.fromTheme('document-open'))
+                    case 'Mount':
+                        item.setIcon(0, QIcon.fromTheme('drive-harddisk'))
                 self.ui.tasks.addTopLevelItem(item)
             else:
                 item = self.ui.tasks.topLevelItem(i)
@@ -385,18 +387,19 @@ class MainWindow(QMainWindow):
             item.setText(2, self.tasks[i].destination)
 
             if len(rc.tasks) > i:
-                self.tasks[i].set_full_size(rc.tasks[i]['full_size'])
-                self.tasks[i].set_size(rc.tasks[i]['current_size'])
-                self.tasks[i].set_speed(rc.tasks[i]['speed'])
-                self.tasks[i].set_estimated(rc.tasks[i]['estimated'])
-                self.tasks[i].set_status(rc.tasks[i]['is_done'])
+                if self.tasks[i].operation in ['Upload', 'Download', 'Opening']:
+                    self.tasks[i].set_full_size(rc.tasks[i]['full_size'])
+                    self.tasks[i].set_size(rc.tasks[i]['current_size'])
+                    self.tasks[i].set_speed(rc.tasks[i]['speed'])
+                    self.tasks[i].set_estimated(rc.tasks[i]['estimated'])
+                    self.tasks[i].set_status(rc.tasks[i]['is_done'])
 
-                item.setText(3, self.tasks[i].status)
-                item.setText(4, self.tasks[i].size)
-                self.ui.tasks.setItemWidget(
-                    item, 5, QProgressBar(value=self.tasks[i].progress))
-                item.setText(6, self.tasks[i].speed)
-                item.setText(7, self.tasks[i].estimated)
+                    item.setText(3, self.tasks[i].status)
+                    item.setText(4, self.tasks[i].size)
+                    self.ui.tasks.setItemWidget(
+                        item, 5, QProgressBar(value=self.tasks[i].progress))
+                    item.setText(6, self.tasks[i].speed)
+                    item.setText(7, self.tasks[i].estimated)
 
     def closeEvent(self, event):
         if self.temp_dir != '':
@@ -702,8 +705,11 @@ class MainWindow(QMainWindow):
 
     def mount_remote(self, name: str):
         if os.name == 'nt':
-            process = Process(target=rc.mount, args=(name, '*'), daemon=True)
-            process.start()
+            # process = Process(target=rc.mount, args=(name, '*'), daemon=False)
+            # process.start()
+            process = rc.mount(name, '*')
+            self.tasks.append(Task(operation='Mount', source=name, process=process))
+            self.ui.dock_tasks.show()
         else:
             mount_path = QFileDialog.getExistingDirectory()
             if mount_path is not None and mount_path != '':
@@ -797,6 +803,12 @@ class MainWindow(QMainWindow):
         del rc.tasks[index]
         self.ui.tasks.takeTopLevelItem(index)
 
+    def stop_task(self, index: int):
+        self.tasks[index].process.send_signal(signal.CTRL_C_EVENT)
+        self.tasks[index].process.wait(1)
+        self.ui.tasks.takeTopLevelItem(index)
+        del self.tasks[index]
+
     def show_context_menu_tree(self, point):
         index = self.ui.tree_files.indexAt(point)
         selected = self.ui.tree_files.selectedItems()
@@ -804,13 +816,13 @@ class MainWindow(QMainWindow):
         menu = QMenu()
 
         if not index.isValid():
-            action = QAction(window)
+            action = QAction(self)
             action.setText('Paste')
             action.setIcon(QIcon.fromTheme('edit-paste'))
             action.triggered.connect(lambda: self.paste_file())
             menu.addAction(action)
 
-            action = QAction(window)
+            action = QAction(self)
             action.setText('New Folder')
             action.setIcon(QIcon.fromTheme('folder-new'))
             action.triggered.connect(
@@ -821,13 +833,13 @@ class MainWindow(QMainWindow):
             file_name = item.text(0)
             is_dir = item.text(3) == 'inode/directory'
 
-            action = QAction(window)
+            action = QAction(self)
             action.setText('Open')
             action.setIcon(QIcon.fromTheme('document-open'))
             action.triggered.connect(lambda: self.open_item(file_name, is_dir))
             menu.addAction(action)
 
-            action = QAction(window)
+            action = QAction(self)
             action.setText('Download')
             action.setIcon(QIcon.fromTheme('emblem-downloads'))
             action.triggered.connect(
@@ -836,13 +848,13 @@ class MainWindow(QMainWindow):
 
             menu.addSeparator()
 
-            action = QAction(window)
+            action = QAction(self)
             action.setText('Copy')
             action.setIcon(QIcon.fromTheme('edit-copy'))
             action.triggered.connect(lambda: self.copy_file(file_name))
             menu.addAction(action)
 
-            action = QAction(window)
+            action = QAction(self)
             action.setText('Paste')
             action.setIcon(QIcon.fromTheme('edit-paste'))
             action.triggered.connect(lambda: self.paste_file())
@@ -850,13 +862,13 @@ class MainWindow(QMainWindow):
 
             menu.addSeparator()
 
-            action = QAction(window)
+            action = QAction(self)
             action.setText('Rename')
             action.setIcon(QIcon.fromTheme('format-text-italic'))
             # action.triggered.connect(lambda: self.download_file(0))
             menu.addAction(action)
 
-            action = QAction(window)
+            action = QAction(self)
             action.setText('Delete')
             action.setIcon(QIcon.fromTheme('edit-delete'))
             action.triggered.connect(lambda: self.delete_file(selected))
@@ -864,7 +876,7 @@ class MainWindow(QMainWindow):
 
             menu.addSeparator()
 
-            action = QAction(window)
+            action = QAction(self)
             action.setText('New Folder')
             action.setIcon(QIcon.fromTheme('folder-new'))
             action.triggered.connect(
@@ -883,25 +895,25 @@ class MainWindow(QMainWindow):
 
         menu = QMenu()
 
-        action = QAction(window)
+        action = QAction(self)
         action.setText('Open')
         action.setIcon(QIcon.fromTheme('folder-open'))
         action.triggered.connect(lambda: self.open_remote(item))
         menu.addAction(action)
 
-        action = QAction(window)
+        action = QAction(self)
         action.setText('Edit')
         action.setIcon(QIcon.fromTheme('applications-development'))
         action.triggered.connect(lambda: self.edit_remote(item.text(0)))
         menu.addAction(action)
 
-        action = QAction(window)
+        action = QAction(self)
         action.setText('Mount')
         action.setIcon(QIcon.fromTheme('drive-harddisk'))
         action.triggered.connect(lambda: self.mount_remote(item.text(0)))
         menu.addAction(action)
 
-        action = QAction(window)
+        action = QAction(self)
         action.setText('Delete')
         action.setIcon(QIcon.fromTheme('edit-delete'))
         action.triggered.connect(lambda: self.delete_remote(item.text(0)))
@@ -918,18 +930,25 @@ class MainWindow(QMainWindow):
         item = self.ui.tasks.itemAt(point)
 
         menu = QMenu()
-
-        action = QAction(window)
-        action.setText('Open folder')
-        action.setIcon(QIcon.fromTheme('folder-open'))
-        action.triggered.connect(lambda: self.open_task_dir(item))
-        menu.addAction(action)
+        
+        if item.text(0) in ['Download', 'Upload', 'Opening']:
+            action = QAction(self)
+            action.setText('Open folder')
+            action.setIcon(QIcon.fromTheme('folder-open'))
+            action.triggered.connect(lambda: self.open_task_dir(item))
+            menu.addAction(action)
 
         if item.text(3) == 'Done':
-            action = QAction(window)
+            action = QAction(self)
             action.setText('Clear')
             action.setIcon(QIcon.fromTheme('edit-clear'))
             action.triggered.connect(lambda: self.clear_task(index.row()))
+            menu.addAction(action)
+        
+        if item.text(0) == 'Mount':
+            action = QAction(self)
+            action.setText('Stop')
+            action.triggered.connect(lambda: self.stop_task(index.row()))
             menu.addAction(action)
 
         menu.exec(QCursor.pos())

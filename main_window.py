@@ -26,7 +26,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1033, 771)
+        MainWindow.resize(1280, 800)
         icon = QIcon(QIcon.fromTheme(u"weather-overcast"))
         MainWindow.setWindowIcon(icon)
         self.action_new_remote = QAction(MainWindow)
@@ -165,7 +165,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 1033, 33))
+        self.menubar.setGeometry(QRect(0, 0, 1280, 33))
         self.menuClient = QMenu(self.menubar)
         self.menuClient.setObjectName(u"menuClient")
         self.menuOther = QMenu(self.menubar)
