@@ -66,12 +66,14 @@ class NewServeWindow(QDialog):
             if not user or not password:
                 args += '--no-auth'
 
-        process: subprocess.Popen = rc.serve(serve_type, path, user, password, address, read_only, args)
+        process: subprocess.Popen = rc.serve(
+            serve_type, path, user, password, address, read_only, args)
         try:
             process.wait(1)
             QMessageBox.critical(self, 'Error', 'Check the data!')
         except subprocess.TimeoutExpired:
-            window.tasks.append(Task(operation='Serve',source=path, destination=serve_type, process=process))
+            window.tasks.append(
+                Task(operation='Serve', source=path, destination=serve_type, process=process))
             self.close()
 
 
@@ -383,7 +385,8 @@ class MainWindow(QMainWindow):
                     case 'Mount':
                         item.setIcon(0, QIcon.fromTheme('drive-harddisk'))
                     case 'Serve':
-                        item.setIcon(0, QIcon.fromTheme('applications-internet'))
+                        item.setIcon(0, QIcon.fromTheme(
+                            'applications-internet'))
                 self.ui.tasks.addTopLevelItem(item)
             else:
                 item = self.ui.tasks.topLevelItem(i)
@@ -709,9 +712,12 @@ class MainWindow(QMainWindow):
                         asyncio.ensure_future(rc.copy(
                             f'{self.current_remote}{file_path}', f'{download_path}{item.text(0)}'))
 
-    def mount_remote(self, name: str):
+    def mount_remote(self, name: str, type: str):
         if os.name == 'nt':
-            process = rc.mount(name, '*')
+            if type in ['local', 'alias', 'union']:
+                process = rc.mount(name, '*')
+            else:
+                process = rc.mount(name, '*', '--network-mode')
             self.tasks.append(Task(operation='Mount', source=name, process=process))
             self.ui.dock_tasks.show()
         else:
@@ -913,7 +919,7 @@ class MainWindow(QMainWindow):
         action = QAction(self)
         action.setText('Mount')
         action.setIcon(QIcon.fromTheme('drive-harddisk'))
-        action.triggered.connect(lambda: self.mount_remote(item.text(0)))
+        action.triggered.connect(lambda: self.mount_remote(item.text(0), item.text(1)))
         menu.addAction(action)
 
         action = QAction(self)
@@ -933,7 +939,7 @@ class MainWindow(QMainWindow):
         item = self.ui.tasks.itemAt(point)
 
         menu = QMenu()
-        
+
         if item.text(0) in ['Download', 'Upload', 'Opening']:
             action = QAction(self)
             action.setText('Open folder')
@@ -947,7 +953,7 @@ class MainWindow(QMainWindow):
             action.setIcon(QIcon.fromTheme('edit-clear'))
             action.triggered.connect(lambda: self.clear_task(index.row()))
             menu.addAction(action)
-        
+
         if item.text(0) in ['Mount', 'Serve']:
             action = QAction(self)
             action.setText('Stop')
