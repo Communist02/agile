@@ -44,14 +44,14 @@ class Rclone(CheckRclone):
     def __init__(self, debug: bool = True):
         self.debug = debug
 
-    async def _stream_process(self, p: subprocess.Popen[bytes]):
+    async def _stream_process(self, process: subprocess.Popen[bytes]):
         self.tasks.append(
             {'current_size': 0, 'speed': 0, 'estimated': '-', 'full_size': 0, 'is_done': False})
         index = len(self.tasks) - 1
         loop = asyncio.get_running_loop()
 
         while True:
-            line = await loop.run_in_executor(None, p.stdout.readline)
+            line = await loop.run_in_executor(None, process.stdout.readline)
             if not line:
                 break
             s: str = line.decode()
@@ -125,7 +125,7 @@ class Rclone(CheckRclone):
                              stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
         if progress:
-            await self._stream_process(progress)
+            await self._stream_process(process)
 
         loop = asyncio.get_running_loop()
         OUT, _ = await loop.run_in_executor(None, process.communicate)
