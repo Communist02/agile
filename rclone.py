@@ -1,4 +1,5 @@
 import asyncio
+import os
 import shutil
 import subprocess
 import json
@@ -160,9 +161,11 @@ class Rclone(CheckRclone):
         if self.debug:
             print(f'Executing: {_command}')
 
-        process = subprocess.Popen(_command, shell=True,
-                             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-
+        if not communicate and os.name == 'nt':
+            process = subprocess.Popen(_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
+        else:
+            process = subprocess.Popen(_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        
         if communicate:
             OUT, _ = process.communicate()
             OUT = OUT.decode()
@@ -223,7 +226,7 @@ class Rclone(CheckRclone):
             args += f' --pass {password}'
         if address:
             args += f' --addr {address}'
-        return self.sync_process('serve', serve_type, f'"{path}"', args)
+        return self.sync_process('serve', serve_type, f'"{path}"', args, communicate=False)
 
     async def execute(self, command):
         return await self.async_process(subcommand=command, arg1='', arg2='', arg3='', arg4='', progress=False, _execute=True)

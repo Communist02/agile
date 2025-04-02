@@ -66,9 +66,13 @@ class NewServeWindow(QDialog):
             if not user or not password:
                 args += '--no-auth'
 
-        process = Process(target=rc.serve, args=(serve_type, path, user,
-                                                 password, address, read_only, args), daemon=True)
-        process.start()
+        process: subprocess.Popen = rc.serve(serve_type, path, user, password, address, read_only, args)
+        try:
+            process.wait(1)
+            QMessageBox.critical(self, 'Error', 'Check the data!')
+        except subprocess.TimeoutExpired:
+            window.tasks.append(Task(operation='Serve',source=path, destination=serve_type, process=process))
+            self.close()
 
 
 class NewRemoteWindow(QDialog):
@@ -378,6 +382,8 @@ class MainWindow(QMainWindow):
                         item.setIcon(0, QIcon.fromTheme('document-open'))
                     case 'Mount':
                         item.setIcon(0, QIcon.fromTheme('drive-harddisk'))
+                    case 'Serve':
+                        item.setIcon(0, QIcon.fromTheme('applications-internet'))
                 self.ui.tasks.addTopLevelItem(item)
             else:
                 item = self.ui.tasks.topLevelItem(i)
@@ -705,8 +711,6 @@ class MainWindow(QMainWindow):
 
     def mount_remote(self, name: str):
         if os.name == 'nt':
-            # process = Process(target=rc.mount, args=(name, '*'), daemon=False)
-            # process.start()
             process = rc.mount(name, '*')
             self.tasks.append(Task(operation='Mount', source=name, process=process))
             self.ui.dock_tasks.show()
@@ -804,8 +808,7 @@ class MainWindow(QMainWindow):
         self.ui.tasks.takeTopLevelItem(index)
 
     def stop_task(self, index: int):
-        self.tasks[index].process.send_signal(signal.CTRL_C_EVENT)
-        self.tasks[index].process.wait(1)
+        self.tasks[index].process.send_signal(signal.CTRL_BREAK_EVENT)
         self.ui.tasks.takeTopLevelItem(index)
         del self.tasks[index]
 
@@ -945,7 +948,7 @@ class MainWindow(QMainWindow):
             action.triggered.connect(lambda: self.clear_task(index.row()))
             menu.addAction(action)
         
-        if item.text(0) == 'Mount':
+        if item.text(0) in ['Mount', 'Serve']:
             action = QAction(self)
             action.setText('Stop')
             action.triggered.connect(lambda: self.stop_task(index.row()))

@@ -148,7 +148,6 @@ class Ui_NewServeWindow(object):
 
 
         self.retranslateUi(NewServeWindow)
-        self.buttonBox.accepted.connect(NewServeWindow.accept)
         self.buttonBox.rejected.connect(NewServeWindow.reject)
 
         QMetaObject.connectSlotsByName(NewServeWindow)
