@@ -148,9 +148,8 @@ class Rclone(CheckRclone):
         else:
             return OUT
 
-    def sync_process(self, subcommand, arg1='', arg2='', arg3='', arg4='', progress=False, _execute=False, communicate=True, *args):
+    def sync_process(self, subcommand, arg1='', arg2='', arg3='', arg4='', _execute=False, communicate=True, *args):
         if subcommand in ['copy', 'move', 'sync', 'bisync', 'copyto', 'copyurl'] and not _execute:
-            progress = True
             P = '-P'
         else:
             P = ''
@@ -229,10 +228,13 @@ class Rclone(CheckRclone):
         return self.sync_process('serve', serve_type, f'"{path}"', args, communicate=False)
 
     async def execute(self, command):
-        return await self.async_process(subcommand=command, arg1='', arg2='', arg3='', arg4='', progress=False, _execute=True)
+        return await self.async_process(subcommand=command, _execute=True)
 
-    def deletefile(self, path: str):
-        return self.sync_process('deletefile', f'"{path}"')
+    async def deletefile(self, path: str):
+        return await self.async_process('deletefile', f'"{path}"')
+    
+    async def purge(self, path: str):
+        return await self.async_process('purge', f'"{path}"')
     
     async def moveto(self, source_path: str, destination_path: str):
         return await self.async_process('moveto', f'"{source_path}"', f'"{destination_path}"')
@@ -243,9 +245,6 @@ class Rclone(CheckRclone):
         loop = asyncio.get_running_loop()
         OUT, ERROR = await loop.run_in_executor(None, p.communicate)
         return 'ERROR :' in ERROR.decode()
-
-    def purge(self, path: str):
-        return self.sync_process('purge', f'"{path}"')
 
     def __getattr__(self, attr):
         def wrapper(*args, **kwargs):

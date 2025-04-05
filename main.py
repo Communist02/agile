@@ -162,7 +162,7 @@ class NewRemoteWindow(QDialog):
                 case 'union':
                     self.ui.tabWidget.setCurrentIndex(9)
             self.ui.lineEdit_name.setText(remote_name[:-1])
-            self.ui.tabWidget.tabBar().setVisible(False)
+            self.ui.tabWidget.tabBar().hide()
 
     def set_view_ftp_tls_option(self, value):
         self.ui.radioButton_ftp_false.setEnabled(value)
@@ -254,13 +254,16 @@ class Task():
         self.operation = operation
         self.source = source
         self.destination = destination
-        self.status = 'Executing'
+        self.status = 'Running'
         self.size = ''
         self.full_size = 0
         self.progress = 0
         self.speed = ''
         self.estimated = ''
         self.process = process
+
+    def done(self):
+        self.status = 'Done'
 
     def set_full_size(self, size: float):
         self.full_size = size
@@ -328,6 +331,7 @@ class MainWindow(QMainWindow):
         self.ui.tree_files.header().setSortIndicator(0, Qt.SortOrder.AscendingOrder)
         self.ui.tree_remotes.header().setSortIndicator(0, Qt.SortOrder.AscendingOrder)
         self.ui.tree_remotes.setIconSize(QSize(28, 28))
+        self.ui.dock_tasks.hide()
 
         self.ui.action_exit.triggered.connect(self.close)
         self.ui.action_new_remote.triggered.connect(
@@ -339,6 +343,10 @@ class MainWindow(QMainWindow):
         self.ui.tree_files.itemDoubleClicked.connect(
             lambda item: self.open_item(item.text(0), item.text(3) == 'inode/directory'))
         self.ui.tasks.itemDoubleClicked.connect(self.open_task_dir)
+
+        self.ui.button_exit_dir.clicked.connect(self.exit_folder)
+        self.ui.button_update.clicked.connect(lambda: asyncio.ensure_future(
+            self.update_dir(self.current_remote, self.remotes_paths.setdefault(self.current_remote, ''))))
 
         self.ui.tree_files.startDrag = self.start_drag
 
@@ -353,10 +361,6 @@ class MainWindow(QMainWindow):
         self.ui.tasks.setContextMenuPolicy(Qt.CustomContextMenu)
         self.ui.tasks.customContextMenuRequested.connect(
             self.show_context_menu_task)
-
-        self.ui.button_exit_dir.clicked.connect(self.exit_folder)
-        self.ui.button_update.clicked.connect(lambda: asyncio.ensure_future(
-            self.update_dir(self.current_remote, self.remotes_paths[self.current_remote])))
 
         self.slider_scale: QSlider = QSlider()
         self.slider_scale.setFixedWidth(128)
@@ -721,7 +725,8 @@ class MainWindow(QMainWindow):
                 process = rc.mount(name, '*')
             else:
                 process = rc.mount(name, '*', '--network-mode')
-            self.tasks.append(Task(operation='Mount', source=name, process=process))
+            self.tasks.append(
+                Task(operation='Mount', source=name, process=process))
             self.ui.dock_tasks.show()
         else:
             mount_path = QFileDialog.getExistingDirectory()
@@ -740,31 +745,44 @@ class MainWindow(QMainWindow):
         mime_data.setUrls([url])
         clipboard.setMimeData(mime_data)
 
-    def delete_file(self, items: list[QTreeWidgetItem]):
+    async def delete_file(self, items: list[QTreeWidgetItem]):
+        destination_remote = self.current_remote
+        destination_path = self.remotes_paths[self.current_remote]
+
+        files = []
+        for item in items:
+            files.append([item.text(0), item.text(3) == 'inode/directory'])
+            item.setHidden(True)
+
         if len(items) == 1:
             question = f'Are you sure you want to delete {items[0].text(0)} ?'
         else:
             question = f'Are you sure you want to delete {len(items)} files ?'
         confirmation = QMessageBox.question(self, 'Delete', question)
         if confirmation == QMessageBox.Yes:
-            for item in items:
-                if self.remotes_paths[self.current_remote] != '':
-                    file_path = f'{self.current_remote}{self.remotes_paths[self.current_remote]}/{item.text(0)}'
+            for file in files:
+                if destination_path != '':
+                    file_path = f'{destination_remote}{destination_path}/{file[0]}'
                 else:
-                    file_path = f'{self.current_remote}{item.text(0)}'
-                if not item.text(3) == 'inode/directory':
-                    rc.deletefile(file_path)
+                    file_path = f'{destination_remote}{file[0]}'
+
+                task = Task(operation='Delete', source=f'{self.current_remote}{file_path}')
+                self.tasks.append(task)
+                self.ui.dock_tasks.show()
+
+                if file[1]:
+                    await rc.purge(file_path)
                 else:
-                    rc.purge(file_path)
-                item.setHidden(True)
-                self.clear_cache(self.current_remote,
-                                 self.remotes_paths[self.current_remote])
+                    await rc.deletefile(file_path)
+                task.done()
+                self.clear_cache(destination_remote, destination_path)
 
     async def update_dir(self, remote_name: str, path: str):
-        self.clear_cache(remote_name, path)
+        if remote_name != '':
+            self.clear_cache(remote_name, path)
 
-        if f'{remote_name}{path}' == f'{self.current_remote}{self.remotes_paths[self.current_remote]}':
-            await self.open_dir(remote_name, path)
+            if f'{remote_name}{path}' == f'{self.current_remote}{self.remotes_paths[self.current_remote]}':
+                await self.open_dir(remote_name, path, update=True)
 
     def paste_file(self):
         clipboard = QApplication.clipboard()
@@ -786,7 +804,7 @@ class MainWindow(QMainWindow):
     async def new_folder(self):
         folder_name, ok = QInputDialog.getText(
             self, "New Folder", "Enter folder name:", text="New Folder")
-        
+
         destination_remote = self.current_remote
         destination_path = self.remotes_paths[self.current_remote]
 
@@ -801,7 +819,7 @@ class MainWindow(QMainWindow):
     async def rename_file(self, file_name: str, is_dir: bool):
         new_file_name, ok = QInputDialog.getText(
             self, "Rename", "Enter new name:", text=file_name)
-        
+
         destination_remote = self.current_remote
         destination_path = self.remotes_paths[self.current_remote]
 
@@ -847,73 +865,75 @@ class MainWindow(QMainWindow):
 
         menu = QMenu()
 
-        if not index.isValid():
-            action = QAction(self)
-            action.setText('Paste')
-            action.setIcon(QIcon.fromTheme('edit-paste'))
-            action.triggered.connect(lambda: self.paste_file())
-            menu.addAction(action)
+        if self.current_remote != '':
+            if not index.isValid():
+                action = QAction(self)
+                action.setText('Paste')
+                action.setIcon(QIcon.fromTheme('edit-paste'))
+                action.triggered.connect(lambda: self.paste_file())
+                menu.addAction(action)
 
-            action = QAction(self)
-            action.setText('New Folder')
-            action.setIcon(QIcon.fromTheme('folder-new'))
-            action.triggered.connect(
-                lambda: asyncio.ensure_future(self.new_folder()))
-            menu.addAction(action)
-        else:
-            item = self.ui.tree_files.itemAt(point)
-            file_name = item.text(0)
-            is_dir = item.text(3) == 'inode/directory'
+                action = QAction(self)
+                action.setText('New Folder')
+                action.setIcon(QIcon.fromTheme('folder-new'))
+                action.triggered.connect(
+                    lambda: asyncio.ensure_future(self.new_folder()))
+                menu.addAction(action)
+            else:
+                item = self.ui.tree_files.itemAt(point)
+                file_name = item.text(0)
+                is_dir = item.text(3) == 'inode/directory'
 
-            action = QAction(self)
-            action.setText('Open')
-            action.setIcon(QIcon.fromTheme('document-open'))
-            action.triggered.connect(lambda: self.open_item(file_name, is_dir))
-            menu.addAction(action)
+                action = QAction(self)
+                action.setText('Open')
+                action.setIcon(QIcon.fromTheme('document-open'))
+                action.triggered.connect(
+                    lambda: self.open_item(file_name, is_dir))
+                menu.addAction(action)
 
-            action = QAction(self)
-            action.setText('Download')
-            action.setIcon(QIcon.fromTheme('emblem-downloads'))
-            action.triggered.connect(
-                lambda: self.download_file(selected))
-            menu.addAction(action)
+                action = QAction(self)
+                action.setText('Download')
+                action.setIcon(QIcon.fromTheme('emblem-downloads'))
+                action.triggered.connect(
+                    lambda: self.download_file(selected))
+                menu.addAction(action)
 
-            menu.addSeparator()
+                menu.addSeparator()
 
-            action = QAction(self)
-            action.setText('Copy')
-            action.setIcon(QIcon.fromTheme('edit-copy'))
-            action.triggered.connect(lambda: self.copy_file(file_name))
-            menu.addAction(action)
+                action = QAction(self)
+                action.setText('Copy')
+                action.setIcon(QIcon.fromTheme('edit-copy'))
+                action.triggered.connect(lambda: self.copy_file(file_name))
+                menu.addAction(action)
 
-            action = QAction(self)
-            action.setText('Paste')
-            action.setIcon(QIcon.fromTheme('edit-paste'))
-            action.triggered.connect(lambda: self.paste_file())
-            menu.addAction(action)
+                action = QAction(self)
+                action.setText('Paste')
+                action.setIcon(QIcon.fromTheme('edit-paste'))
+                action.triggered.connect(lambda: self.paste_file())
+                menu.addAction(action)
 
-            menu.addSeparator()
+                menu.addSeparator()
 
-            action = QAction(self)
-            action.setText('Rename')
-            action.setIcon(QIcon.fromTheme('format-text-italic'))
-            action.triggered.connect(lambda: asyncio.ensure_future(self.rename_file(file_name, is_dir)))
-            menu.addAction(action)
+                action = QAction(self)
+                action.setText('Rename')
+                action.setIcon(QIcon.fromTheme('format-text-italic'))
+                action.triggered.connect(lambda: asyncio.ensure_future(self.rename_file(file_name, is_dir)))
+                menu.addAction(action)
 
-            action = QAction(self)
-            action.setText('Delete')
-            action.setIcon(QIcon.fromTheme('edit-delete'))
-            action.triggered.connect(lambda: self.delete_file(selected))
-            menu.addAction(action)
+                action = QAction(self)
+                action.setText('Delete')
+                action.setIcon(QIcon.fromTheme('edit-delete'))
+                action.triggered.connect(lambda: asyncio.ensure_future(self.delete_file(selected)))
+                menu.addAction(action)
 
-            menu.addSeparator()
+                menu.addSeparator()
 
-            action = QAction(self)
-            action.setText('New Folder')
-            action.setIcon(QIcon.fromTheme('folder-new'))
-            action.triggered.connect(
-                lambda: asyncio.ensure_future(self.new_folder()))
-            menu.addAction(action)
+                action = QAction(self)
+                action.setText('New Folder')
+                action.setIcon(QIcon.fromTheme('folder-new'))
+                action.triggered.connect(
+                    lambda: asyncio.ensure_future(self.new_folder()))
+                menu.addAction(action)
 
         menu.exec(QCursor.pos())
 
@@ -942,7 +962,8 @@ class MainWindow(QMainWindow):
         action = QAction(self)
         action.setText('Mount')
         action.setIcon(QIcon.fromTheme('drive-harddisk'))
-        action.triggered.connect(lambda: self.mount_remote(item.text(0), item.text(1)))
+        action.triggered.connect(
+            lambda: self.mount_remote(item.text(0), item.text(1)))
         menu.addAction(action)
 
         action = QAction(self)
