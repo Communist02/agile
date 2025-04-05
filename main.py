@@ -4,11 +4,10 @@ import signal
 import sys
 import os
 import subprocess
-from multiprocessing import Process
 import types
 
-from PySide6.QtCore import QMimeData, QSize, QUrl, Qt, QTimer
-from PySide6.QtGui import QDrag, QDragEnterEvent, QIcon, QAction, QCursor, QPixmap
+from PySide6.QtCore import QMimeData, QSize, QUrl, Qt, QTimer, QRegularExpression
+from PySide6.QtGui import QDrag, QDragEnterEvent, QIcon, QAction, QCursor, QPixmap, QRegularExpressionValidator
 from PySide6.QtWidgets import QInputDialog, QMainWindow, QApplication, QDialog, QMenu, QFileDialog, QProgressBar, QSizePolicy, QSlider, QTreeWidgetItem, QPushButton, QMessageBox, QLabel
 import PySide6.QtAsyncio as QtAsyncio
 
@@ -86,6 +85,10 @@ class NewRemoteWindow(QDialog):
         self.ui.buttonBox.accepted.connect(
             lambda: self.new_remote(edit_mode, remote_name))
         self.ui.checkBox_ftp_tls.clicked.connect(self.set_view_ftp_tls_option)
+
+        reg_exp = QRegularExpression('[a-zA-ZА-Яа-яЁё0-9_\\.\\-\\+@\\* ]*$')
+        validator = QRegularExpressionValidator(reg_exp)
+        self.ui.lineEdit_name.setValidator(validator)
 
         if edit_mode:
             self.setWindowTitle(f'Edit {remote_name}')
@@ -169,7 +172,7 @@ class NewRemoteWindow(QDialog):
         name = self.ui.lineEdit_name.text().strip()
         if name != '':
             if edit_mode:
-                rc.config('delete', remote_name[:-1])
+                rc.config('delete', f'"{remote_name[:-1]}"')
             match self.ui.tabWidget.currentWidget().objectName():
                 case 'tab_google_drive':
                     rclone.create_remote(
@@ -783,17 +786,37 @@ class MainWindow(QMainWindow):
     async def new_folder(self):
         folder_name, ok = QInputDialog.getText(
             self, "New Folder", "Enter folder name:", text="New Folder")
+        
+        destination_remote = self.current_remote
+        destination_path = self.remotes_paths[self.current_remote]
 
         if ok and folder_name.strip():
-            if self.remotes_paths[self.current_remote] != '':
-                folder_path = f'{self.current_remote}{self.remotes_paths[self.current_remote]}/{folder_name.strip()}'
+            if destination_path != '':
+                folder_path = f'{destination_remote}{destination_path}/{folder_name.strip()}'
             else:
-                folder_path = f'{self.current_remote}{self.remotes_paths[self.current_remote]}{folder_name.strip()}'
+                folder_path = f'{destination_remote}{destination_path}{folder_name.strip()}'
             await rc.mkdir(folder_path)
-            await self.update_dir(self.current_remote, self.remotes_paths[self.current_remote])
+            await self.update_dir(destination_remote, destination_path)
+
+    async def rename_file(self, file_name: str, is_dir: bool):
+        new_file_name, ok = QInputDialog.getText(
+            self, "Rename", "Enter new name:", text=file_name)
+        
+        destination_remote = self.current_remote
+        destination_path = self.remotes_paths[self.current_remote]
+
+        if ok and new_file_name.strip():
+            if destination_path != '':
+                new_file_path = f'{destination_remote}{destination_path}/{new_file_name.strip()}'
+                old_file_path = f'{destination_remote}{destination_path}/{file_name}'
+            else:
+                new_file_path = f'{destination_remote}{destination_path}{new_file_name.strip()}'
+                old_file_path = f'{destination_remote}{destination_path}{file_name}'
+            await rc.moveto(old_file_path, new_file_path)
+            await self.update_dir(destination_remote, destination_path)
 
     def delete_remote(self, name: str):
-        rc.config('delete', name[:-1])
+        rc.config('delete', f'"{name[:-1]}"')
         self.update_remotes()
 
     def edit_remote(self, name: str):
@@ -874,7 +897,7 @@ class MainWindow(QMainWindow):
             action = QAction(self)
             action.setText('Rename')
             action.setIcon(QIcon.fromTheme('format-text-italic'))
-            # action.triggered.connect(lambda: self.download_file(0))
+            action.triggered.connect(lambda: asyncio.ensure_future(self.rename_file(file_name, is_dir)))
             menu.addAction(action)
 
             action = QAction(self)

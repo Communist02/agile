@@ -233,6 +233,9 @@ class Rclone(CheckRclone):
 
     def deletefile(self, path: str):
         return self.sync_process('deletefile', f'"{path}"')
+    
+    async def moveto(self, source_path: str, destination_path: str):
+        return await self.async_process('moveto', f'"{source_path}"', f'"{destination_path}"')
 
     async def is_dir(self, path: str):
         p = subprocess.Popen(f'{self.rclone} deletefile "{path}" --dry-run',
