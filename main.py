@@ -6,9 +6,9 @@ import os
 import subprocess
 import types
 
-from PySide6.QtCore import QMimeData, QSize, QUrl, Qt, QTimer, QRegularExpression
+from PySide6.QtCore import QMimeData, QSettings, QSize, QUrl, Qt, QTimer, QRegularExpression
 from PySide6.QtGui import QDrag, QDragEnterEvent, QIcon, QAction, QCursor, QPixmap, QRegularExpressionValidator
-from PySide6.QtWidgets import QInputDialog, QMainWindow, QApplication, QDialog, QMenu, QFileDialog, QProgressBar, QSizePolicy, QSlider, QTreeWidgetItem, QPushButton, QMessageBox, QLabel
+from PySide6.QtWidgets import QInputDialog, QMainWindow, QApplication, QDialog, QMenu, QFileDialog, QProgressBar, QSizePolicy, QSlider, QStyleFactory, QTreeWidgetItem, QPushButton, QMessageBox, QLabel
 import PySide6.QtAsyncio as QtAsyncio
 
 from rclone_python import rclone
@@ -20,6 +20,7 @@ from watchdog.events import FileSystemEventHandler
 import main_window
 import new_remote_window
 import new_serve_window
+import settings_window
 
 if os.name == 'nt':
     import win32api
@@ -35,6 +36,27 @@ class FileMonitorHandler(FileSystemEventHandler):
     def on_created(self, event):
         if os.path.basename(event.src_path) == os.path.basename(self.target_file):
             window.download_path = event.src_path
+
+
+class SettingsWindow(QDialog):
+    def __init__(self):
+        super(SettingsWindow, self).__init__()
+        self.ui = settings_window.Ui_SettingsWindow()
+        self.ui.setupUi(self)
+
+        self.setWindowIcon(QIcon(f'{os.path.dirname(__file__) + os.sep}favicon.ico'))
+
+        styles = QStyleFactory.keys()
+        for i in range(len(styles)):
+            styles[i] = styles[i].lower()
+        self.ui.comboBox_style.addItems(styles)
+        self.ui.comboBox_style.setCurrentText(app.style().name())
+
+        self.ui.buttonBox.accepted.connect(self.ok)
+
+    def ok(self):
+        app.setStyle(self.ui.comboBox_style.currentText())
+        settings.setValue('style', self.ui.comboBox_style.currentText())
 
 
 class NewServeWindow(QDialog):
@@ -338,6 +360,7 @@ class MainWindow(QMainWindow):
             self.open_new_remote_window)
         self.ui.action_new_serve.triggered.connect(self.open_new_serve_window)
         self.ui.action_list_remotes.triggered.connect(self.open_list_remotes)
+        self.ui.action_settings.triggered.connect(self.open_settings_window)
 
         self.ui.tree_remotes.itemClicked.connect(self.open_remote)
         self.ui.tree_files.itemDoubleClicked.connect(
@@ -550,6 +573,10 @@ class MainWindow(QMainWindow):
 
     def open_list_remotes(self):
         self.ui.tree_remotes.setVisible(not self.ui.tree_remotes.isVisible())
+
+    def open_settings_window(self):
+        open_win = SettingsWindow()
+        open_win.exec()
 
     def clear_cache(self, remote_name: str, path: str):
         if remote_name in self.cache and path in self.cache[remote_name]:
@@ -1010,6 +1037,8 @@ class MainWindow(QMainWindow):
 if __name__ == "__main__":
     app = QApplication()
     window = MainWindow()
+    settings = QSettings('Denis Mazur', 'Cloud Explorer')
+    app.setStyle(settings.value('style', ''))
 
     window.show()
     sys.exit(QtAsyncio.run())

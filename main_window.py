@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'main_window.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.8.3
+## Created by: Qt User Interface Compiler version 6.9.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -49,6 +49,10 @@ class Ui_MainWindow(object):
         self.action_new_serve.setObjectName(u"action_new_serve")
         icon4 = QIcon(QIcon.fromTheme(u"applications-internet"))
         self.action_new_serve.setIcon(icon4)
+        self.action_settings = QAction(MainWindow)
+        self.action_settings.setObjectName(u"action_settings")
+        icon5 = QIcon(QIcon.fromTheme(u"applications-development"))
+        self.action_settings.setIcon(icon5)
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.verticalLayout = QVBoxLayout(self.centralwidget)
@@ -64,8 +68,8 @@ class Ui_MainWindow(object):
         self.pushButton_2.setSizePolicy(sizePolicy)
         self.pushButton_2.setMinimumSize(QSize(34, 34))
         self.pushButton_2.setMaximumSize(QSize(34, 34))
-        icon5 = QIcon(QIcon.fromTheme(u"go-previous"))
-        self.pushButton_2.setIcon(icon5)
+        icon6 = QIcon(QIcon.fromTheme(u"go-previous"))
+        self.pushButton_2.setIcon(icon6)
         self.pushButton_2.setFlat(True)
 
         self.horizontalLayout.addWidget(self.pushButton_2)
@@ -76,8 +80,8 @@ class Ui_MainWindow(object):
         self.pushButton_3.setSizePolicy(sizePolicy)
         self.pushButton_3.setMinimumSize(QSize(34, 34))
         self.pushButton_3.setMaximumSize(QSize(34, 34))
-        icon6 = QIcon(QIcon.fromTheme(u"go-next"))
-        self.pushButton_3.setIcon(icon6)
+        icon7 = QIcon(QIcon.fromTheme(u"go-next"))
+        self.pushButton_3.setIcon(icon7)
         self.pushButton_3.setFlat(True)
 
         self.horizontalLayout.addWidget(self.pushButton_3)
@@ -88,8 +92,8 @@ class Ui_MainWindow(object):
         self.button_exit_dir.setSizePolicy(sizePolicy)
         self.button_exit_dir.setMinimumSize(QSize(34, 34))
         self.button_exit_dir.setMaximumSize(QSize(34, 34))
-        icon7 = QIcon(QIcon.fromTheme(u"go-up"))
-        self.button_exit_dir.setIcon(icon7)
+        icon8 = QIcon(QIcon.fromTheme(u"go-up"))
+        self.button_exit_dir.setIcon(icon8)
         self.button_exit_dir.setFlat(True)
 
         self.horizontalLayout.addWidget(self.button_exit_dir)
@@ -98,8 +102,8 @@ class Ui_MainWindow(object):
         self.button_update.setObjectName(u"button_update")
         self.button_update.setMinimumSize(QSize(34, 34))
         self.button_update.setMaximumSize(QSize(34, 34))
-        icon8 = QIcon(QIcon.fromTheme(u"view-refresh"))
-        self.button_update.setIcon(icon8)
+        icon9 = QIcon(QIcon.fromTheme(u"view-refresh"))
+        self.button_update.setIcon(icon9)
         self.button_update.setFlat(True)
 
         self.horizontalLayout.addWidget(self.button_update)
@@ -199,6 +203,9 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuOther.menuAction())
         self.menuClient.addAction(self.action_new_remote)
         self.menuClient.addAction(self.action_new_serve)
+        self.menuClient.addSeparator()
+        self.menuClient.addAction(self.action_settings)
+        self.menuClient.addSeparator()
         self.menuClient.addAction(self.action_exit)
         self.menuOther.addAction(self.action_about)
         self.menuView.addAction(self.action_list_remotes)
@@ -215,6 +222,7 @@ class Ui_MainWindow(object):
         self.action_about.setText(QCoreApplication.translate("MainWindow", u"About", None))
         self.action_list_remotes.setText(QCoreApplication.translate("MainWindow", u"List remotes", None))
         self.action_new_serve.setText(QCoreApplication.translate("MainWindow", u"New serve", None))
+        self.action_settings.setText(QCoreApplication.translate("MainWindow", u"Settings", None))
         self.pushButton_2.setText("")
         self.pushButton_3.setText("")
         self.button_exit_dir.setText("")

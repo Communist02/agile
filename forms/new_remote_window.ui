@@ -33,7 +33,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>9</number>
      </property>
      <widget class="QWidget" name="tab_ftp">
       <attribute name="title">
@@ -560,12 +560,6 @@
        </item>
        <item>
         <widget class="QScrollArea" name="scrollArea">
-         <property name="frameShape">
-          <enum>QFrame::Shape::NoFrame</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Shadow::Plain</enum>
-         </property>
          <property name="widgetResizable">
           <bool>true</bool>
          </property>
@@ -573,8 +567,8 @@
           <property name="geometry">
            <rect>
             <x>0</x>
-            <y>0</y>
-            <width>203</width>
+            <y>-11</y>
+            <width>584</width>
             <height>338</height>
            </rect>
           </property>
@@ -610,7 +604,7 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>350</width>
+                <width>582</width>
                 <height>144</height>
                </rect>
               </property>

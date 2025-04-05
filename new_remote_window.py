@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'new_remote_window.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.8.3
+## Created by: Qt User Interface Compiler version 6.9.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -405,12 +405,10 @@ class Ui_NewRemoteWindow(object):
 
         self.scrollArea = QScrollArea(self.tab_union)
         self.scrollArea.setObjectName(u"scrollArea")
-        self.scrollArea.setFrameShape(QFrame.Shape.NoFrame)
-        self.scrollArea.setFrameShadow(QFrame.Shadow.Plain)
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 203, 338))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, -11, 584, 338))
         self.verticalLayout_21 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_21.setObjectName(u"verticalLayout_21")
         self.verticalLayout_21.setContentsMargins(0, 0, 0, 0)
@@ -424,7 +422,7 @@ class Ui_NewRemoteWindow(object):
         self.toolBox.setFrameShape(QFrame.Shape.Box)
         self.page = QWidget()
         self.page.setObjectName(u"page")
-        self.page.setGeometry(QRect(0, 0, 350, 144))
+        self.page.setGeometry(QRect(0, 0, 582, 144))
         self.verticalLayout_22 = QVBoxLayout(self.page)
         self.verticalLayout_22.setObjectName(u"verticalLayout_22")
         self.pushButton = QPushButton(self.page)
@@ -562,7 +560,7 @@ class Ui_NewRemoteWindow(object):
         self.retranslateUi(NewRemoteWindow)
         self.buttonBox.rejected.connect(NewRemoteWindow.reject)
 
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(9)
         self.toolBox.setCurrentIndex(0)
 
 

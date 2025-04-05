@@ -288,6 +288,9 @@
     </property>
     <addaction name="action_new_remote"/>
     <addaction name="action_new_serve"/>
+    <addaction name="separator"/>
+    <addaction name="action_settings"/>
+    <addaction name="separator"/>
     <addaction name="action_exit"/>
    </widget>
    <widget class="QMenu" name="menuOther">
@@ -423,6 +426,14 @@
    </property>
    <property name="text">
     <string>New serve</string>
+   </property>
+  </action>
+  <action name="action_settings">
+   <property name="icon">
+    <iconset theme="applications-development"/>
+   </property>
+   <property name="text">
+    <string>Settings</string>
    </property>
   </action>
  </widget>
