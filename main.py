@@ -7,8 +7,8 @@ import subprocess
 import types
 
 from PySide6.QtCore import QMimeData, QSettings, QSize, QUrl, Qt, QTimer, QRegularExpression
-from PySide6.QtGui import QDrag, QDragEnterEvent, QIcon, QAction, QCursor, QPixmap, QRegularExpressionValidator
-from PySide6.QtWidgets import QInputDialog, QMainWindow, QApplication, QDialog, QMenu, QFileDialog, QProgressBar, QSizePolicy, QSlider, QStyleFactory, QTreeWidgetItem, QPushButton, QMessageBox, QLabel
+from PySide6.QtGui import QCloseEvent, QDrag, QDragEnterEvent, QIcon, QAction, QCursor, QPixmap, QRegularExpressionValidator
+from PySide6.QtWidgets import QInputDialog, QMainWindow, QApplication, QDialog, QMenu, QFileDialog, QProgressBar, QSizePolicy, QSlider, QStyleFactory, QSystemTrayIcon, QTreeWidgetItem, QPushButton, QMessageBox, QLabel
 import PySide6.QtAsyncio as QtAsyncio
 
 from rclone_python import rclone
@@ -401,6 +401,17 @@ class MainWindow(QMainWindow):
         self.timer.timeout.connect(self.timer_update)
         self.timer.start()
 
+        self.tray_icon = QSystemTrayIcon(self)
+        self.tray_icon.setIcon(QIcon.fromTheme('folder'))
+        self.tray_icon.setContextMenu(self.context_menu_tray_icon())
+        self.tray_icon.activated.connect(self.tray_icon_activated)
+        self.tray_icon.show()
+
+    def tray_icon_activated(self, reason: QSystemTrayIcon.ActivationReason):
+        match reason:
+            case QSystemTrayIcon.ActivationReason.DoubleClick:
+                self.show()
+
     def timer_update(self):
         for i in range(len(self.tasks)):
             if i >= self.ui.tasks.topLevelItemCount():
@@ -440,10 +451,15 @@ class MainWindow(QMainWindow):
                     item.setText(6, self.tasks[i].speed)
                     item.setText(7, self.tasks[i].estimated)
 
-    def closeEvent(self, event):
-        if self.temp_dir != '':
-            shutil.rmtree(self.temp_dir)
-        return super().closeEvent(event)
+    def closeEvent(self, event: QCloseEvent):
+        if self.isVisible():
+            event.ignore()
+            self.hide()
+        else:
+            if self.temp_dir != '':
+                shutil.rmtree(self.temp_dir)
+            event.accept()
+            os._exit(0)
 
     def set_scale(self, index: int):
         sizes = [16, 22, 32, 48, 64, 80, 96, 112, 128,
@@ -1032,6 +1048,21 @@ class MainWindow(QMainWindow):
             menu.addAction(action)
 
         menu.exec(QCursor.pos())
+
+    def context_menu_tray_icon(self):
+        menu = QMenu()
+
+        def close():
+            self.hide()
+            self.close()
+
+        action = QAction(self)
+        action.setText('Exit')
+        action.setIcon(QIcon.fromTheme('application-exit'))
+        action.triggered.connect(close)
+        menu.addAction(action)
+
+        return menu
 
 
 if __name__ == "__main__":
