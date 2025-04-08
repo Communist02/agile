@@ -341,6 +341,65 @@ class Ui_NewRemoteWindow(object):
         self.verticalLayout_12.addItem(self.verticalSpacer_6)
 
         self.tabWidget.addTab(self.tab_onedrive, "")
+        self.tab_mailru = QWidget()
+        self.tab_mailru.setObjectName(u"tab_mailru")
+        self.verticalLayout_25 = QVBoxLayout(self.tab_mailru)
+        self.verticalLayout_25.setObjectName(u"verticalLayout_25")
+        self.horizontalLayout_3 = QHBoxLayout()
+        self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
+        self.verticalLayout_23 = QVBoxLayout()
+        self.verticalLayout_23.setObjectName(u"verticalLayout_23")
+        self.label_24 = QLabel(self.tab_mailru)
+        self.label_24.setObjectName(u"label_24")
+
+        self.verticalLayout_23.addWidget(self.label_24)
+
+        self.lineEdit_mailru_login = QLineEdit(self.tab_mailru)
+        self.lineEdit_mailru_login.setObjectName(u"lineEdit_mailru_login")
+
+        self.verticalLayout_23.addWidget(self.lineEdit_mailru_login)
+
+
+        self.horizontalLayout_3.addLayout(self.verticalLayout_23)
+
+        self.verticalLayout_24 = QVBoxLayout()
+        self.verticalLayout_24.setObjectName(u"verticalLayout_24")
+        self.label_25 = QLabel(self.tab_mailru)
+        self.label_25.setObjectName(u"label_25")
+
+        self.verticalLayout_24.addWidget(self.label_25)
+
+        self.lineEdit_mailru_password = QLineEdit(self.tab_mailru)
+        self.lineEdit_mailru_password.setObjectName(u"lineEdit_mailru_password")
+        self.lineEdit_mailru_password.setEchoMode(QLineEdit.EchoMode.Password)
+
+        self.verticalLayout_24.addWidget(self.lineEdit_mailru_password)
+
+
+        self.horizontalLayout_3.addLayout(self.verticalLayout_24)
+
+
+        self.verticalLayout_25.addLayout(self.horizontalLayout_3)
+
+        self.label_26 = QLabel(self.tab_mailru)
+        self.label_26.setObjectName(u"label_26")
+        self.label_26.setWordWrap(True)
+
+        self.verticalLayout_25.addWidget(self.label_26)
+
+        self.label_27 = QLabel(self.tab_mailru)
+        self.label_27.setObjectName(u"label_27")
+        self.label_27.setTextFormat(Qt.TextFormat.RichText)
+        self.label_27.setOpenExternalLinks(True)
+        self.label_27.setTextInteractionFlags(Qt.TextInteractionFlag.TextBrowserInteraction)
+
+        self.verticalLayout_25.addWidget(self.label_27)
+
+        self.verticalSpacer_10 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+
+        self.verticalLayout_25.addItem(self.verticalSpacer_10)
+
+        self.tabWidget.addTab(self.tab_mailru, "")
         self.tab_http = QWidget()
         self.tab_http.setObjectName(u"tab_http")
         self.verticalLayout_2 = QVBoxLayout(self.tab_http)
@@ -408,7 +467,7 @@ class Ui_NewRemoteWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, -11, 584, 338))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 203, 338))
         self.verticalLayout_21 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_21.setObjectName(u"verticalLayout_21")
         self.verticalLayout_21.setContentsMargins(0, 0, 0, 0)
@@ -422,7 +481,7 @@ class Ui_NewRemoteWindow(object):
         self.toolBox.setFrameShape(QFrame.Shape.Box)
         self.page = QWidget()
         self.page.setObjectName(u"page")
-        self.page.setGeometry(QRect(0, 0, 582, 144))
+        self.page.setGeometry(QRect(0, 0, 350, 144))
         self.verticalLayout_22 = QVBoxLayout(self.page)
         self.verticalLayout_22.setObjectName(u"verticalLayout_22")
         self.pushButton = QPushButton(self.page)
@@ -560,7 +619,7 @@ class Ui_NewRemoteWindow(object):
         self.retranslateUi(NewRemoteWindow)
         self.buttonBox.rejected.connect(NewRemoteWindow.reject)
 
-        self.tabWidget.setCurrentIndex(9)
+        self.tabWidget.setCurrentIndex(0)
         self.toolBox.setCurrentIndex(0)
 
 
@@ -598,12 +657,17 @@ class Ui_NewRemoteWindow(object):
         self.comboBox_webdav_vendor.setItemText(6, QCoreApplication.translate("NewRemoteWindow", u"rclone WebDAV server to serve a remote over HTTP via the WebDAV protocol", None))
 
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_webdav), QCoreApplication.translate("NewRemoteWindow", u"WebDAV", None))
-        self.label_3.setText(QCoreApplication.translate("NewRemoteWindow", u"The browser will open", None))
+        self.label_3.setText(QCoreApplication.translate("NewRemoteWindow", u"By pressing the OK button your browser will open and you will be needed to authenticate in Google Drive", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_google_drive), QCoreApplication.translate("NewRemoteWindow", u"Google Drive", None))
-        self.label_6.setText(QCoreApplication.translate("NewRemoteWindow", u"The browser will open", None))
+        self.label_6.setText(QCoreApplication.translate("NewRemoteWindow", u"By pressing the OK button your browser will open and you will be needed to authenticate in Yandex Disk", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_yandex_disk), QCoreApplication.translate("NewRemoteWindow", u"Yandex Disk", None))
-        self.label_11.setText(QCoreApplication.translate("NewRemoteWindow", u"The browser will open", None))
+        self.label_11.setText(QCoreApplication.translate("NewRemoteWindow", u"By pressing the OK button your browser will open and you will be needed to authenticate in Microsoft OneDrive", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_onedrive), QCoreApplication.translate("NewRemoteWindow", u"Microsoft OneDrive", None))
+        self.label_24.setText(QCoreApplication.translate("NewRemoteWindow", u"Login", None))
+        self.label_25.setText(QCoreApplication.translate("NewRemoteWindow", u"Password", None))
+        self.label_26.setText(QCoreApplication.translate("NewRemoteWindow", u"To add Mail.ru you will need to generate a password for external applications in the Mail.ru web control panel. Select \"Full access to Mail. Cloud, Calendar (All Protocols)\". You can generate the password in this url", None))
+        self.label_27.setText(QCoreApplication.translate("NewRemoteWindow", u"<a href=\"https://id.mail.ru/security\">https://id.mail.ru/security</a>", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_mailru), QCoreApplication.translate("NewRemoteWindow", u"Mail.ru Cloud", None))
         self.label.setText(QCoreApplication.translate("NewRemoteWindow", u"URL", None))
         self.lineEdit_url.setText(QCoreApplication.translate("NewRemoteWindow", u"http://127.0.0.1:8000/", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_http), QCoreApplication.translate("NewRemoteWindow", u"HTTP", None))

@@ -6,9 +6,10 @@ import os
 import subprocess
 import types
 
-from PySide6.QtCore import QMimeData, QSettings, QSize, QUrl, Qt, QTimer, QRegularExpression
+from PySide6.QtNetwork import QLocalServer, QLocalSocket
+from PySide6.QtCore import QByteArray, QMimeData, QSettings, QSize, QUrl, Qt, QTimer, QRegularExpression
 from PySide6.QtGui import QCloseEvent, QDrag, QDragEnterEvent, QIcon, QAction, QCursor, QPixmap, QRegularExpressionValidator
-from PySide6.QtWidgets import QInputDialog, QMainWindow, QApplication, QDialog, QMenu, QFileDialog, QProgressBar, QSizePolicy, QSlider, QStyleFactory, QSystemTrayIcon, QTreeWidgetItem, QPushButton, QMessageBox, QLabel
+from PySide6.QtWidgets import QInputDialog, QMainWindow, QApplication, QDialog, QMenu, QFileDialog, QProgressBar, QSizePolicy, QSlider, QStyleFactory, QSystemTrayIcon, QTreeWidgetItem, QPushButton, QMessageBox, QLabel, QWidget
 import PySide6.QtAsyncio as QtAsyncio
 
 from rclone_python import rclone
@@ -23,6 +24,7 @@ import new_serve_window
 import settings_window
 
 if os.name == 'nt':
+    import winreg
     import win32api
 
 rc = Rclone()
@@ -44,7 +46,8 @@ class SettingsWindow(QDialog):
         self.ui = settings_window.Ui_SettingsWindow()
         self.ui.setupUi(self)
 
-        self.setWindowIcon(QIcon(f'{os.path.dirname(__file__) + os.sep}favicon.ico'))
+        self.setWindowIcon(
+            QIcon(f'{os.path.dirname(__file__) + os.sep}favicon.ico'))
 
         styles = QStyleFactory.keys()
         for i in range(len(styles)):
@@ -118,11 +121,14 @@ class NewRemoteWindow(QDialog):
             type = config[remote_name[:-1]]['type']
             match type:
                 case 'drive':
-                    self.ui.tabWidget.setCurrentIndex(3)
+                    self.ui.tabWidget.setCurrentIndex(self.ui.tabWidget.indexOf(
+                        self.ui.tabWidget.findChild(QWidget, 'tab_google_drive')))
                 case 'yandex':
-                    self.ui.tabWidget.setCurrentIndex(4)
+                    self.ui.tabWidget.setCurrentIndex(self.ui.tabWidget.indexOf(
+                        self.ui.tabWidget.findChild(QWidget, 'tab_yandex_disk')))
                 case 'ftp':
-                    self.ui.tabWidget.setCurrentIndex(0)
+                    self.ui.tabWidget.setCurrentIndex(self.ui.tabWidget.indexOf(
+                        self.ui.tabWidget.findChild(QWidget, 'tab_ftp')))
                     host = config[remote_name[:-1]]['host']
                     port = config[remote_name[:-1]]['port']
                     user = config[remote_name[:-1]]['user']
@@ -138,7 +144,8 @@ class NewRemoteWindow(QDialog):
                     self.ui.checkBox_ftp_tls.setChecked(tls)
                     self.ui.radioButton_ftp_true.setChecked(explicit_tls)
                 case 'webdav':
-                    self.ui.tabWidget.setCurrentIndex(2)
+                    self.ui.tabWidget.setCurrentIndex(self.ui.tabWidget.indexOf(
+                        self.ui.tabWidget.findChild(QWidget, 'tab_webdav')))
                     url = config[remote_name[:-1]]['url']
                     user = config[remote_name[:-1]]['user']
                     vendor = config[remote_name[:-1]
@@ -162,15 +169,24 @@ class NewRemoteWindow(QDialog):
                             vendor = 0
                     self.ui.comboBox_webdav_vendor.setCurrentIndex(vendor)
                 case 'http':
-                    self.ui.tabWidget.setCurrentIndex(6)
+                    self.ui.tabWidget.setCurrentIndex(self.ui.tabWidget.indexOf(
+                        self.ui.tabWidget.findChild(QWidget, 'tab_http')))
                     url = config[remote_name[:-1]]['url']
                     self.ui.lineEdit_url.setText(url)
                 case 'local':
-                    self.ui.tabWidget.setCurrentIndex(7)
+                    self.ui.tabWidget.setCurrentIndex(self.ui.tabWidget.indexOf(
+                        self.ui.tabWidget.findChild(QWidget, 'tab_local')))
                 case 'onedrive':
-                    self.ui.tabWidget.setCurrentIndex(5)
+                    self.ui.tabWidget.setCurrentIndex(self.ui.tabWidget.indexOf(
+                        self.ui.tabWidget.findChild(QWidget, 'tab_onedrive')))
+                case 'mailru':
+                    self.ui.tabWidget.setCurrentIndex(self.ui.tabWidget.indexOf(
+                        self.ui.tabWidget.findChild(QWidget, 'tab_mailru')))
+                    user = config[remote_name[:-1]]['user']
+                    self.ui.lineEdit_mailru_login.setText(user)
                 case 'sftp':
-                    self.ui.tabWidget.setCurrentIndex(1)
+                    self.ui.tabWidget.setCurrentIndex(self.ui.tabWidget.indexOf(
+                        self.ui.tabWidget.findChild(QWidget, 'tab_sftp')))
                     host = config[remote_name[:-1]]['host']
                     port = config[remote_name[:-1]]['port']
                     user = config[remote_name[:-1]]['user']
@@ -178,11 +194,13 @@ class NewRemoteWindow(QDialog):
                     self.ui.lineEdit_sftp_port.setText(port)
                     self.ui.lineEdit_sftp_login.setText(user)
                 case 'alias':
-                    self.ui.tabWidget.setCurrentIndex(8)
+                    self.ui.tabWidget.setCurrentIndex(self.ui.tabWidget.indexOf(
+                        self.ui.tabWidget.findChild(QWidget, 'tab_alias')))
                     remote = config[remote_name[:-1]]['remote']
                     self.ui.lineEdit_alias_path.setText(remote)
                 case 'union':
-                    self.ui.tabWidget.setCurrentIndex(9)
+                    self.ui.tabWidget.setCurrentIndex(self.ui.tabWidget.indexOf(
+                        self.ui.tabWidget.findChild(QWidget, 'tab_union')))
             self.ui.lineEdit_name.setText(remote_name[:-1])
             self.ui.tabWidget.tabBar().hide()
 
@@ -248,6 +266,13 @@ class NewRemoteWindow(QDialog):
                 case 'tab_onedrive':
                     rclone.create_remote(
                         name, remote_type=remote_types.RemoteTypes.onedrive)
+                    self.close()
+                case 'tab_mailru':
+                    rclone.create_remote(name, remote_type=remote_types.RemoteTypes.mailru,
+                                         user=self.ui.lineEdit_mailru_login.text().strip())
+                    if self.ui.lineEdit_mailru_password.text().strip() != '':
+                        rc.config('password', name, 'pass',
+                                  self.ui.lineEdit_mailru_password.text().strip())
                     self.close()
                 case 'tab_sftp':
                     rclone.create_remote(name,
@@ -411,6 +436,7 @@ class MainWindow(QMainWindow):
         match reason:
             case QSystemTrayIcon.ActivationReason.DoubleClick:
                 self.show()
+                self.activateWindow()
 
     def timer_update(self):
         for i in range(len(self.tasks)):
@@ -462,7 +488,7 @@ class MainWindow(QMainWindow):
             os._exit(0)
 
     def set_scale(self, index: int):
-        sizes = [16, 22, 32, 48, 64, 80, 96, 112, 128,
+        sizes = [18, 22, 32, 48, 64, 80, 96, 112, 128,
                  144, 160, 176, 192, 208, 224, 240, 256]
         sizes_icon = [16, 16, 22, 34, 48, 64, 80, 96,
                       112, 128, 144, 160, 176, 192, 208, 224, 240]
@@ -809,7 +835,8 @@ class MainWindow(QMainWindow):
                 else:
                     file_path = f'{destination_remote}{file[0]}'
 
-                task = Task(operation='Delete', source=f'{self.current_remote}{file_path}')
+                task = Task(operation='Delete',
+                            source=f'{self.current_remote}{file_path}')
                 self.tasks.append(task)
                 self.ui.dock_tasks.show()
 
@@ -902,6 +929,18 @@ class MainWindow(QMainWindow):
         self.ui.tasks.takeTopLevelItem(index)
         del self.tasks[index]
 
+    def add_to_autostart(app_name, executable_path):
+        if os.name == 'nt':
+            key = winreg.HKEY_CURRENT_USER
+            reg_path = r'Software\\Microsoft\\Windows\\CurrentVersion\\Run'
+
+            try:
+                with winreg.OpenKey(key, reg_path, 0, winreg.KEY_SET_VALUE) as reg_key:
+                    winreg.SetValueEx(reg_key, app_name, 0,
+                                      winreg.REG_SZ, executable_path)
+            except Exception as e:
+                print(f'Error: {e}')
+
     def show_context_menu_tree(self, point):
         index = self.ui.tree_files.indexAt(point)
         selected = self.ui.tree_files.selectedItems()
@@ -960,13 +999,15 @@ class MainWindow(QMainWindow):
                 action = QAction(self)
                 action.setText('Rename')
                 action.setIcon(QIcon.fromTheme('format-text-italic'))
-                action.triggered.connect(lambda: asyncio.ensure_future(self.rename_file(file_name, is_dir)))
+                action.triggered.connect(lambda: asyncio.ensure_future(
+                    self.rename_file(file_name, is_dir)))
                 menu.addAction(action)
 
                 action = QAction(self)
                 action.setText('Delete')
                 action.setIcon(QIcon.fromTheme('edit-delete'))
-                action.triggered.connect(lambda: asyncio.ensure_future(self.delete_file(selected)))
+                action.triggered.connect(
+                    lambda: asyncio.ensure_future(self.delete_file(selected)))
                 menu.addAction(action)
 
                 menu.addSeparator()
@@ -1065,11 +1106,51 @@ class MainWindow(QMainWindow):
         return menu
 
 
-if __name__ == "__main__":
+def is_already_running(server_name: str):
+    socket = QLocalSocket()
+    socket.connectToServer(server_name)
+    if socket.waitForConnected(100):
+        socket.write(b'ACTIVATE')
+        socket.flush()
+        socket.disconnectFromServer()
+        return True
+    return False
+
+
+def start_server(window: MainWindow, server_name: str):
+    server = QLocalServer()
+    try:
+        server.removeServer(server_name)  # На случай краша предыдущего запуска
+    except:
+        pass
+    server.listen(server_name)
+
+    def on_new_connection():
+        client = server.nextPendingConnection()
+        if client:
+            client.waitForReadyRead(100)
+            window.show()
+            window.activateWindow()
+            client.disconnectFromServer()
+
+    server.newConnection.connect(on_new_connection)
+
+
+if __name__ == '__main__':
     app = QApplication()
+
+    server_name = 'Cloud Explorer'
+    server = QLocalServer()
+
+    if is_already_running(server_name):
+        print('The application has already been launched')
+        sys.exit(0)
+
     window = MainWindow()
     settings = QSettings('Denis Mazur', 'Cloud Explorer')
     app.setStyle(settings.value('style', ''))
-
     window.show()
+
+    start_server(window, server_name)
+
     sys.exit(QtAsyncio.run())
