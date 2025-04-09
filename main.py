@@ -485,7 +485,10 @@ class MainWindow(QMainWindow):
             if self.temp_dir != '':
                 shutil.rmtree(self.temp_dir)
             event.accept()
-            os._exit(0)
+            if os.name == 'nt':
+                os._exit(0)
+            else:
+                sys.exit(0)
 
     def set_scale(self, index: int):
         sizes = [18, 22, 32, 48, 64, 80, 96, 112, 128,
@@ -727,7 +730,10 @@ class MainWindow(QMainWindow):
                         else:
                             type_file = file['type'].split(
                                 ';')[0].replace('/', '-')
-                            item.setIcon(0, QIcon.fromTheme(type_file))
+                            if QIcon.fromTheme(type_file):
+                                item.setIcon(0, QIcon.fromTheme(type_file))
+                            else:
+                                item.setIcon(0, QIcon.fromTheme('text-plain'))
                     self.ui.tree_files.addTopLevelItem(item)
 
             if not update:
