@@ -423,7 +423,8 @@ class MainWindow(QMainWindow):
         self.slider_scale.valueChanged.connect(self.set_scale)
 
         self.layout_free_size = QLabel('', statusbar_widget)
-        h_layout.addItem(QSpacerItem(0, 0, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
+        h_layout.addItem(QSpacerItem(
+            0, 0, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
         h_layout.addWidget(self.layout_free_size)
         h_layout.addWidget(QLabel('Scale:', statusbar_widget))
         h_layout.addWidget(self.slider_scale)
@@ -443,7 +444,7 @@ class MainWindow(QMainWindow):
 
     def tray_icon_activated(self, reason: QSystemTrayIcon.ActivationReason):
         match reason:
-            case QSystemTrayIcon.ActivationReason.DoubleClick:
+            case QSystemTrayIcon.ActivationReason.Trigger:
                 self.show()
                 self.activateWindow()
 
@@ -512,14 +513,15 @@ class MainWindow(QMainWindow):
             if free >= 1024:
                 free = round(float(free) / 1024, 2)
                 index_free += 1
-        
+
         index_total = 0
         for _ in range(4):
             if total >= 1024:
                 total = round(float(total) / 1024, 2)
                 index_total += 1
 
-        self.layout_free_size.setText(f'Total: {total} {sizes[index_total]} | Free: {free} {sizes[index_free]}    ')
+        self.layout_free_size.setText(
+            f'Total: {total} {sizes[index_total]} | Free: {free} {sizes[index_free]}    ')
 
     def set_scale(self, index: int):
         sizes = [18, 22, 32, 48, 64, 80, 96, 112, 128,
@@ -1131,9 +1133,25 @@ class MainWindow(QMainWindow):
     def context_menu_tray_icon(self):
         menu = QMenu()
 
+        def open():
+            self.show()
+            self.activateWindow()
+
         def close():
             self.hide()
             self.close()
+
+        action = QAction(self)
+        action.setText('Open')
+        action.triggered.connect(open)
+        menu.addAction(action)
+
+        menu.addSeparator()
+        menu.addAction(self.ui.action_new_remote)
+        menu.addAction(self.ui.action_new_serve)
+        menu.addSeparator()
+        menu.addAction(self.ui.action_settings)
+        menu.addSeparator()
 
         action = QAction(self)
         action.setText('Exit')
@@ -1176,6 +1194,7 @@ def start_server(window: MainWindow, server_name: str):
 
 if __name__ == '__main__':
     app = QApplication()
+    app.setQuitOnLastWindowClosed(False)
 
     server_name = 'Cloud Explorer'
     server = QLocalServer()
