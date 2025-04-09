@@ -137,7 +137,7 @@ class Rclone(CheckRclone):
             total_size = int(OUT.split('Total size: ')[1].split(
                 ' (')[1].split(')')[0].split(' Byte')[0])
             return {'total_objects': total_objects, 'total_size': total_size}
-        elif subcommand == 'lsjson' or subcommand == 'config' and arg1 == 'dump':
+        elif subcommand == 'lsjson' or subcommand == 'config' and arg1 == 'dump' or subcommand == 'about':
             return json.loads(OUT)
         elif subcommand == 'lsf':
             return OUT.rstrip().split('\n')
@@ -175,7 +175,7 @@ class Rclone(CheckRclone):
                 total_size = int(OUT.split('Total size: ')[1].split(
                     ' (')[1].split(')')[0].split(' Byte')[0])
                 return {'total_objects': total_objects, 'total_size': total_size}
-            elif subcommand == 'lsjson' or subcommand == 'config' and arg1 == 'dump':
+            elif subcommand == 'lsjson' or subcommand == 'config' and arg1 == 'dump' or subcommand == 'about':
                 return json.loads(OUT)
             elif subcommand == 'lsf':
                 return OUT.rstrip().split('\n')
@@ -210,8 +210,8 @@ class Rclone(CheckRclone):
         else:
             return self.sync_process('listremotes')
 
-    def config(self, command: str, arg1: str = '', arg2: str = ''):
-        return self.sync_process('config', command, arg1, arg2)
+    def config(self, command: str, arg1: str = '', arg2: str = '', arg3: str = ''):
+        return self.sync_process('config', command, arg1, arg2, arg3)
 
     def mount(self, remote_name: str, arg1: str = '', arg2: str = ''):
         return self.sync_process('mount', f'"{remote_name}"', arg1, arg2, communicate=False)
@@ -238,6 +238,9 @@ class Rclone(CheckRclone):
     
     async def moveto(self, source_path: str, destination_path: str):
         return await self.async_process('moveto', f'"{source_path}"', f'"{destination_path}"')
+    
+    async def about(self, remote_name: str):
+        return await self.async_process('about', f'"{remote_name}"', '--json')
 
     async def is_dir(self, path: str):
         p = subprocess.Popen(f'{self.rclone} deletefile "{path}" --dry-run',

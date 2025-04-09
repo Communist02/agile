@@ -7,9 +7,9 @@ import subprocess
 import types
 
 from PySide6.QtNetwork import QLocalServer, QLocalSocket
-from PySide6.QtCore import QByteArray, QMimeData, QSettings, QSize, QUrl, Qt, QTimer, QRegularExpression
+from PySide6.QtCore import QMimeData, QRect, QSettings, QSize, QUrl, Qt, QTimer, QRegularExpression
 from PySide6.QtGui import QCloseEvent, QDrag, QDragEnterEvent, QIcon, QAction, QCursor, QPixmap, QRegularExpressionValidator
-from PySide6.QtWidgets import QInputDialog, QMainWindow, QApplication, QDialog, QMenu, QFileDialog, QProgressBar, QSizePolicy, QSlider, QStyleFactory, QSystemTrayIcon, QTreeWidgetItem, QPushButton, QMessageBox, QLabel, QWidget
+from PySide6.QtWidgets import QHBoxLayout, QInputDialog, QMainWindow, QApplication, QDialog, QMenu, QFileDialog, QProgressBar, QSizePolicy, QSlider, QStyleFactory, QSystemTrayIcon, QTreeWidgetItem, QPushButton, QMessageBox, QLabel, QWidget, QSpacerItem
 import PySide6.QtAsyncio as QtAsyncio
 
 from rclone_python import rclone
@@ -289,7 +289,7 @@ class NewRemoteWindow(QDialog):
                     rclone.create_remote(
                         name, remote_type='alias', remote=self.ui.lineEdit_alias_path.text().strip())
                     self.close()
-                case 'tab_alias':
+                case 'tab_union':
                     self.close()
         else:
             QMessageBox.warning(self, 'Enter name',
@@ -380,7 +380,11 @@ class MainWindow(QMainWindow):
         self.ui.tree_remotes.setIconSize(QSize(28, 28))
         self.ui.dock_tasks.hide()
 
-        self.ui.action_exit.triggered.connect(self.close)
+        def close():
+            self.hide()
+            self.close()
+
+        self.ui.action_exit.triggered.connect(close)
         self.ui.action_new_remote.triggered.connect(
             self.open_new_remote_window)
         self.ui.action_new_serve.triggered.connect(self.open_new_serve_window)
@@ -398,19 +402,18 @@ class MainWindow(QMainWindow):
 
         self.ui.tree_files.startDrag = self.start_drag
 
-        self.ui.tree_files.setContextMenuPolicy(Qt.CustomContextMenu)
         self.ui.tree_files.customContextMenuRequested.connect(
             self.show_context_menu_tree)
-
-        self.ui.tree_remotes.setContextMenuPolicy(Qt.CustomContextMenu)
         self.ui.tree_remotes.customContextMenuRequested.connect(
             self.show_context_menu_remote)
-
-        self.ui.tasks.setContextMenuPolicy(Qt.CustomContextMenu)
         self.ui.tasks.customContextMenuRequested.connect(
             self.show_context_menu_task)
 
-        self.slider_scale: QSlider = QSlider()
+        statusbar_widget = QWidget()
+        h_layout = QHBoxLayout(statusbar_widget)
+        h_layout.setContentsMargins(0, 0, 9, 0)
+
+        self.slider_scale: QSlider = QSlider(statusbar_widget)
         self.slider_scale.setFixedWidth(128)
         self.slider_scale.setMinimum(0)
         self.slider_scale.setMaximum(16)
@@ -418,7 +421,13 @@ class MainWindow(QMainWindow):
         self.set_scale(2)
         self.slider_scale.setOrientation(Qt.Orientation.Horizontal)
         self.slider_scale.valueChanged.connect(self.set_scale)
-        self.ui.statusbar.addPermanentWidget(self.slider_scale)
+
+        self.layout_free_size = QLabel('', statusbar_widget)
+        h_layout.addItem(QSpacerItem(0, 0, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
+        h_layout.addWidget(self.layout_free_size)
+        h_layout.addWidget(QLabel('Scale:', statusbar_widget))
+        h_layout.addWidget(self.slider_scale)
+        self.ui.statusbar.addPermanentWidget(statusbar_widget)
 
         self.update_remotes()
 
@@ -489,6 +498,28 @@ class MainWindow(QMainWindow):
                 os._exit(0)
             else:
                 sys.exit(0)
+
+    async def update_free_size(self, remote_name: str, clear: bool = False):
+        if clear:
+            self.layout_free_size.setText('')
+        size = await rc.about(remote_name)
+        free = size['free']
+        total = size['total']
+
+        sizes = ['B', 'KB', 'MB', 'GB', 'TB']
+        index_free = 0
+        for _ in range(4):
+            if free >= 1024:
+                free = round(float(free) / 1024, 2)
+                index_free += 1
+        
+        index_total = 0
+        for _ in range(4):
+            if total >= 1024:
+                total = round(float(total) / 1024, 2)
+                index_total += 1
+
+        self.layout_free_size.setText(f'Total: {total} {sizes[index_total]} | Free: {free} {sizes[index_free]}    ')
 
     def set_scale(self, index: int):
         sizes = [18, 22, 32, 48, 64, 80, 96, 112, 128,
@@ -743,6 +774,7 @@ class MainWindow(QMainWindow):
         for i in range(self.ui.path_list.count()):
             self.ui.path_list.itemAt(i).widget().deleteLater()
         asyncio.ensure_future(self.open_dir(item.text(0)))
+        asyncio.ensure_future(self.update_free_size(item.text(0), True))
 
     async def open_file(self, file_path: str, file_name: str):
         if self.temp_dir == '':

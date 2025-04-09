@@ -57,6 +57,7 @@ class Ui_MainWindow(object):
         self.centralwidget.setObjectName(u"centralwidget")
         self.verticalLayout = QVBoxLayout(self.centralwidget)
         self.verticalLayout.setObjectName(u"verticalLayout")
+        self.verticalLayout.setContentsMargins(-1, -1, -1, 0)
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.pushButton_2 = QPushButton(self.centralwidget)
@@ -147,6 +148,7 @@ class Ui_MainWindow(object):
         sizePolicy2.setVerticalStretch(0)
         sizePolicy2.setHeightForWidth(self.tree_remotes.sizePolicy().hasHeightForWidth())
         self.tree_remotes.setSizePolicy(sizePolicy2)
+        self.tree_remotes.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.tree_remotes.setRootIsDecorated(False)
         self.tree_remotes.setSortingEnabled(True)
 
@@ -154,6 +156,7 @@ class Ui_MainWindow(object):
 
         self.tree_files = QTreeWidget(self.centralwidget)
         self.tree_files.setObjectName(u"tree_files")
+        self.tree_files.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.tree_files.setDragEnabled(True)
         self.tree_files.setDragDropMode(QAbstractItemView.DragDropMode.DragOnly)
         self.tree_files.setDefaultDropAction(Qt.DropAction.CopyAction)
@@ -191,6 +194,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.tasks = QTreeWidget(self.dockWidgetContents)
         self.tasks.setObjectName(u"tasks")
+        self.tasks.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.tasks.setRootIsDecorated(False)
 
         self.verticalLayout_2.addWidget(self.tasks)
