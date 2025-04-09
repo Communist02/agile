@@ -612,7 +612,7 @@ class MainWindow(QMainWindow):
         for remote in remotes:
             item = QTreeWidgetItem([remote['name'] + ':', remote['type']])
             item.setSizeHint(0, QSize(0, 32))
-            if QApplication.styleHints().colorScheme() == Qt.ColorScheme.Dark:
+            if QApplication.styleHints().colorScheme() == Qt.ColorScheme.Dark and QApplication.style().name() != 'windowsvista':
                 inv = '_inv'
             else:
                 inv = ''
@@ -1195,6 +1195,8 @@ def start_server(window: MainWindow, server_name: str):
 if __name__ == '__main__':
     app = QApplication()
     app.setQuitOnLastWindowClosed(False)
+    settings = QSettings('Denis Mazur', 'Cloud Explorer')
+    app.setStyle(settings.value('style', ''))
 
     server_name = 'Cloud Explorer'
     server = QLocalServer()
@@ -1204,8 +1206,6 @@ if __name__ == '__main__':
         sys.exit(0)
 
     window = MainWindow()
-    settings = QSettings('Denis Mazur', 'Cloud Explorer')
-    app.setStyle(settings.value('style', ''))
     window.show()
 
     start_server(window, server_name)
