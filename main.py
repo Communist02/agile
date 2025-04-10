@@ -37,8 +37,18 @@ class FileMonitorHandler(FileSystemEventHandler):
 
     def on_created(self, event):
         if os.path.basename(event.src_path) == os.path.basename(self.target_file):
-            os.remove(event.src_path)
-            window.download_file(window.copy_files, event.src_path[:-1 * len(os.path.basename(self.target_file))], True)
+            window.download_path = event.src_path[:-
+                                                  len(os.path.basename(self.target_file)) - 1]
+            while True:
+                try:
+                    os.remove(event.src_path)
+                    break
+                except PermissionError:
+                    pass
+                except FileNotFoundError:
+                    print(
+                        f"Файл {event.src_path} уже удалён или не существует.")
+                    break
 
 
 class SettingsWindow(QDialog):
@@ -453,6 +463,10 @@ class MainWindow(QMainWindow):
                 self.activateWindow()
 
     def timer_update(self):
+        if self.download_path != '':
+            window.download_file(window.copy_files, self.download_path, True)
+            self.download_path = ''
+
         for i in range(len(self.tasks)):
             if i >= self.ui.tasks.topLevelItemCount():
                 item = QTreeWidgetItem()
@@ -468,6 +482,8 @@ class MainWindow(QMainWindow):
                     case 'Serve':
                         item.setIcon(0, QIcon.fromTheme(
                             'applications-internet'))
+                    case 'Delete':
+                        item.setIcon(0, QIcon.fromTheme('edit-delete'))
                 self.ui.tasks.addTopLevelItem(item)
             else:
                 item = self.ui.tasks.topLevelItem(i)
@@ -510,9 +526,24 @@ class MainWindow(QMainWindow):
         open(self.temp_dir + '/.cloud_explorer_file_temp', 'a').close()
 
         handler = FileMonitorHandler('.cloud_explorer_file_temp')
-        observer = Observer()
-        observer.schedule(handler, os.environ['HOME'], recursive=True)
-        observer.start()
+
+        if os.name == 'nt':
+            observers = []
+            drives = win32api.GetLogicalDriveStrings()
+            drives = drives.replace('\x00', '').split('\\')[:-1]
+
+            for disk in drives:
+                observer = Observer()
+                observer.schedule(handler, disk + '\\', recursive=True)
+                try:
+                    observer.start()
+                    observers.append(observer)
+                except PermissionError:
+                    pass
+        else:
+            observer = Observer()
+            observer.schedule(handler, os.environ['HOME'], recursive=True)
+            observer.start()
 
     async def update_free_size(self, remote_name: str, clear: bool = False):
         if clear:
@@ -585,40 +616,50 @@ class MainWindow(QMainWindow):
         drag: QDrag = QDrag(self)
         drag.setMimeData(mime_data)
 
-        handler = FileMonitorHandler('.cloud_explorer_file_temp')
-
-        if os.name == 'nt':
-            observers = []
-            drives = win32api.GetLogicalDriveStrings()
-            drives = drives.replace('\x00', '').split('\\')[:-1]
-
-            for disk in drives:
-                observer = Observer()
-                observer.schedule(handler, disk + '\\', recursive=True)
-                try:
-                    observer.start()
-                    observers.append(observer)
-                except PermissionError:
-                    pass
+        if self.remotes_paths[self.current_remote] != '':
+            dir_path = f'{self.current_remote}{self.remotes_paths[self.current_remote]}/'
         else:
-            observer = Observer()
-            observer.schedule(handler, os.environ['HOME'], recursive=True)
-            observer.start()
+            dir_path = f'{self.current_remote}'
+
+        self.copy_files = []
+        for item in self.ui.tree_files.selectedItems():
+            self.copy_files.append(
+                [dir_path + item.text(0), item.text(3) == 'inode/directory'])
+
+        # handler = FileMonitorHandler('.cloud_explorer_file_temp')
+
+        # if os.name == 'nt':
+        #     observers = []
+        #     drives = win32api.GetLogicalDriveStrings()
+        #     drives = drives.replace('\x00', '').split('\\')[:-1]
+
+        #     for disk in drives:
+        #         observer = Observer()
+        #         observer.schedule(handler, disk + '\\', recursive=True)
+        #         try:
+        #             observer.start()
+        #             observers.append(observer)
+        #         except PermissionError:
+        #             pass
+        # else:
+        #     observer = Observer()
+        #     observer.schedule(handler, os.environ['HOME'], recursive=True)
+        #     observer.start()
 
         drag.setPixmap(QIcon.fromTheme(
             'emblem-documents').pixmap(QSize(64, 64)))
         drag.exec(Qt.DropAction.CopyAction)
 
-        if os.name == 'nt':
-            for obs in observers:
-                obs.stop()
-        else:
-            observer.stop()
+        # if os.name == 'nt':
+        #     for obs in observers:
+        #         obs.stop()
+        # else:
+        #     observer.stop()
 
-        if self.download_path != '':
-            os.remove(self.download_path)
-            self.download_file(self.ui.tree_files.selectedItems(
-            ), self.download_path[:-len('.cloud_explorer_file_temp') - 1])
+        # if self.download_path != '':
+        #     os.remove(self.download_path)
+        #     self.download_file(self.ui.tree_files.selectedItems(
+        #     ), self.download_path[:-len('.cloud_explorer_file_temp') - 1])
 
     def update_remotes(self):
         remotes = rc.listremotes(True)
@@ -647,9 +688,11 @@ class MainWindow(QMainWindow):
         if is_dir:
             if len(destination_path) > 0 and destination_path[-1] != '/':
                 dest_path += '/' + \
-                    source_path.replace('\\', '/').split(':')[-1].split('/')[-1]
+                    source_path.replace(
+                        '\\', '/').split(':')[-1].split('/')[-1]
             else:
-                dest_path += source_path.replace('\\', '/').split(':')[-1].split('/')[-1]
+                dest_path += source_path.replace('\\',
+                                                 '/').split(':')[-1].split('/')[-1]
 
         await rc.copy(source_path, f'{destination_remote}{dest_path}')
         await self.update_dir(destination_remote, destination_path)
@@ -796,7 +839,7 @@ class MainWindow(QMainWindow):
         if self.temp_dir == '':
             self.temp_dir = rclone.tempfile.mkdtemp(prefix='cloud_explorer-')
         self.tasks.append(Task(
-            operation='Opening', source=f'{self.current_remote}{file_path}', destination=self.temp_dir))
+            operation='Opening', source=self.current_remote + file_path, destination=self.temp_dir))
         self.ui.dock_tasks.show()
         await rc.copy(f'{self.current_remote}{file_path}', self.temp_dir)
         if os.name == 'nt':
@@ -841,7 +884,8 @@ class MainWindow(QMainWindow):
                 self.ui.dock_tasks.show()
 
                 if not file[1]:
-                    asyncio.ensure_future(rc.copy(source_remote + file_path, download_path))
+                    asyncio.ensure_future(
+                        rc.copy(source_remote + file_path, download_path))
                 else:
                     if len(download_path) > 0 and download_path[-1] != '/' and download_path[-1] != '\\':
                         asyncio.ensure_future(rc.copy(
@@ -928,7 +972,7 @@ class MainWindow(QMainWindow):
         destination_remote = self.current_remote
         destination_path = self.remotes_paths[self.current_remote]
 
-        if clipboard.mimeData().text() != '.cloud_explorer_file_temp':
+        if clipboard.mimeData().text() == '.cloud_explorer_file_temp':
             for file in self.copy_files:
                 asyncio.ensure_future(self.upload_file(
                     file[0], destination_remote, destination_path))
@@ -1159,6 +1203,20 @@ class MainWindow(QMainWindow):
             action.setIcon(QIcon.fromTheme('edit-clear'))
             action.triggered.connect(lambda: self.clear_task(index.row()))
             menu.addAction(action)
+
+        def clear_tasks():
+            i = 0
+            while i < len(self.tasks):
+                if self.tasks[i].status == 'Done':
+                    self.clear_task(i)
+                else:
+                    i += 1
+
+        action = QAction(self)
+        action.setText('Clear Completed')
+        action.setIcon(QIcon.fromTheme('edit-clear'))
+        action.triggered.connect(clear_tasks)
+        menu.addAction(action)
 
         if item.text(0) in ['Mount', 'Serve']:
             action = QAction(self)
