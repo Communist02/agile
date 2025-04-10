@@ -4,6 +4,7 @@ import signal
 import sys
 import os
 import subprocess
+import threading
 import types
 
 from PySide6.QtNetwork import QLocalServer, QLocalSocket
@@ -543,7 +544,9 @@ class MainWindow(QMainWindow):
         else:
             observer = Observer()
             observer.schedule(handler, os.environ['HOME'], recursive=True)
-            observer.start()
+            observer_thread = threading.Thread(target=observer.start)
+            observer_thread.daemon = True
+            observer_thread.start()
 
     async def update_free_size(self, remote_name: str, clear: bool = False):
         if clear:
@@ -1036,11 +1039,6 @@ class MainWindow(QMainWindow):
         else:
             subprocess.call(['xdg-open', item.text(2)])
 
-    def clear_task(self, index: int):
-        del self.tasks[index]
-        del rc.tasks[index]
-        self.ui.tasks.takeTopLevelItem(index)
-
     def stop_task(self, index: int):
         self.tasks[index].process.send_signal(signal.CTRL_BREAK_EVENT)
         self.ui.tasks.takeTopLevelItem(index)
@@ -1188,6 +1186,11 @@ class MainWindow(QMainWindow):
 
         item = self.ui.tasks.itemAt(point)
 
+        def clear_tasks():
+            for i in range(len(self.tasks)):
+                if self.tasks[i].status == 'Done':
+                    self.ui.tasks.topLevelItem(i).setHidden(True)
+
         menu = QMenu()
 
         if item.text(0) in ['Download', 'Upload', 'Opening']:
@@ -1197,31 +1200,23 @@ class MainWindow(QMainWindow):
             action.triggered.connect(lambda: self.open_task_dir(item))
             menu.addAction(action)
 
-        if item.text(3) == 'Done':
-            action = QAction(self)
-            action.setText('Clear')
-            action.setIcon(QIcon.fromTheme('edit-clear'))
-            action.triggered.connect(lambda: self.clear_task(index.row()))
-            menu.addAction(action)
-
-        def clear_tasks():
-            i = 0
-            while i < len(self.tasks):
-                if self.tasks[i].status == 'Done':
-                    self.clear_task(i)
-                else:
-                    i += 1
-
         action = QAction(self)
         action.setText('Clear Completed')
         action.setIcon(QIcon.fromTheme('edit-clear'))
         action.triggered.connect(clear_tasks)
         menu.addAction(action)
 
+        if item.text(3) == 'Done':
+            action = QAction(self)
+            action.setText('Clear Task')
+            action.setIcon(QIcon.fromTheme('edit-clear'))
+            action.triggered.connect(lambda: self.clear_task(index.row()))
+            menu.addAction(action)
+
         if item.text(0) in ['Mount', 'Serve']:
             action = QAction(self)
             action.setText('Stop')
-            action.triggered.connect(lambda: self.stop_task(index.row()))
+            action.triggered.connect(lambda: self.ui.tasks.topLevelItem(index.row()).setHidden(True))
             menu.addAction(action)
 
         menu.exec(QCursor.pos())
