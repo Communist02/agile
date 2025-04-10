@@ -1039,11 +1039,6 @@ class MainWindow(QMainWindow):
         else:
             subprocess.call(['xdg-open', item.text(2)])
 
-    def stop_task(self, index: int):
-        self.tasks[index].process.send_signal(signal.CTRL_BREAK_EVENT)
-        self.ui.tasks.takeTopLevelItem(index)
-        del self.tasks[index]
-
     def add_to_autostart(app_name, executable_path):
         if os.name == 'nt':
             key = winreg.HKEY_CURRENT_USER
@@ -1191,6 +1186,11 @@ class MainWindow(QMainWindow):
                 if self.tasks[i].status == 'Done':
                     self.ui.tasks.topLevelItem(i).setHidden(True)
 
+        def stop_task(index: int):
+            self.tasks[index].process.send_signal(signal.CTRL_BREAK_EVENT)
+            self.ui.tasks.takeTopLevelItem(index)
+            del self.tasks[index]
+
         menu = QMenu()
 
         if item.text(0) in ['Download', 'Upload', 'Opening']:
@@ -1210,13 +1210,13 @@ class MainWindow(QMainWindow):
             action = QAction(self)
             action.setText('Clear Task')
             action.setIcon(QIcon.fromTheme('edit-clear'))
-            action.triggered.connect(lambda: self.clear_task(index.row()))
+            action.triggered.connect(lambda: self.ui.tasks.topLevelItem(index.row()).setHidden(True))
             menu.addAction(action)
 
         if item.text(0) in ['Mount', 'Serve']:
             action = QAction(self)
             action.setText('Stop')
-            action.triggered.connect(lambda: self.ui.tasks.topLevelItem(index.row()).setHidden(True))
+            action.triggered.connect(lambda: stop_task(index.row()))
             menu.addAction(action)
 
         menu.exec(QCursor.pos())
