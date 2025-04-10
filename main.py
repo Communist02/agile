@@ -37,7 +37,8 @@ class FileMonitorHandler(FileSystemEventHandler):
 
     def on_created(self, event):
         if os.path.basename(event.src_path) == os.path.basename(self.target_file):
-            window.download_path = event.src_path
+            os.remove(event.src_path)
+            window.download_file(window.copy_files, event.src_path[:-1 * len(os.path.basename(self.target_file))], True)
 
 
 class SettingsWindow(QDialog):
@@ -366,6 +367,7 @@ class MainWindow(QMainWindow):
     cache: dict = {}
     tasks: list[Task] = []
     scale: int
+    copy_files: list = []
 
     def __init__(self):
         super(MainWindow, self).__init__()
@@ -442,6 +444,8 @@ class MainWindow(QMainWindow):
         self.tray_icon.activated.connect(self.tray_icon_activated)
         self.tray_icon.show()
 
+        self.start_file_monitor()
+
     def tray_icon_activated(self, reason: QSystemTrayIcon.ActivationReason):
         match reason:
             case QSystemTrayIcon.ActivationReason.Trigger:
@@ -499,6 +503,16 @@ class MainWindow(QMainWindow):
                 os._exit(0)
             else:
                 sys.exit(0)
+
+    def start_file_monitor(self):
+        if self.temp_dir == '':
+            self.temp_dir = rclone.tempfile.mkdtemp(prefix='cloud_explorer-')
+        open(self.temp_dir + '/.cloud_explorer_file_temp', 'a').close()
+
+        handler = FileMonitorHandler('.cloud_explorer_file_temp')
+        observer = Observer()
+        observer.schedule(handler, os.environ['HOME'], recursive=True)
+        observer.start()
 
     async def update_free_size(self, remote_name: str, clear: bool = False):
         if clear:
@@ -633,9 +647,9 @@ class MainWindow(QMainWindow):
         if is_dir:
             if len(destination_path) > 0 and destination_path[-1] != '/':
                 dest_path += '/' + \
-                    source_path.replace('\\', '/').split('/')[-1]
+                    source_path.replace('\\', '/').split(':')[-1].split('/')[-1]
             else:
-                dest_path += source_path.replace('\\', '/').split('/')[-1]
+                dest_path += source_path.replace('\\', '/').split(':')[-1].split('/')[-1]
 
         await rc.copy(source_path, f'{destination_remote}{dest_path}')
         await self.update_dir(destination_remote, destination_path)
@@ -803,30 +817,38 @@ class MainWindow(QMainWindow):
             else:
                 asyncio.ensure_future(self.open_file(file_path, file_name))
 
-    def download_file(self, items: list[QTreeWidgetItem], download_path: str = None):
+    def download_file(self, list_files: list, download_path: str = None, is_full_paths: bool = False):
+        source_remote = self.current_remote
+
         if download_path is None:
             download_path = QFileDialog.getExistingDirectory()
         if download_path is not None and download_path != '':
-            for item in items:
+            for file in list_files:
+                base_name = file[0]
+
                 if self.remotes_paths[self.current_remote] != '':
-                    file_path = f'{self.remotes_paths[self.current_remote]}/{item.text(0)}'
+                    file_path = f'{self.remotes_paths[self.current_remote]}/{base_name}'
                 else:
-                    file_path = item.text(0)
+                    file_path = base_name
+
+                if is_full_paths != '':
+                    source_remote = ''
+                    file_path = file[0]
+                    base_name = file[0].split(':')[-1].split('/')[-1]
 
                 self.tasks.append(Task(
-                    operation='Download', source=f'{self.current_remote}{file_path}', destination=download_path))
+                    operation='Download', source=f'{source_remote}{file_path}', destination=download_path))
                 self.ui.dock_tasks.show()
 
-                if item.text(3) != 'inode/directory':
-                    asyncio.ensure_future(rc.copy(
-                        f'{self.current_remote}{file_path}', download_path))
+                if not file[1]:
+                    asyncio.ensure_future(rc.copy(source_remote + file_path, download_path))
                 else:
-                    if len(download_path) > 0 and (download_path[-1] != '/' or download_path[-1] != '\\'):
+                    if len(download_path) > 0 and download_path[-1] != '/' and download_path[-1] != '\\':
                         asyncio.ensure_future(rc.copy(
-                            f'{self.current_remote}{file_path}', f'{download_path}/{item.text(0)}'))
+                            f'{source_remote}{file_path}', f'{download_path}/{base_name}'))
                     else:
                         asyncio.ensure_future(rc.copy(
-                            f'{self.current_remote}{file_path}', f'{download_path}{item.text(0)}'))
+                            f'{source_remote}{file_path}', f'{download_path}{base_name}'))
 
     def mount_remote(self, name: str, type: str):
         if os.name == 'nt':
@@ -842,15 +864,21 @@ class MainWindow(QMainWindow):
             if mount_path is not None and mount_path != '':
                 rc.mount(f'"{name}"', f'"{mount_path}"')
 
-    def copy_file(self, file_name: str):
+    def copy_file(self, items: list[QTreeWidgetItem]):
         if self.remotes_paths[self.current_remote] != '':
-            file_path = f'{self.current_remote}{self.remotes_paths[self.current_remote]}/{file_name}'
+            dir_path = f'{self.current_remote}{self.remotes_paths[self.current_remote]}/'
         else:
-            file_path = f'{self.current_remote}{file_name}'
+            dir_path = f'{self.current_remote}'
+
+        self.copy_files = []
+        for item in items:
+            self.copy_files.append(
+                [dir_path + item.text(0), item.text(3) == 'inode/directory'])
+
         clipboard = QApplication.clipboard()
         mime_data = QMimeData()
-        mime_data.setText(file_path)
-        url = QUrl.fromLocalFile(file_path)
+        mime_data.setText('.cloud_explorer_file_temp')
+        url = QUrl.fromLocalFile(self.temp_dir + '/.cloud_explorer_file_temp')
         mime_data.setUrls([url])
         clipboard.setMimeData(mime_data)
 
@@ -859,9 +887,6 @@ class MainWindow(QMainWindow):
         destination_path = self.remotes_paths[self.current_remote]
 
         files = []
-        for item in items:
-            files.append([item.text(0), item.text(3) == 'inode/directory'])
-            item.setHidden(True)
 
         if len(items) == 1:
             question = f'Are you sure you want to delete {items[0].text(0)} ?'
@@ -869,6 +894,9 @@ class MainWindow(QMainWindow):
             question = f'Are you sure you want to delete {len(items)} files ?'
         confirmation = QMessageBox.question(self, 'Delete', question)
         if confirmation == QMessageBox.Yes:
+            for item in items:
+                files.append([item.text(0), item.text(3) == 'inode/directory'])
+                item.setHidden(True)
             for file in files:
                 if destination_path != '':
                     file_path = f'{destination_remote}{destination_path}/{file[0]}'
@@ -900,10 +928,15 @@ class MainWindow(QMainWindow):
         destination_remote = self.current_remote
         destination_path = self.remotes_paths[self.current_remote]
 
-        for url in clipboard.mimeData().urls():
-            source_path = url.toLocalFile()
-            asyncio.ensure_future(self.upload_file(
-                source_path, destination_remote, destination_path))
+        if clipboard.mimeData().text() != '.cloud_explorer_file_temp':
+            for file in self.copy_files:
+                asyncio.ensure_future(self.upload_file(
+                    file[0], destination_remote, destination_path))
+        else:
+            for url in clipboard.mimeData().urls():
+                source_path = url.toLocalFile()
+                asyncio.ensure_future(self.upload_file(
+                    source_path, destination_remote, destination_path))
 
     def exit_folder(self):
         if self.current_remote != '' and self.remotes_paths[self.current_remote] != '':
@@ -987,6 +1020,11 @@ class MainWindow(QMainWindow):
 
         menu = QMenu()
 
+        selected_files = []
+        for item in selected:
+            selected_files.append(
+                [item.text(0), item.text(3) == 'inode/directory'])
+
         if self.current_remote != '':
             if not index.isValid():
                 action = QAction(self)
@@ -1017,7 +1055,7 @@ class MainWindow(QMainWindow):
                 action.setText('Download')
                 action.setIcon(QIcon.fromTheme('emblem-downloads'))
                 action.triggered.connect(
-                    lambda: self.download_file(selected))
+                    lambda: self.download_file(selected_files))
                 menu.addAction(action)
 
                 menu.addSeparator()
@@ -1025,7 +1063,7 @@ class MainWindow(QMainWindow):
                 action = QAction(self)
                 action.setText('Copy')
                 action.setIcon(QIcon.fromTheme('edit-copy'))
-                action.triggered.connect(lambda: self.copy_file(file_name))
+                action.triggered.connect(lambda: self.copy_file(selected))
                 menu.addAction(action)
 
                 action = QAction(self)
