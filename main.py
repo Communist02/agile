@@ -9,7 +9,7 @@ import types
 
 from PySide6.QtNetwork import QLocalServer, QLocalSocket
 from PySide6.QtCore import QMimeData, QRect, QSettings, QSize, QUrl, Qt, QTimer, QRegularExpression
-from PySide6.QtGui import QCloseEvent, QDrag, QDragEnterEvent, QIcon, QAction, QCursor, QPixmap, QRegularExpressionValidator
+from PySide6.QtGui import QCloseEvent, QDrag, QDragEnterEvent, QIcon, QAction, QCursor, QKeySequence, QPixmap, QRegularExpressionValidator, QShortcut
 from PySide6.QtWidgets import QHBoxLayout, QInputDialog, QMainWindow, QApplication, QDialog, QMenu, QFileDialog, QProgressBar, QSizePolicy, QSlider, QStyleFactory, QSystemTrayIcon, QTreeWidgetItem, QPushButton, QMessageBox, QLabel, QWidget, QSpacerItem
 import PySide6.QtAsyncio as QtAsyncio
 
@@ -456,6 +456,7 @@ class MainWindow(QMainWindow):
         self.tray_icon.show()
 
         self.start_file_monitor()
+        self.shortcuts()
 
     def tray_icon_activated(self, reason: QSystemTrayIcon.ActivationReason):
         match reason:
@@ -1051,8 +1052,45 @@ class MainWindow(QMainWindow):
             except Exception as e:
                 print(f'Error: {e}')
 
+    def shortcuts(self):
+        def delete():
+            selected = self.ui.tree_files.selectedItems()
+            if len(selected) > 0:
+                asyncio.ensure_future(self.delete_file(self.ui.tree_files.selectedItems()))
+
+        self.delete_shortcut = QShortcut(
+            QKeySequence("Del"), self.ui.tree_files)
+        self.delete_shortcut.activated.connect(delete)
+
+        self.copy_shortcut = QShortcut(
+            QKeySequence("Ctrl+C"), self.ui.tree_files)
+        self.copy_shortcut.activated.connect(
+            lambda: self.copy_file(self.ui.tree_files.selectedItems()))
+
+        self.paste_shortcut = QShortcut(
+            QKeySequence("Ctrl+V"), self.ui.tree_files)
+        self.paste_shortcut.activated.connect(self.paste_file)
+
+        def rename():
+            selected = self.ui.tree_files.selectedItems()
+            if len(selected) > 0:
+                asyncio.ensure_future(self.rename_file(selected[0].text(
+                    0), selected[0].text(3) == 'inode/directory'))
+
+        self.rename_shortcut = QShortcut(
+            QKeySequence("F2"), self.ui.tree_files)
+        self.rename_shortcut.activated.connect(rename)
+
+        self.update_shortcut = QShortcut(
+            QKeySequence("F5"), self.ui.tree_files)
+        self.update_shortcut.activated.connect(lambda: asyncio.ensure_future(
+            self.update_dir(self.current_remote, self.remotes_paths.setdefault(self.current_remote, ''))))
+        
+        self.new_folder_shortcut = QShortcut(
+            QKeySequence("F7"), self.ui.tree_files)
+        self.new_folder_shortcut.activated.connect(lambda: asyncio.ensure_future(self.new_folder()))
+
     def show_context_menu_tree(self, point):
-        index = self.ui.tree_files.indexAt(point)
         selected = self.ui.tree_files.selectedItems()
 
         menu = QMenu()
@@ -1063,11 +1101,12 @@ class MainWindow(QMainWindow):
                 [item.text(0), item.text(3) == 'inode/directory'])
 
         if self.current_remote != '':
-            if not index.isValid():
+            if len(selected) < 1:
                 action = QAction(self)
                 action.setText('Paste')
                 action.setIcon(QIcon.fromTheme('edit-paste'))
-                action.triggered.connect(lambda: self.paste_file())
+                action.triggered.connect(self.paste_file)
+                action.setShortcut(QKeySequence('Ctrl+V'))
                 menu.addAction(action)
 
                 action = QAction(self)
@@ -1075,6 +1114,7 @@ class MainWindow(QMainWindow):
                 action.setIcon(QIcon.fromTheme('folder-new'))
                 action.triggered.connect(
                     lambda: asyncio.ensure_future(self.new_folder()))
+                action.setShortcut(QKeySequence('F7'))
                 menu.addAction(action)
             else:
                 item = self.ui.tree_files.itemAt(point)
@@ -1101,12 +1141,14 @@ class MainWindow(QMainWindow):
                 action.setText('Copy')
                 action.setIcon(QIcon.fromTheme('edit-copy'))
                 action.triggered.connect(lambda: self.copy_file(selected))
+                action.setShortcut(QKeySequence('Ctrl+C'))
                 menu.addAction(action)
 
                 action = QAction(self)
                 action.setText('Paste')
                 action.setIcon(QIcon.fromTheme('edit-paste'))
-                action.triggered.connect(lambda: self.paste_file())
+                action.triggered.connect(self.paste_file)
+                action.setShortcut(QKeySequence('Ctrl+V'))
                 menu.addAction(action)
 
                 menu.addSeparator()
@@ -1116,6 +1158,7 @@ class MainWindow(QMainWindow):
                 action.setIcon(QIcon.fromTheme('format-text-italic'))
                 action.triggered.connect(lambda: asyncio.ensure_future(
                     self.rename_file(file_name, is_dir)))
+                action.setShortcut(QKeySequence('F2'))
                 menu.addAction(action)
 
                 action = QAction(self)
@@ -1123,6 +1166,7 @@ class MainWindow(QMainWindow):
                 action.setIcon(QIcon.fromTheme('edit-delete'))
                 action.triggered.connect(
                     lambda: asyncio.ensure_future(self.delete_file(selected)))
+                action.setShortcut(QKeySequence('Del'))
                 menu.addAction(action)
 
                 menu.addSeparator()
@@ -1132,6 +1176,7 @@ class MainWindow(QMainWindow):
                 action.setIcon(QIcon.fromTheme('folder-new'))
                 action.triggered.connect(
                     lambda: asyncio.ensure_future(self.new_folder()))
+                action.setShortcut(QKeySequence('F7'))
                 menu.addAction(action)
 
         menu.exec(QCursor.pos())
@@ -1210,7 +1255,8 @@ class MainWindow(QMainWindow):
             action = QAction(self)
             action.setText('Clear Task')
             action.setIcon(QIcon.fromTheme('edit-clear'))
-            action.triggered.connect(lambda: self.ui.tasks.topLevelItem(index.row()).setHidden(True))
+            action.triggered.connect(
+                lambda: self.ui.tasks.topLevelItem(index.row()).setHidden(True))
             menu.addAction(action)
 
         if item.text(0) in ['Mount', 'Serve']:
