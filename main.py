@@ -493,6 +493,7 @@ class MainWindow(QMainWindow):
             item.setText(0, self.tasks[i].operation)
             item.setText(1, self.tasks[i].source)
             item.setText(2, self.tasks[i].destination)
+            item.setText(3, self.tasks[i].status)
 
             if len(rc.tasks) > i:
                 if self.tasks[i].operation in ['Upload', 'Download', 'Opening']:
@@ -951,8 +952,7 @@ class MainWindow(QMainWindow):
                 else:
                     file_path = f'{destination_remote}{file[0]}'
 
-                task = Task(operation='Delete',
-                            source=f'{self.current_remote}{file_path}')
+                task = Task(operation='Delete', source=file_path)
                 self.tasks.append(task)
                 self.ui.dock_tasks.show()
 
@@ -1056,7 +1056,8 @@ class MainWindow(QMainWindow):
         def delete():
             selected = self.ui.tree_files.selectedItems()
             if len(selected) > 0:
-                asyncio.ensure_future(self.delete_file(self.ui.tree_files.selectedItems()))
+                asyncio.ensure_future(self.delete_file(
+                    self.ui.tree_files.selectedItems()))
 
         self.delete_shortcut = QShortcut(
             QKeySequence("Del"), self.ui.tree_files)
@@ -1085,10 +1086,11 @@ class MainWindow(QMainWindow):
             QKeySequence("F5"), self.ui.tree_files)
         self.update_shortcut.activated.connect(lambda: asyncio.ensure_future(
             self.update_dir(self.current_remote, self.remotes_paths.setdefault(self.current_remote, ''))))
-        
+
         self.new_folder_shortcut = QShortcut(
             QKeySequence("F7"), self.ui.tree_files)
-        self.new_folder_shortcut.activated.connect(lambda: asyncio.ensure_future(self.new_folder()))
+        self.new_folder_shortcut.activated.connect(
+            lambda: asyncio.ensure_future(self.new_folder()))
 
     def show_context_menu_tree(self, point):
         selected = self.ui.tree_files.selectedItems()
