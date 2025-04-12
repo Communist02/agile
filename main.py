@@ -8,8 +8,8 @@ import threading
 import types
 
 from PySide6.QtNetwork import QLocalServer, QLocalSocket
-from PySide6.QtCore import QMimeData, QRect, QSettings, QSize, QUrl, Qt, QTimer, QRegularExpression
-from PySide6.QtGui import QCloseEvent, QDrag, QDragEnterEvent, QIcon, QAction, QCursor, QKeySequence, QPixmap, QRegularExpressionValidator, QShortcut
+from PySide6.QtCore import QMimeData, QPoint, QRect, QSettings, QSize, QUrl, Qt, QTimer, QRegularExpression
+from PySide6.QtGui import QCloseEvent, QColorConstants, QDrag, QDragEnterEvent, QIcon, QAction, QCursor, QKeySequence, QPainter, QPixmap, QRegularExpressionValidator, QShortcut
 from PySide6.QtWidgets import QHBoxLayout, QInputDialog, QMainWindow, QApplication, QDialog, QMenu, QFileDialog, QProgressBar, QSizePolicy, QSlider, QStyleFactory, QSystemTrayIcon, QTreeWidgetItem, QPushButton, QMessageBox, QLabel, QWidget, QSpacerItem
 import PySide6.QtAsyncio as QtAsyncio
 
@@ -626,45 +626,48 @@ class MainWindow(QMainWindow):
         else:
             dir_path = f'{self.current_remote}'
 
+        match len(self.ui.tree_files.selectedItems()):
+            case 1 | 2 | 3 | 4:
+                icon_size = 64
+                pixmap_size = 132
+            case 5 | 6 | 7 | 8 | 9:
+                icon_size = 48
+                pixmap_size = 150
+            case 10 | 11 | 12 | 13 | 14 | 15 | 16:
+                icon_size = 32
+                pixmap_size = 136
+            case _:
+                icon_size = 16
+                pixmap_size = 144
+
+        pixmap = QPixmap(QSize(pixmap_size, pixmap_size))
+        pixmap.fill(QColorConstants.Transparent)
+        painter = QPainter(pixmap)
+
+
+        i = 0
+        is_i_max = False
+        j = 0
         self.copy_files = []
         for item in self.ui.tree_files.selectedItems():
             self.copy_files.append(
                 [dir_path + item.text(0), item.text(3) == 'inode/directory'])
 
-        # handler = FileMonitorHandler('.cloud_explorer_file_temp')
+            painter.drawPixmap(i, j, item.icon(0).pixmap(QSize(icon_size, icon_size)))
+            if j < pixmap_size:
+                i += icon_size + 2
+                if i >= pixmap_size:
+                    j += icon_size + 2
+                    i = 0
+                    is_i_max = True
+        painter.end()
 
-        # if os.name == 'nt':
-        #     observers = []
-        #     drives = win32api.GetLogicalDriveStrings()
-        #     drives = drives.replace('\x00', '').split('\\')[:-1]
+        if is_i_max:
+            i = pixmap_size
 
-        #     for disk in drives:
-        #         observer = Observer()
-        #         observer.schedule(handler, disk + '\\', recursive=True)
-        #         try:
-        #             observer.start()
-        #             observers.append(observer)
-        #         except PermissionError:
-        #             pass
-        # else:
-        #     observer = Observer()
-        #     observer.schedule(handler, os.environ['HOME'], recursive=True)
-        #     observer.start()
-
-        drag.setPixmap(QIcon.fromTheme(
-            'emblem-documents').pixmap(QSize(64, 64)))
+        drag.setPixmap(pixmap)
+        drag.setHotSpot(QPoint(i / 2, -9))
         drag.exec(Qt.DropAction.CopyAction)
-
-        # if os.name == 'nt':
-        #     for obs in observers:
-        #         obs.stop()
-        # else:
-        #     observer.stop()
-
-        # if self.download_path != '':
-        #     os.remove(self.download_path)
-        #     self.download_file(self.ui.tree_files.selectedItems(
-        #     ), self.download_path[:-len('.cloud_explorer_file_temp') - 1])
 
     def update_remotes(self):
         remotes = rc.listremotes(True)
