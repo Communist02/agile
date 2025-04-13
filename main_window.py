@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'main_window.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.9.0
+## Created by: Qt User Interface Compiler version 6.8.3
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -27,32 +27,30 @@ class Ui_MainWindow(object):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
         MainWindow.resize(1280, 800)
-        icon = QIcon(QIcon.fromTheme(u"weather-overcast"))
-        MainWindow.setWindowIcon(icon)
         self.action_new_remote = QAction(MainWindow)
         self.action_new_remote.setObjectName(u"action_new_remote")
-        icon1 = QIcon(QIcon.fromTheme(u"system-file-manager"))
-        self.action_new_remote.setIcon(icon1)
+        icon = QIcon(QIcon.fromTheme(u"system-file-manager"))
+        self.action_new_remote.setIcon(icon)
         self.action_exit = QAction(MainWindow)
         self.action_exit.setObjectName(u"action_exit")
-        icon2 = QIcon(QIcon.fromTheme(u"application-exit"))
-        self.action_exit.setIcon(icon2)
+        icon1 = QIcon(QIcon.fromTheme(u"application-exit"))
+        self.action_exit.setIcon(icon1)
         self.action_about = QAction(MainWindow)
         self.action_about.setObjectName(u"action_about")
-        icon3 = QIcon(QIcon.fromTheme(u"help-about"))
-        self.action_about.setIcon(icon3)
+        icon2 = QIcon(QIcon.fromTheme(u"help-about"))
+        self.action_about.setIcon(icon2)
         self.action_list_remotes = QAction(MainWindow)
         self.action_list_remotes.setObjectName(u"action_list_remotes")
         self.action_list_remotes.setCheckable(True)
         self.action_list_remotes.setChecked(True)
         self.action_new_serve = QAction(MainWindow)
         self.action_new_serve.setObjectName(u"action_new_serve")
-        icon4 = QIcon(QIcon.fromTheme(u"applications-internet"))
-        self.action_new_serve.setIcon(icon4)
+        icon3 = QIcon(QIcon.fromTheme(u"applications-internet"))
+        self.action_new_serve.setIcon(icon3)
         self.action_settings = QAction(MainWindow)
         self.action_settings.setObjectName(u"action_settings")
-        icon5 = QIcon(QIcon.fromTheme(u"applications-development"))
-        self.action_settings.setIcon(icon5)
+        icon4 = QIcon(QIcon.fromTheme(u"applications-development"))
+        self.action_settings.setIcon(icon4)
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.verticalLayout = QVBoxLayout(self.centralwidget)
@@ -69,8 +67,8 @@ class Ui_MainWindow(object):
         self.pushButton_2.setSizePolicy(sizePolicy)
         self.pushButton_2.setMinimumSize(QSize(34, 34))
         self.pushButton_2.setMaximumSize(QSize(34, 34))
-        icon6 = QIcon(QIcon.fromTheme(u"go-previous"))
-        self.pushButton_2.setIcon(icon6)
+        icon5 = QIcon(QIcon.fromTheme(u"go-previous"))
+        self.pushButton_2.setIcon(icon5)
         self.pushButton_2.setFlat(True)
 
         self.horizontalLayout.addWidget(self.pushButton_2)
@@ -81,8 +79,8 @@ class Ui_MainWindow(object):
         self.pushButton_3.setSizePolicy(sizePolicy)
         self.pushButton_3.setMinimumSize(QSize(34, 34))
         self.pushButton_3.setMaximumSize(QSize(34, 34))
-        icon7 = QIcon(QIcon.fromTheme(u"go-next"))
-        self.pushButton_3.setIcon(icon7)
+        icon6 = QIcon(QIcon.fromTheme(u"go-next"))
+        self.pushButton_3.setIcon(icon6)
         self.pushButton_3.setFlat(True)
 
         self.horizontalLayout.addWidget(self.pushButton_3)
@@ -93,8 +91,8 @@ class Ui_MainWindow(object):
         self.button_exit_dir.setSizePolicy(sizePolicy)
         self.button_exit_dir.setMinimumSize(QSize(34, 34))
         self.button_exit_dir.setMaximumSize(QSize(34, 34))
-        icon8 = QIcon(QIcon.fromTheme(u"go-up"))
-        self.button_exit_dir.setIcon(icon8)
+        icon7 = QIcon(QIcon.fromTheme(u"go-up"))
+        self.button_exit_dir.setIcon(icon7)
         self.button_exit_dir.setFlat(True)
 
         self.horizontalLayout.addWidget(self.button_exit_dir)
@@ -103,8 +101,8 @@ class Ui_MainWindow(object):
         self.button_update.setObjectName(u"button_update")
         self.button_update.setMinimumSize(QSize(34, 34))
         self.button_update.setMaximumSize(QSize(34, 34))
-        icon9 = QIcon(QIcon.fromTheme(u"view-refresh"))
-        self.button_update.setIcon(icon9)
+        icon8 = QIcon(QIcon.fromTheme(u"view-refresh"))
+        self.button_update.setIcon(icon8)
         self.button_update.setFlat(True)
 
         self.horizontalLayout.addWidget(self.button_update)

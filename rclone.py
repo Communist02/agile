@@ -45,9 +45,9 @@ class Rclone(CheckRclone):
         self.debug = debug
 
     async def _stream_process(self, process: subprocess.Popen[bytes]):
+        index = len(self.tasks)
         self.tasks.append(
             {'current_size': 0, 'speed': 0, 'estimated': '-', 'full_size': 0, 'is_done': False})
-        index = len(self.tasks) - 1
         loop = asyncio.get_running_loop()
 
         while True:

@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'new_serve_window.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.9.0
+## Created by: Qt User Interface Compiler version 6.8.3
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -25,8 +25,6 @@ class Ui_NewServeWindow(object):
         if not NewServeWindow.objectName():
             NewServeWindow.setObjectName(u"NewServeWindow")
         NewServeWindow.resize(640, 480)
-        icon = QIcon(QIcon.fromTheme(u"applications-internet"))
-        NewServeWindow.setWindowIcon(icon)
         NewServeWindow.setModal(True)
         self.verticalLayout = QVBoxLayout(NewServeWindow)
         self.verticalLayout.setObjectName(u"verticalLayout")

@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'settings_window.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.9.0
+## Created by: Qt User Interface Compiler version 6.8.3
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -24,6 +24,7 @@ class Ui_SettingsWindow(object):
         if not SettingsWindow.objectName():
             SettingsWindow.setObjectName(u"SettingsWindow")
         SettingsWindow.resize(400, 300)
+        SettingsWindow.setModal(True)
         self.verticalLayout = QVBoxLayout(SettingsWindow)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.horizontalLayout = QHBoxLayout()
@@ -61,7 +62,7 @@ class Ui_SettingsWindow(object):
     # setupUi
 
     def retranslateUi(self, SettingsWindow):
-        SettingsWindow.setWindowTitle(QCoreApplication.translate("SettingsWindow", u"Dialog", None))
+        SettingsWindow.setWindowTitle(QCoreApplication.translate("SettingsWindow", u"Settings", None))
         self.label.setText(QCoreApplication.translate("SettingsWindow", u"Style", None))
     # retranslateUi
 

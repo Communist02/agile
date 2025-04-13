@@ -13,9 +13,6 @@
   <property name="windowTitle">
    <string>New remote</string>
   </property>
-  <property name="windowIcon">
-   <iconset theme="weather-overcast"/>
-  </property>
   <property name="modal">
    <bool>true</bool>
   </property>
@@ -650,7 +647,7 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>203</width>
+            <width>584</width>
             <height>338</height>
            </rect>
           </property>
@@ -686,7 +683,7 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>350</width>
+                <width>582</width>
                 <height>144</height>
                </rect>
               </property>

@@ -13,9 +13,6 @@
   <property name="windowTitle">
    <string>New serve</string>
   </property>
-  <property name="windowIcon">
-   <iconset theme="applications-internet"/>
-  </property>
   <property name="modal">
    <bool>true</bool>
   </property>

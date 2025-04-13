@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'new_remote_window.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.9.0
+## Created by: Qt User Interface Compiler version 6.8.3
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -26,8 +26,6 @@ class Ui_NewRemoteWindow(object):
         if not NewRemoteWindow.objectName():
             NewRemoteWindow.setObjectName(u"NewRemoteWindow")
         NewRemoteWindow.resize(640, 480)
-        icon = QIcon(QIcon.fromTheme(u"weather-overcast"))
-        NewRemoteWindow.setWindowIcon(icon)
         NewRemoteWindow.setModal(True)
         self.verticalLayout = QVBoxLayout(NewRemoteWindow)
         self.verticalLayout.setObjectName(u"verticalLayout")
@@ -467,7 +465,7 @@ class Ui_NewRemoteWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 203, 338))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 584, 338))
         self.verticalLayout_21 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_21.setObjectName(u"verticalLayout_21")
         self.verticalLayout_21.setContentsMargins(0, 0, 0, 0)
@@ -481,7 +479,7 @@ class Ui_NewRemoteWindow(object):
         self.toolBox.setFrameShape(QFrame.Shape.Box)
         self.page = QWidget()
         self.page.setObjectName(u"page")
-        self.page.setGeometry(QRect(0, 0, 350, 144))
+        self.page.setGeometry(QRect(0, 0, 582, 144))
         self.verticalLayout_22 = QVBoxLayout(self.page)
         self.verticalLayout_22.setObjectName(u"verticalLayout_22")
         self.pushButton = QPushButton(self.page)

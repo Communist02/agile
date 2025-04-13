@@ -13,9 +13,6 @@
   <property name="windowTitle">
    <string>Cloud Explorer</string>
   </property>
-  <property name="windowIcon">
-   <iconset theme="weather-overcast"/>
-  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <property name="bottomMargin">

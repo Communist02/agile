@@ -8,9 +8,9 @@ import threading
 import types
 
 from PySide6.QtNetwork import QLocalServer, QLocalSocket
-from PySide6.QtCore import QMimeData, QPoint, QRect, QSettings, QSize, QUrl, Qt, QTimer, QRegularExpression
-from PySide6.QtGui import QCloseEvent, QColorConstants, QDrag, QDragEnterEvent, QIcon, QAction, QCursor, QKeySequence, QPainter, QPixmap, QRegularExpressionValidator, QShortcut
-from PySide6.QtWidgets import QHBoxLayout, QInputDialog, QMainWindow, QApplication, QDialog, QMenu, QFileDialog, QProgressBar, QSizePolicy, QSlider, QStyleFactory, QSystemTrayIcon, QTreeWidgetItem, QPushButton, QMessageBox, QLabel, QWidget, QSpacerItem
+from PySide6.QtCore import QFileInfo, QMimeData, QPoint, QSettings, QSize, QUrl, Qt, QTimer, QRegularExpression
+from PySide6.QtGui import QCloseEvent, QColorConstants, QDesktopServices, QDrag, QDragEnterEvent, QIcon, QAction, QCursor, QKeySequence, QPainter, QPixmap, QRegularExpressionValidator, QShortcut
+from PySide6.QtWidgets import QFileIconProvider, QHBoxLayout, QInputDialog, QMainWindow, QApplication, QDialog, QMenu, QFileDialog, QProgressBar, QSizePolicy, QSlider, QStyleFactory, QSystemTrayIcon, QTreeWidgetItem, QPushButton, QMessageBox, QLabel, QWidget, QSpacerItem
 import PySide6.QtAsyncio as QtAsyncio
 
 from rclone_python import rclone
@@ -47,8 +47,6 @@ class FileMonitorHandler(FileSystemEventHandler):
                 except PermissionError:
                     pass
                 except FileNotFoundError:
-                    print(
-                        f"Файл {event.src_path} уже удалён или не существует.")
                     break
 
 
@@ -58,8 +56,7 @@ class SettingsWindow(QDialog):
         self.ui = settings_window.Ui_SettingsWindow()
         self.ui.setupUi(self)
 
-        self.setWindowIcon(
-            QIcon(f'{os.path.dirname(__file__) + os.sep}favicon.ico'))
+        self.setWindowIcon(QIcon(f'{os.path.dirname(__file__) + os.sep}favicon.ico'))
 
         styles = QStyleFactory.keys()
         for i in range(len(styles)):
@@ -79,6 +76,8 @@ class NewServeWindow(QDialog):
         super(NewServeWindow, self).__init__()
         self.ui = new_serve_window.Ui_NewServeWindow()
         self.ui.setupUi(self)
+
+        self.setWindowIcon(QIcon(f'{os.path.dirname(__file__) + os.sep}favicon.ico'))
 
         self.ui.buttonBox.accepted.connect(lambda: self.new_serve())
 
@@ -118,6 +117,8 @@ class NewRemoteWindow(QDialog):
         super(NewRemoteWindow, self).__init__()
         self.ui = new_remote_window.Ui_NewRemoteWindow()
         self.ui.setupUi(self)
+
+        self.setWindowIcon(QIcon(f'{os.path.dirname(__file__) + os.sep}favicon.ico'))
 
         self.ui.buttonBox.accepted.connect(
             lambda: self.new_remote(edit_mode, remote_name))
@@ -321,6 +322,12 @@ class Task():
         self.estimated = ''
         self.process = process
 
+        match operation:
+            case 'Download' | 'Upload' | 'Opening':
+                self.index = len(rc.tasks)
+            case _:
+                self.index = -1
+
     def done(self):
         self.status = 'Done'
 
@@ -385,6 +392,8 @@ class MainWindow(QMainWindow):
         self.ui = main_window.Ui_MainWindow()
         self.ui.setupUi(self)
 
+        self.setWindowIcon(QIcon(f'{os.path.dirname(__file__) + os.sep}favicon.ico'))
+
         self.ui.tree_files.header().resizeSection(0, 300)
         self.ui.tree_files.header().resizeSection(1, 80)
         self.ui.tree_files.header().resizeSection(2, 120)
@@ -403,6 +412,8 @@ class MainWindow(QMainWindow):
         self.ui.action_new_serve.triggered.connect(self.open_new_serve_window)
         self.ui.action_list_remotes.triggered.connect(self.open_list_remotes)
         self.ui.action_settings.triggered.connect(self.open_settings_window)
+        self.ui.action_about.triggered.connect(
+            lambda: QMessageBox.aboutQt(self))
 
         self.ui.tree_remotes.itemClicked.connect(self.open_remote)
         self.ui.tree_files.itemDoubleClicked.connect(
@@ -450,7 +461,7 @@ class MainWindow(QMainWindow):
         self.timer.start()
 
         self.tray_icon = QSystemTrayIcon(self)
-        self.tray_icon.setIcon(QIcon.fromTheme('folder'))
+        self.tray_icon.setIcon(self.windowIcon())
         self.tray_icon.setContextMenu(self.context_menu_tray_icon())
         self.tray_icon.activated.connect(self.tray_icon_activated)
         self.tray_icon.show()
@@ -495,13 +506,18 @@ class MainWindow(QMainWindow):
             item.setText(2, self.tasks[i].destination)
             item.setText(3, self.tasks[i].status)
 
-            if len(rc.tasks) > i:
+            if self.tasks[i].index != -1:
                 if self.tasks[i].operation in ['Upload', 'Download', 'Opening']:
-                    self.tasks[i].set_full_size(rc.tasks[i]['full_size'])
-                    self.tasks[i].set_size(rc.tasks[i]['current_size'])
-                    self.tasks[i].set_speed(rc.tasks[i]['speed'])
-                    self.tasks[i].set_estimated(rc.tasks[i]['estimated'])
-                    self.tasks[i].set_status(rc.tasks[i]['is_done'])
+                    self.tasks[i].set_full_size(
+                        rc.tasks[self.tasks[i].index]['full_size'])
+                    self.tasks[i].set_size(
+                        rc.tasks[self.tasks[i].index]['current_size'])
+                    self.tasks[i].set_speed(
+                        rc.tasks[self.tasks[i].index]['speed'])
+                    self.tasks[i].set_estimated(
+                        rc.tasks[self.tasks[i].index]['estimated'])
+                    self.tasks[i].set_status(
+                        rc.tasks[self.tasks[i].index]['is_done'])
 
                     item.setText(3, self.tasks[i].status)
                     item.setText(4, self.tasks[i].size)
@@ -644,7 +660,6 @@ class MainWindow(QMainWindow):
         pixmap.fill(QColorConstants.Transparent)
         painter = QPainter(pixmap)
 
-
         i = 0
         is_i_max = False
         j = 0
@@ -653,7 +668,8 @@ class MainWindow(QMainWindow):
             self.copy_files.append(
                 [dir_path + item.text(0), item.text(3) == 'inode/directory'])
 
-            painter.drawPixmap(i, j, item.icon(0).pixmap(QSize(icon_size, icon_size)))
+            painter.drawPixmap(i, j, item.icon(
+                0).pixmap(QSize(icon_size, icon_size)))
             if j < pixmap_size:
                 i += icon_size + 2
                 if i >= pixmap_size:
@@ -820,18 +836,12 @@ class MainWindow(QMainWindow):
                     item.__lt__ = types.MethodType(lt, item)
 
                     if file['is_dir']:
-                        item.setIcon(0, QIcon.fromTheme('folder'))
+                        icon = QFileIconProvider().icon(QFileIconProvider().IconType.Folder)
+                        item.setIcon(0, icon)
                     else:
-                        if os.name == 'nt':
-                            item.setIcon(0, QIcon.fromTheme(
-                                'emblem-documents'))
-                        else:
-                            type_file = file['type'].split(
-                                ';')[0].replace('/', '-')
-                            if QIcon.fromTheme(type_file):
-                                item.setIcon(0, QIcon.fromTheme(type_file))
-                            else:
-                                item.setIcon(0, QIcon.fromTheme('text-plain'))
+                        file_info = QFileInfo(file['name'])
+                        icon = QFileIconProvider().icon(file_info)
+                        item.setIcon(0, icon)
                     self.ui.tree_files.addTopLevelItem(item)
 
             if not update:
@@ -843,19 +853,25 @@ class MainWindow(QMainWindow):
         asyncio.ensure_future(self.open_dir(item.text(0)))
         asyncio.ensure_future(self.update_free_size(item.text(0), True))
 
-    async def open_file(self, file_path: str, file_name: str):
+    async def open_file(self, file_path: str, file_name: str, is_with: bool = False):
         if self.temp_dir == '':
             self.temp_dir = rclone.tempfile.mkdtemp(prefix='cloud_explorer-')
         self.tasks.append(Task(
             operation='Opening', source=self.current_remote + file_path, destination=self.temp_dir))
         self.ui.dock_tasks.show()
         await rc.copy(f'{self.current_remote}{file_path}', self.temp_dir)
-        if os.name == 'nt':
-            os.startfile(self.temp_dir + '\\' + file_name)
+        if not is_with:
+            QDesktopServices.openUrl(QUrl.fromLocalFile(
+                self.temp_dir + '/' + file_name))
         else:
-            subprocess.call(['xdg-open', self.temp_dir + '/' + file_name])
+            if os.name == 'nt':
+                subprocess.run(
+                    ['rundll32', 'shell32.dll,OpenAs_RunDLL', self.temp_dir + '\\' + file_name])
+            else:
+                QDesktopServices.openUrl(QUrl.fromLocalFile(
+                    self.temp_dir + '/' + file_name))
 
-    def open_item(self, file_name: str, is_dir: bool):
+    def open_item(self, file_name: str, is_dir: bool, is_with: bool = False):
         if self.current_remote:
             if self.remotes_paths[self.current_remote] != '':
                 file_path = self.remotes_paths[self.current_remote] + \
@@ -866,7 +882,8 @@ class MainWindow(QMainWindow):
                 asyncio.ensure_future(self.open_dir(
                     self.current_remote, file_path))
             else:
-                asyncio.ensure_future(self.open_file(file_path, file_name))
+                asyncio.ensure_future(self.open_file(
+                    file_path, file_name, is_with))
 
     def download_file(self, list_files: list, download_path: str = None, is_full_paths: bool = False):
         source_remote = self.current_remote
@@ -1128,10 +1145,18 @@ class MainWindow(QMainWindow):
 
                 action = QAction(self)
                 action.setText('Open')
-                action.setIcon(QIcon.fromTheme('document-open'))
+                action.setIcon(item.icon(0))
                 action.triggered.connect(
                     lambda: self.open_item(file_name, is_dir))
                 menu.addAction(action)
+
+                if not is_dir and os.name == 'nt':
+                    action = QAction(self)
+                    action.setText('Open With...')
+                    action.setIcon(QIcon.fromTheme('document-open'))
+                    action.triggered.connect(
+                        lambda: self.open_item(file_name, is_dir, True))
+                    menu.addAction(action)
 
                 action = QAction(self)
                 action.setText('Download')
@@ -1285,6 +1310,7 @@ class MainWindow(QMainWindow):
 
         action = QAction(self)
         action.setText('Open')
+        action.setIcon(self.windowIcon())
         action.triggered.connect(open)
         menu.addAction(action)
 
@@ -1327,7 +1353,7 @@ def start_server(window: MainWindow, server_name: str):
         client = server.nextPendingConnection()
         if client:
             client.waitForReadyRead(100)
-            window.show()
+            window.showNormal()
             window.activateWindow()
             client.disconnectFromServer()
 
