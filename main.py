@@ -669,7 +669,7 @@ class MainWindow(QMainWindow):
                 [dir_path + item.text(0), item.text(3) == 'inode/directory'])
 
             painter.drawPixmap(i, j, item.icon(
-                0).pixmap(QSize(icon_size, icon_size)))
+                0).pixmap(QSize(icon_size, icon_size)).scaled(icon_size, icon_size))
             if j < pixmap_size:
                 i += icon_size + 2
                 if i >= pixmap_size:
