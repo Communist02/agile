@@ -56,7 +56,8 @@ class SettingsWindow(QDialog):
         self.ui = settings_window.Ui_SettingsWindow()
         self.ui.setupUi(self)
 
-        self.setWindowIcon(QIcon(f'{os.path.dirname(__file__) + os.sep}favicon.ico'))
+        self.setWindowIcon(
+            QIcon(f'{os.path.dirname(__file__) + os.sep}favicon.ico'))
 
         styles = QStyleFactory.keys()
         for i in range(len(styles)):
@@ -77,7 +78,8 @@ class NewServeWindow(QDialog):
         self.ui = new_serve_window.Ui_NewServeWindow()
         self.ui.setupUi(self)
 
-        self.setWindowIcon(QIcon(f'{os.path.dirname(__file__) + os.sep}favicon.ico'))
+        self.setWindowIcon(
+            QIcon(f'{os.path.dirname(__file__) + os.sep}favicon.ico'))
 
         self.ui.buttonBox.accepted.connect(lambda: self.new_serve())
 
@@ -118,7 +120,8 @@ class NewRemoteWindow(QDialog):
         self.ui = new_remote_window.Ui_NewRemoteWindow()
         self.ui.setupUi(self)
 
-        self.setWindowIcon(QIcon(f'{os.path.dirname(__file__) + os.sep}favicon.ico'))
+        self.setWindowIcon(
+            QIcon(f'{os.path.dirname(__file__) + os.sep}favicon.ico'))
 
         self.ui.buttonBox.accepted.connect(
             lambda: self.new_remote(edit_mode, remote_name))
@@ -386,13 +389,15 @@ class MainWindow(QMainWindow):
     tasks: list[Task] = []
     scale: int
     copy_files: list = []
+    history: dict = {}
 
     def __init__(self):
         super(MainWindow, self).__init__()
         self.ui = main_window.Ui_MainWindow()
         self.ui.setupUi(self)
 
-        self.setWindowIcon(QIcon(f'{os.path.dirname(__file__) + os.sep}favicon.ico'))
+        self.setWindowIcon(
+            QIcon(f'{os.path.dirname(__file__) + os.sep}favicon.ico'))
 
         self.ui.tree_files.header().resizeSection(0, 300)
         self.ui.tree_files.header().resizeSection(1, 80)
@@ -423,6 +428,8 @@ class MainWindow(QMainWindow):
         self.ui.button_exit_dir.clicked.connect(self.exit_folder)
         self.ui.button_update.clicked.connect(lambda: asyncio.ensure_future(
             self.update_dir(self.current_remote, self.remotes_paths.setdefault(self.current_remote, ''))))
+        self.ui.button_prev_history.clicked.connect(self.prev_history)
+        self.ui.button_next_history.clicked.connect(self.next_history)
 
         self.ui.tree_files.startDrag = self.start_drag
 
@@ -685,6 +692,46 @@ class MainWindow(QMainWindow):
         drag.setHotSpot(QPoint(i / 2, -9))
         drag.exec(Qt.DropAction.CopyAction)
 
+    def prev_history(self):
+        if self.current_remote in self.history.keys():
+            if self.history[self.current_remote][1] > 0:
+                self.history[self.current_remote][1] -= 1
+                asyncio.ensure_future(self.open_dir(
+                    self.current_remote, self.history[self.current_remote][0][self.history[self.current_remote][1]]))
+                self.ui.button_next_history.setEnabled(True)
+            if self.history[self.current_remote][1] < 1:
+                self.ui.button_prev_history.setEnabled(False)
+
+    def next_history(self):
+        if self.current_remote in self.history.keys() and self.history[self.current_remote][1] < len(self.history[self.current_remote][0]) - 1:
+            self.history[self.current_remote][1] += 1
+            self.ui.button_prev_history.setEnabled(True)
+            if self.history[self.current_remote][1] == len(self.history[self.current_remote][0]) - 1:
+                self.ui.button_next_history.setEnabled(False)
+            asyncio.ensure_future(self.open_dir(
+                self.current_remote, self.history[self.current_remote][0][self.history[self.current_remote][1]]))
+
+    def update_history(self):
+        if self.current_remote in self.history.keys():
+            if self.history[self.current_remote][0][self.history[self.current_remote][1]] != self.remotes_paths[self.current_remote]:
+                self.history[self.current_remote][1] += 1
+                self.history[self.current_remote][0] = self.history[self.current_remote][0][:self.history[self.current_remote][1]]
+                self.history[self.current_remote][0].append(
+                    self.remotes_paths[self.current_remote])
+        else:
+            self.history[self.current_remote] = [
+                [self.remotes_paths[self.current_remote]], 0]
+
+        if self.history[self.current_remote][1] > 0:
+            self.ui.button_prev_history.setEnabled(True)
+        else:
+            self.ui.button_prev_history.setEnabled(False)
+
+        if self.history[self.current_remote][1] < len(self.history[self.current_remote][0]) - 1:
+            self.ui.button_next_history.setEnabled(True)
+        else:
+            self.ui.button_next_history.setEnabled(False)
+
     def update_remotes(self):
         remotes = rc.listremotes(True)
         self.ui.tree_remotes.clear()
@@ -744,6 +791,13 @@ class MainWindow(QMainWindow):
     async def open_dir(self, remote_name: str, path_dir: str = '', update=False):
         self.current_remote = remote_name
         self.remotes_paths[remote_name] = path_dir
+
+        self.update_history()
+
+        if path_dir != '':
+            self.ui.button_exit_dir.setEnabled(True)
+        else:
+            self.ui.button_exit_dir.setEnabled(False)
 
         for i in range(self.ui.path_list.count()):
             self.ui.path_list.itemAt(i).widget().deleteLater()
@@ -850,7 +904,10 @@ class MainWindow(QMainWindow):
     def open_remote(self, item: QTreeWidgetItem):
         for i in range(self.ui.path_list.count()):
             self.ui.path_list.itemAt(i).widget().deleteLater()
-        asyncio.ensure_future(self.open_dir(item.text(0)))
+        if item.text(0) not in self.remotes_paths.keys():
+            self.remotes_paths[item.text(0)] = ''
+        asyncio.ensure_future(self.open_dir(
+            item.text(0), self.remotes_paths[item.text(0)]))
         asyncio.ensure_future(self.update_free_size(item.text(0), True))
 
     async def open_file(self, file_path: str, file_name: str, is_with: bool = False):
@@ -1008,6 +1065,7 @@ class MainWindow(QMainWindow):
 
     def exit_folder(self):
         if self.current_remote != '' and self.remotes_paths[self.current_remote] != '':
+            self.update_history()
             path_dir = f'{self.remotes_paths[self.current_remote]}'
             path = '/'.join(path_dir.split('/')[:-1])
             asyncio.ensure_future(self.open_dir(self.current_remote, path))
@@ -1250,11 +1308,7 @@ class MainWindow(QMainWindow):
 
     def show_context_menu_task(self, point):
         index = self.ui.tasks.indexAt(point)
-
-        if not index.isValid():
-            return
-
-        item = self.ui.tasks.itemAt(point)
+        menu = QMenu()
 
         def clear_tasks():
             for i in range(len(self.tasks)):
@@ -1266,33 +1320,40 @@ class MainWindow(QMainWindow):
             self.ui.tasks.takeTopLevelItem(index)
             del self.tasks[index]
 
-        menu = QMenu()
-
-        if item.text(0) in ['Download', 'Upload', 'Opening']:
+        if not index.isValid():
             action = QAction(self)
-            action.setText('Open folder')
-            action.setIcon(QIcon.fromTheme('folder-open'))
-            action.triggered.connect(lambda: self.open_task_dir(item))
-            menu.addAction(action)
-
-        action = QAction(self)
-        action.setText('Clear Completed')
-        action.setIcon(QIcon.fromTheme('edit-clear'))
-        action.triggered.connect(clear_tasks)
-        menu.addAction(action)
-
-        if item.text(3) == 'Done':
-            action = QAction(self)
-            action.setText('Clear Task')
+            action.setText('Clear Completed')
             action.setIcon(QIcon.fromTheme('edit-clear'))
-            action.triggered.connect(
-                lambda: self.ui.tasks.topLevelItem(index.row()).setHidden(True))
+            action.triggered.connect(clear_tasks)
             menu.addAction(action)
+        else:
+            item = self.ui.tasks.itemAt(point)
 
-        if item.text(0) in ['Mount', 'Serve']:
+            if item.text(0) in ['Download', 'Upload', 'Opening']:
+                action = QAction(self)
+                action.setText('Open folder')
+                action.setIcon(QIcon.fromTheme('folder-open'))
+                action.triggered.connect(lambda: self.open_task_dir(item))
+                menu.addAction(action)
+
+            if item.text(3) == 'Done':
+                action = QAction(self)
+                action.setText('Clear Task')
+                action.setIcon(QIcon.fromTheme('edit-clear'))
+                action.triggered.connect(
+                    lambda: self.ui.tasks.topLevelItem(index.row()).setHidden(True))
+                menu.addAction(action)
+
+            if item.text(0) in ['Mount', 'Serve']:
+                action = QAction(self)
+                action.setText('Stop')
+                action.triggered.connect(lambda: stop_task(index.row()))
+                menu.addAction(action)
+
             action = QAction(self)
-            action.setText('Stop')
-            action.triggered.connect(lambda: stop_task(index.row()))
+            action.setText('Clear Completed')
+            action.setIcon(QIcon.fromTheme('edit-clear'))
+            action.triggered.connect(clear_tasks)
             menu.addAction(action)
 
         menu.exec(QCursor.pos())
