@@ -81,7 +81,13 @@ class NewServeWindow(QDialog):
         self.setWindowIcon(
             QIcon(f'{os.path.dirname(__file__) + os.sep}favicon.ico'))
 
-        self.ui.buttonBox.accepted.connect(lambda: self.new_serve())
+        self.ui.buttonBox.accepted.connect(self.new_serve)
+        self.ui.button_select_dir.clicked.connect(self.select_dir)
+    
+    def select_dir(self):
+        path = QFileDialog.getExistingDirectory()
+        if path is not None and path != '':
+            self.ui.lineEdit_path.setText(path)
 
     def new_serve(self):
         path = self.ui.lineEdit_path.text()
@@ -313,6 +319,8 @@ class NewRemoteWindow(QDialog):
 
 
 class Task():
+    last_index = 0
+
     def __init__(self, operation: str, source: str = '', destination: str = '', process: subprocess.Popen = None):
         self.operation = operation
         self.source = source
@@ -327,7 +335,8 @@ class Task():
 
         match operation:
             case 'Download' | 'Upload' | 'Opening':
-                self.index = len(rc.tasks)
+                self.index = Task.last_index
+                Task.last_index += 1
             case _:
                 self.index = -1
 
@@ -484,7 +493,7 @@ class MainWindow(QMainWindow):
 
     def timer_update(self):
         if self.download_path != '':
-            window.download_file(window.copy_files, self.download_path, True)
+            self.download_file(self.copy_files, self.download_path, True)
             self.download_path = ''
 
         for i in range(len(self.tasks)):
@@ -505,6 +514,7 @@ class MainWindow(QMainWindow):
                     case 'Delete':
                         item.setIcon(0, QIcon.fromTheme('edit-delete'))
                 self.ui.tasks.addTopLevelItem(item)
+                self.ui.dock_tasks.show()
             else:
                 item = self.ui.tasks.topLevelItem(i)
 
@@ -752,7 +762,6 @@ class MainWindow(QMainWindow):
     async def upload_file(self, source_path: str, destination_remote: str, destination_path: str):
         self.tasks.append(Task(operation='Upload', source=source_path,
                           destination=f'{destination_remote}{destination_path}'))
-        self.ui.dock_tasks.show()
         is_dir = await rc.is_dir(source_path)
 
         dest_path = destination_path
@@ -915,7 +924,6 @@ class MainWindow(QMainWindow):
             self.temp_dir = rclone.tempfile.mkdtemp(prefix='cloud_explorer-')
         self.tasks.append(Task(
             operation='Opening', source=self.current_remote + file_path, destination=self.temp_dir))
-        self.ui.dock_tasks.show()
         await rc.copy(f'{self.current_remote}{file_path}', self.temp_dir)
         if not is_with:
             QDesktopServices.openUrl(QUrl.fromLocalFile(
@@ -963,7 +971,6 @@ class MainWindow(QMainWindow):
 
                 self.tasks.append(Task(
                     operation='Download', source=f'{source_remote}{file_path}', destination=download_path))
-                self.ui.dock_tasks.show()
 
                 if not file[1]:
                     asyncio.ensure_future(
@@ -984,7 +991,6 @@ class MainWindow(QMainWindow):
                 process = rc.mount(name, '*', '--network-mode')
             self.tasks.append(
                 Task(operation='Mount', source=name, process=process))
-            self.ui.dock_tasks.show()
         else:
             mount_path = QFileDialog.getExistingDirectory()
             if mount_path is not None and mount_path != '':
@@ -1031,7 +1037,6 @@ class MainWindow(QMainWindow):
 
                 task = Task(operation='Delete', source=file_path)
                 self.tasks.append(task)
-                self.ui.dock_tasks.show()
 
                 if file[1]:
                     await rc.purge(file_path)

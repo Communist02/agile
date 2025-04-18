@@ -18,7 +18,7 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
 from PySide6.QtWidgets import (QAbstractButton, QApplication, QCheckBox, QDialog,
     QDialogButtonBox, QGroupBox, QHBoxLayout, QLabel,
     QLineEdit, QRadioButton, QSizePolicy, QSpacerItem,
-    QVBoxLayout, QWidget)
+    QToolButton, QVBoxLayout, QWidget)
 
 class Ui_NewServeWindow(object):
     def setupUi(self, NewServeWindow):
@@ -70,10 +70,20 @@ class Ui_NewServeWindow(object):
 
         self.verticalLayout.addWidget(self.label_3)
 
+        self.horizontalLayout_3 = QHBoxLayout()
+        self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
         self.lineEdit_path = QLineEdit(NewServeWindow)
         self.lineEdit_path.setObjectName(u"lineEdit_path")
 
-        self.verticalLayout.addWidget(self.lineEdit_path)
+        self.horizontalLayout_3.addWidget(self.lineEdit_path)
+
+        self.button_select_dir = QToolButton(NewServeWindow)
+        self.button_select_dir.setObjectName(u"button_select_dir")
+
+        self.horizontalLayout_3.addWidget(self.button_select_dir)
+
+
+        self.verticalLayout.addLayout(self.horizontalLayout_3)
 
         self.groupBox = QGroupBox(NewServeWindow)
         self.groupBox.setObjectName(u"groupBox")
@@ -164,6 +174,7 @@ class Ui_NewServeWindow(object):
         self.lineEdit_path.setToolTip(QCoreApplication.translate("NewServeWindow", u"Can be \"myremote:path/to/dir\", \"myremote:bucket\", \"myremote:\" or \"/local/path\"", None))
 #endif // QT_CONFIG(tooltip)
         self.lineEdit_path.setPlaceholderText(QCoreApplication.translate("NewServeWindow", u"Can be \"myremote:path/to/dir\", \"myremote:bucket\", \"myremote:\" or \"/local/path\"", None))
+        self.button_select_dir.setText(QCoreApplication.translate("NewServeWindow", u"...", None))
         self.groupBox.setTitle(QCoreApplication.translate("NewServeWindow", u"Optional", None))
         self.label_4.setText(QCoreApplication.translate("NewServeWindow", u"Address", None))
 #if QT_CONFIG(tooltip)
