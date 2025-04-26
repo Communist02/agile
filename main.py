@@ -83,7 +83,7 @@ class NewServeWindow(QDialog):
 
         self.ui.buttonBox.accepted.connect(self.new_serve)
         self.ui.button_select_dir.clicked.connect(self.select_dir)
-    
+
     def select_dir(self):
         path = QFileDialog.getExistingDirectory()
         if path is not None and path != '':
@@ -170,11 +170,9 @@ class NewRemoteWindow(QDialog):
                         self.ui.tabWidget.findChild(QWidget, 'tab_webdav')))
                     url = config[remote_name[:-1]]['url']
                     user = config[remote_name[:-1]]['user']
-                    vendor = config[remote_name[:-1]
-                                    ].setdefault('vendor', 'other')
                     self.ui.lineEdit_webdav_url.setText(url)
                     self.ui.lineEdit_webdav_login.setText(user)
-                    match vendor:
+                    match config[remote_name[:-1]].setdefault('vendor', 'other'):
                         case 'fastmail':
                             vendor = 1
                         case 'nextcloud':
@@ -201,6 +199,14 @@ class NewRemoteWindow(QDialog):
                 case 'onedrive':
                     self.ui.tabWidget.setCurrentIndex(self.ui.tabWidget.indexOf(
                         self.ui.tabWidget.findChild(QWidget, 'tab_onedrive')))
+                    match config[remote_name[:-1]].setdefault('region', 'global'):
+                        case 'us':
+                            region = 1
+                        case 'cn':
+                            region = 2
+                        case _:
+                            region = 0
+                    self.ui.comboBox_onedrive_region.setCurrentIndex(region)
                 case 'mailru':
                     self.ui.tabWidget.setCurrentIndex(self.ui.tabWidget.indexOf(
                         self.ui.tabWidget.findChild(QWidget, 'tab_mailru')))
@@ -264,14 +270,13 @@ class NewRemoteWindow(QDialog):
                                   self.ui.lineEdit_ftp_password.text().strip())
                     self.close()
                 case 'tab_webdav':
-                    vendors = ['other', 'fastmail', 'nextcloud',
-                               'owncloud', 'sharepoint', 'sharepoint-ntlm', 'rclone']
+                    vendor = ['other', 'fastmail', 'nextcloud', 'owncloud', 'sharepoint',
+                              'sharepoint-ntlm', 'rclone'][self.ui.comboBox_webdav_vendor.currentIndex()]
                     rclone.create_remote(name,
                                          remote_type=remote_types.RemoteTypes.webdav,
                                          url=self.ui.lineEdit_webdav_url.text().strip(),
                                          user=self.ui.lineEdit_webdav_login.text().strip(),
-                                         vendor=vendors[self.ui.comboBox_webdav_vendor.currentIndex(
-                                         )]
+                                         vendor=vendor
                                          )
                     if self.ui.lineEdit_webdav_password.text().strip() != '':
                         rc.config('password', name, 'pass',
@@ -286,8 +291,10 @@ class NewRemoteWindow(QDialog):
                         name, remote_type=remote_types.RemoteTypes.local)
                     self.close()
                 case 'tab_onedrive':
+                    region = [
+                        'global', 'us', 'cn'][self.ui.comboBox_onedrive_region.currentIndex()]
                     rclone.create_remote(
-                        name, remote_type=remote_types.RemoteTypes.onedrive)
+                        name, remote_type=remote_types.RemoteTypes.onedrive, region=region)
                     self.close()
                 case 'tab_mailru':
                     rclone.create_remote(name, remote_type=remote_types.RemoteTypes.mailru,

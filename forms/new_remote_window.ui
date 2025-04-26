@@ -439,6 +439,39 @@
         </widget>
        </item>
        <item>
+        <widget class="Line" name="line_2">
+         <property name="orientation">
+          <enum>Qt::Orientation::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_28">
+         <property name="text">
+          <string>Region</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comboBox_onedrive_region">
+         <item>
+          <property name="text">
+           <string extracomment="global">Microsoft Cloud Global</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string extracomment="us">Microsoft Cloud for US Government</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string extracomment="cn">Azure and Office 365 operated by Vnet Group in China</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item>
         <spacer name="verticalSpacer_6">
          <property name="orientation">
           <enum>Qt::Orientation::Vertical</enum>
@@ -647,7 +680,7 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>584</width>
+            <width>203</width>
             <height>338</height>
            </rect>
           </property>
@@ -683,7 +716,7 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>582</width>
+                <width>350</width>
                 <height>144</height>
                </rect>
               </property>

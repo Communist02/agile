@@ -334,6 +334,26 @@ class Ui_NewRemoteWindow(object):
 
         self.verticalLayout_12.addWidget(self.label_11)
 
+        self.line_2 = QFrame(self.tab_onedrive)
+        self.line_2.setObjectName(u"line_2")
+        self.line_2.setFrameShape(QFrame.Shape.HLine)
+        self.line_2.setFrameShadow(QFrame.Shadow.Sunken)
+
+        self.verticalLayout_12.addWidget(self.line_2)
+
+        self.label_28 = QLabel(self.tab_onedrive)
+        self.label_28.setObjectName(u"label_28")
+
+        self.verticalLayout_12.addWidget(self.label_28)
+
+        self.comboBox_onedrive_region = QComboBox(self.tab_onedrive)
+        self.comboBox_onedrive_region.addItem("")
+        self.comboBox_onedrive_region.addItem("")
+        self.comboBox_onedrive_region.addItem("")
+        self.comboBox_onedrive_region.setObjectName(u"comboBox_onedrive_region")
+
+        self.verticalLayout_12.addWidget(self.comboBox_onedrive_region)
+
         self.verticalSpacer_6 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.verticalLayout_12.addItem(self.verticalSpacer_6)
@@ -465,7 +485,7 @@ class Ui_NewRemoteWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 584, 338))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 203, 338))
         self.verticalLayout_21 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_21.setObjectName(u"verticalLayout_21")
         self.verticalLayout_21.setContentsMargins(0, 0, 0, 0)
@@ -479,7 +499,7 @@ class Ui_NewRemoteWindow(object):
         self.toolBox.setFrameShape(QFrame.Shape.Box)
         self.page = QWidget()
         self.page.setObjectName(u"page")
-        self.page.setGeometry(QRect(0, 0, 582, 144))
+        self.page.setGeometry(QRect(0, 0, 350, 144))
         self.verticalLayout_22 = QVBoxLayout(self.page)
         self.verticalLayout_22.setObjectName(u"verticalLayout_22")
         self.pushButton = QPushButton(self.page)
@@ -660,6 +680,11 @@ class Ui_NewRemoteWindow(object):
         self.label_6.setText(QCoreApplication.translate("NewRemoteWindow", u"By pressing the OK button your browser will open and you will be needed to authenticate in Yandex Disk", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_yandex_disk), QCoreApplication.translate("NewRemoteWindow", u"Yandex Disk", None))
         self.label_11.setText(QCoreApplication.translate("NewRemoteWindow", u"By pressing the OK button your browser will open and you will be needed to authenticate in Microsoft OneDrive", None))
+        self.label_28.setText(QCoreApplication.translate("NewRemoteWindow", u"Region", None))
+        self.comboBox_onedrive_region.setItemText(0, QCoreApplication.translate("NewRemoteWindow", u"Microsoft Cloud Global", None))
+        self.comboBox_onedrive_region.setItemText(1, QCoreApplication.translate("NewRemoteWindow", u"Microsoft Cloud for US Government", None))
+        self.comboBox_onedrive_region.setItemText(2, QCoreApplication.translate("NewRemoteWindow", u"Azure and Office 365 operated by Vnet Group in China", None))
+
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_onedrive), QCoreApplication.translate("NewRemoteWindow", u"Microsoft OneDrive", None))
         self.label_24.setText(QCoreApplication.translate("NewRemoteWindow", u"Login", None))
         self.label_25.setText(QCoreApplication.translate("NewRemoteWindow", u"Password", None))
