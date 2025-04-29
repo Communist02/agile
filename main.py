@@ -445,7 +445,9 @@ class MainWindow(QMainWindow):
 
         self.ui.tree_remotes.itemClicked.connect(self.open_remote)
         self.ui.tree_files.itemDoubleClicked.connect(
-            lambda item: self.open_item(item.text(0), item.text(3) == 'inode/directory'))
+            lambda item: self.open_item(item.data(0, Qt.ItemDataRole.UserRole)['remote'], item.data(0, Qt.ItemDataRole.UserRole)['path'], item.data(0, Qt.ItemDataRole.UserRole)['name'], item.data(0, Qt.ItemDataRole.UserRole)['is_dir']))
+        self.ui.treeWidget_search.itemDoubleClicked.connect(
+            lambda item: self.open_item(item.data(0, Qt.ItemDataRole.UserRole)['remote'], item.data(0, Qt.ItemDataRole.UserRole)['path'], item.data(0, Qt.ItemDataRole.UserRole)['name'], item.data(0, Qt.ItemDataRole.UserRole)['is_dir']))
         self.ui.tasks.itemDoubleClicked.connect(self.open_task_dir)
 
         self.ui.button_exit_dir.clicked.connect(self.exit_folder)
@@ -453,7 +455,8 @@ class MainWindow(QMainWindow):
             self.update_dir(self.current_remote, self.remotes_paths.setdefault(self.current_remote, ''))))
         self.ui.button_prev_history.clicked.connect(self.prev_history)
         self.ui.button_next_history.clicked.connect(self.next_history)
-        self.ui.button_search.clicked.connect(lambda: asyncio.ensure_future(self.search()))
+        self.ui.button_search.clicked.connect(
+            lambda: asyncio.ensure_future(self.search()))
 
         self.ui.tree_files.startDrag = self.start_drag
 
@@ -480,7 +483,8 @@ class MainWindow(QMainWindow):
         self.slider_scale.valueChanged.connect(self.set_scale)
 
         self.layout_free_size = QLabel('', statusbar_widget)
-        h_layout.addItem(QSpacerItem(0, 0, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
+        h_layout.addItem(QSpacerItem(
+            0, 0, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
         h_layout.addWidget(self.layout_free_size)
         h_layout.addWidget(QLabel('Scale:', statusbar_widget))
         h_layout.addWidget(self.slider_scale)
@@ -509,7 +513,7 @@ class MainWindow(QMainWindow):
 
     def timer_update(self):
         if self.download_path != '':
-            self.download_file(self.copy_files, self.download_path, True)
+            self.download_file(self.copy_files, self.download_path)
             self.download_path = ''
 
         for i in range(len(self.tasks)):
@@ -617,7 +621,7 @@ class MainWindow(QMainWindow):
             elif other_item.text(3) == 'inode/directory' and self.text(3) != 'inode/directory':
                 return False
             return self.text(column).lower() < other_item.text(column).lower()
-        
+
         loop = asyncio.get_running_loop()
 
         while True:
@@ -669,6 +673,8 @@ class MainWindow(QMainWindow):
                         file_info = QFileInfo(file['name'])
                         icon = QFileIconProvider().icon(file_info)
                         item.setIcon(0, icon)
+                    item.setData(0, Qt.ItemDataRole.UserRole, {
+                                 'name': file['name'], 'remote': remote_name, 'path': line['Path'], 'is_dir': file['is_dir']})
                     self.ui.treeWidget_search.addTopLevelItem(item)
 
         if search_process_is_running == self.search_process_is_running:
@@ -714,7 +720,7 @@ class MainWindow(QMainWindow):
         for i in range(self.ui.tree_files.topLevelItemCount()):
             item = self.ui.tree_files.topLevelItem(i)
             item.setSizeHint(0, QSize(0, value))
-        
+
         for i in range(self.ui.treeWidget_search.topLevelItemCount()):
             item = self.ui.treeWidget_search.topLevelItem(i)
             item.setSizeHint(0, QSize(0, value))
@@ -780,8 +786,7 @@ class MainWindow(QMainWindow):
         j = 0
         self.copy_files = []
         for item in self.ui.tree_files.selectedItems():
-            self.copy_files.append(
-                [dir_path + item.text(0), item.text(3) == 'inode/directory'])
+            self.copy_files.append(item.data(0, Qt.ItemDataRole.UserRole))
 
             painter.drawPixmap(i, j, item.icon(
                 0).pixmap(QSize(icon_size, icon_size)).scaled(icon_size, icon_size))
@@ -857,7 +862,8 @@ class MainWindow(QMainWindow):
                 file = f'{os.path.dirname(__file__) + os.sep}images{os.sep}unknown{inv}.png'
             item.setIcon(0, QPixmap(file))
             self.ui.tree_remotes.addTopLevelItem(item)
-            self.ui.comboBox_search.addItem(QPixmap(file), remote['name'] + ':')
+            self.ui.comboBox_search.addItem(
+                QPixmap(file), remote['name'] + ':')
 
     async def upload_file(self, source_path: str, destination_remote: str, destination_path: str):
         self.tasks.append(Task(operation='Upload', source=source_path,
@@ -1005,6 +1011,8 @@ class MainWindow(QMainWindow):
                         file_info = QFileInfo(file['name'])
                         icon = QFileIconProvider().icon(file_info)
                         item.setIcon(0, icon)
+                    item.setData(0, Qt.ItemDataRole.UserRole, {
+                                 'name': file['name'], 'remote': remote_name, 'path': file['path'], 'is_dir': file['is_dir']})
                     self.ui.tree_files.addTopLevelItem(item)
 
             if not update:
@@ -1019,12 +1027,12 @@ class MainWindow(QMainWindow):
             item.text(0), self.remotes_paths[item.text(0)]))
         asyncio.ensure_future(self.update_free_size(item.text(0), True))
 
-    async def open_file(self, file_path: str, file_name: str, is_with: bool = False):
+    async def open_file(self, remote: str, file_path: str, file_name: str, is_with: bool = False):
         if self.temp_dir == '':
             self.temp_dir = rclone.tempfile.mkdtemp(prefix='cloud_explorer-')
         self.tasks.append(Task(
-            operation='Opening', source=self.current_remote + file_path, destination=self.temp_dir))
-        await rc.copy(f'{self.current_remote}{file_path}', self.temp_dir)
+            operation='Opening', source=remote + file_path, destination=self.temp_dir))
+        await rc.copy(remote + file_path, self.temp_dir)
         if not is_with:
             QDesktopServices.openUrl(QUrl.fromLocalFile(
                 self.temp_dir + '/' + file_name))
@@ -1036,43 +1044,29 @@ class MainWindow(QMainWindow):
                 QDesktopServices.openUrl(QUrl.fromLocalFile(
                     self.temp_dir + '/' + file_name))
 
-    def open_item(self, file_name: str, is_dir: bool, is_with: bool = False):
-        if self.current_remote:
-            if self.remotes_paths[self.current_remote] != '':
-                file_path = self.remotes_paths[self.current_remote] + \
-                    '/' + file_name
-            else:
-                file_path = file_name
+    def open_item(self, remote: str, file_path: str, file_name: str, is_dir: bool, is_with: bool = False):
+        if remote:
             if is_dir:
                 asyncio.ensure_future(self.open_dir(
-                    self.current_remote, file_path))
+                    remote, file_path))
             else:
                 asyncio.ensure_future(self.open_file(
-                    file_path, file_name, is_with))
+                    remote, file_path, file_name, is_with))
 
-    def download_file(self, list_files: list, download_path: str = None, is_full_paths: bool = False):
-        source_remote = self.current_remote
-
+    def download_file(self, list_files: list[dict], download_path: str = None):
         if download_path is None:
             download_path = QFileDialog.getExistingDirectory()
         if download_path is not None and download_path != '':
             for file in list_files:
-                base_name = file[0]
-
-                if self.remotes_paths[self.current_remote] != '':
-                    file_path = f'{self.remotes_paths[self.current_remote]}/{base_name}'
-                else:
-                    file_path = base_name
-
-                if is_full_paths != '':
-                    source_remote = ''
-                    file_path = file[0]
-                    base_name = file[0].split(':')[-1].split('/')[-1]
+                base_name = file.get(
+                    'name', file['path'].split(':')[-1].split('/')[-1])
+                file_path = file['path']
+                source_remote = file['remote']
 
                 self.tasks.append(Task(
                     operation='Download', source=f'{source_remote}{file_path}', destination=download_path))
 
-                if not file[1]:
+                if not file['is_dir']:
                     asyncio.ensure_future(
                         rc.copy(source_remote + file_path, download_path))
                 else:
@@ -1097,15 +1091,9 @@ class MainWindow(QMainWindow):
                 rc.mount(f'"{name}"', f'"{mount_path}"')
 
     def copy_file(self, items: list[QTreeWidgetItem]):
-        if self.remotes_paths[self.current_remote] != '':
-            dir_path = f'{self.current_remote}{self.remotes_paths[self.current_remote]}/'
-        else:
-            dir_path = f'{self.current_remote}'
-
         self.copy_files = []
         for item in items:
-            self.copy_files.append(
-                [dir_path + item.text(0), item.text(3) == 'inode/directory'])
+            self.copy_files.append(item.data(0, Qt.ItemDataRole.UserRole))
 
         clipboard = QApplication.clipboard()
         mime_data = QMimeData()
@@ -1114,36 +1102,28 @@ class MainWindow(QMainWindow):
         mime_data.setUrls([url])
         clipboard.setMimeData(mime_data)
 
-    async def delete_file(self, items: list[QTreeWidgetItem]):
+    async def delete_file(self, files: list[dict]):
         destination_remote = self.current_remote
         destination_path = self.remotes_paths[self.current_remote]
 
-        files = []
-
-        if len(items) == 1:
-            question = f'Are you sure you want to delete {items[0].text(0)} ?'
+        if len(files) == 1:
+            question = f'Are you sure you want to delete {files[0]['name']} ?'
         else:
-            question = f'Are you sure you want to delete {len(items)} files ?'
+            question = f'Are you sure you want to delete {len(files)} files ?'
         confirmation = QMessageBox.question(self, 'Delete', question)
         if confirmation == QMessageBox.Yes:
-            for item in items:
-                files.append([item.text(0), item.text(3) == 'inode/directory'])
-                item.setHidden(True)
             for file in files:
-                if destination_path != '':
-                    file_path = f'{destination_remote}{destination_path}/{file[0]}'
-                else:
-                    file_path = f'{destination_remote}{file[0]}'
+                file_path = file['remote'] + file['path']
 
                 task = Task(operation='Delete', source=file_path)
                 self.tasks.append(task)
 
-                if file[1]:
+                if file['is_dir']:
                     await rc.purge(file_path)
                 else:
                     await rc.deletefile(file_path)
                 task.done()
-                self.clear_cache(destination_remote, destination_path)
+            await self.update_dir(destination_remote, destination_path)
 
     async def update_dir(self, remote_name: str, path: str):
         if remote_name != '':
@@ -1282,8 +1262,7 @@ class MainWindow(QMainWindow):
 
         selected_files = []
         for item in selected:
-            selected_files.append(
-                [item.text(0), item.text(3) == 'inode/directory'])
+            selected_files.append(item.data(0, Qt.ItemDataRole.UserRole))
 
         if self.current_remote != '':
             if len(selected) < 1:
@@ -1303,14 +1282,16 @@ class MainWindow(QMainWindow):
                 menu.addAction(action)
             else:
                 item = self.ui.tree_files.itemAt(point)
-                file_name = item.text(0)
-                is_dir = item.text(3) == 'inode/directory'
+                file_name = item.data(0, Qt.ItemDataRole.UserRole)['name']
+                is_dir = item.data(0, Qt.ItemDataRole.UserRole)['is_dir']
+                remote = item.data(0, Qt.ItemDataRole.UserRole)['remote']
+                file_path = item.data(0, Qt.ItemDataRole.UserRole)['path']
 
                 action = QAction(self)
                 action.setText('Open')
                 action.setIcon(item.icon(0))
                 action.triggered.connect(
-                    lambda: self.open_item(file_name, is_dir))
+                    lambda: self.open_item(remote, file_path, file_name, is_dir))
                 menu.addAction(action)
 
                 if not is_dir and os.name == 'nt':
@@ -1318,7 +1299,7 @@ class MainWindow(QMainWindow):
                     action.setText('Open With...')
                     action.setIcon(QIcon.fromTheme('document-open'))
                     action.triggered.connect(
-                        lambda: self.open_item(file_name, is_dir, True))
+                        lambda: self.open_item(remote, file_path, file_name, is_dir, True))
                     menu.addAction(action)
 
                 action = QAction(self)
@@ -1358,7 +1339,7 @@ class MainWindow(QMainWindow):
                 action.setText('Delete')
                 action.setIcon(QIcon.fromTheme('edit-delete'))
                 action.triggered.connect(
-                    lambda: asyncio.ensure_future(self.delete_file(selected)))
+                    lambda: asyncio.ensure_future(self.delete_file(selected_files)))
                 action.setShortcut(QKeySequence('Del'))
                 menu.addAction(action)
 
@@ -1381,18 +1362,19 @@ class MainWindow(QMainWindow):
 
         selected_files = []
         for item in selected:
-            selected_files.append(
-                [item.text(0), item.text(3) == 'inode/directory'])
+            selected_files.append(item.data(0, Qt.ItemDataRole.UserRole))
 
         item = self.ui.treeWidget_search.itemAt(point)
-        file_name = item.text(0)
-        is_dir = item.text(3) == 'inode/directory'
+        file_name = item.data(0, Qt.ItemDataRole.UserRole)['name']
+        is_dir = item.data(0, Qt.ItemDataRole.UserRole)['is_dir']
+        remote = item.data(0, Qt.ItemDataRole.UserRole)['remote']
+        file_path = item.data(0, Qt.ItemDataRole.UserRole)['path']
 
         action = QAction(self)
         action.setText('Open')
         action.setIcon(item.icon(0))
         action.triggered.connect(
-            lambda: self.open_item(file_name, is_dir))
+            lambda: self.open_item(remote, file_path, file_name, is_dir))
         menu.addAction(action)
 
         if not is_dir and os.name == 'nt':
@@ -1400,7 +1382,7 @@ class MainWindow(QMainWindow):
             action.setText('Open With...')
             action.setIcon(QIcon.fromTheme('document-open'))
             action.triggered.connect(
-                lambda: self.open_item(file_name, is_dir, True))
+                lambda: self.open_item(remote, file_path, file_name, is_dir, True))
             menu.addAction(action)
 
         action = QAction(self)
