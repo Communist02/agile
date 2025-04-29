@@ -418,6 +418,10 @@ class MainWindow(QMainWindow):
         self.ui.tree_files.header().resizeSection(0, 300)
         self.ui.tree_files.header().resizeSection(1, 80)
         self.ui.tree_files.header().resizeSection(2, 120)
+        self.ui.treeWidget_search.header().resizeSection(0, 300)
+        self.ui.treeWidget_search.header().resizeSection(1, 80)
+        self.ui.treeWidget_search.header().resizeSection(2, 120)
+
         self.ui.tree_files.header().setSortIndicator(0, Qt.SortOrder.AscendingOrder)
         self.ui.tree_remotes.header().setSortIndicator(0, Qt.SortOrder.AscendingOrder)
         self.ui.tree_remotes.setIconSize(QSize(28, 28))
@@ -446,6 +450,7 @@ class MainWindow(QMainWindow):
             self.update_dir(self.current_remote, self.remotes_paths.setdefault(self.current_remote, ''))))
         self.ui.button_prev_history.clicked.connect(self.prev_history)
         self.ui.button_next_history.clicked.connect(self.next_history)
+        self.ui.button_search.clicked.connect(lambda: asyncio.ensure_future(self.search()))
 
         self.ui.tree_files.startDrag = self.start_drag
 
@@ -590,6 +595,66 @@ class MainWindow(QMainWindow):
             observer_thread.daemon = True
             observer_thread.start()
 
+    async def search(self):
+        remote_name = self.ui.comboBox_search.currentText()
+        text = self.ui.lineEdit_search.text()
+
+        self.ui.statusbar.showMessage(f'Search in {remote_name}')
+        self.ui.treeWidget_search.clear()
+        tree = await rc.lsjson(remote_name, 10)
+        self.ui.statusbar.showMessage('')
+
+        for i in range(len(tree)):
+            sizes = ['B', 'KB', 'MB', 'GB', 'TB']
+            index = 0
+            size = tree[i]['Size']
+            name = tree[i]['Name']
+            modified = tree[i]['ModTime']
+            is_dir = tree[i]['IsDir']
+            type = tree[i]['MimeType']
+            path = remote_name + tree[i]['Path']
+
+            if is_dir:
+                size = ''
+            else:
+                for _ in range(4):
+                    if size >= 1024:
+                        size = round(float(size) / 1024, 2)
+                        index += 1
+                size = f'{size} {sizes[index]}'
+
+            modified = modified.replace(
+                'T', ' ').replace('Z', ' ').split('.')[0]
+            tree[i] = {'name': name, 'size': size, 'modified': modified,
+                       'path': path, 'is_dir': is_dir, 'type': type}
+
+        def lt(self, other_item):
+            column = self.treeWidget().sortColumn()
+            if self.text(3) == 'inode/directory' and other_item.text(3) != 'inode/directory':
+                return True
+            elif other_item.text(3) == 'inode/directory' and self.text(3) != 'inode/directory':
+                return False
+            return self.text(column).lower() < other_item.text(column).lower()
+
+        for file in tree:
+            print(file['name'], text, file['name'] in text)
+            if file['name'].lower().rfind(text.lower()) != -1:
+                item = QTreeWidgetItem(
+                    [file['name'], file['size'], file['modified'], file['type'], file['path']])
+                item.setTextAlignment(
+                    1, Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignCenter)
+                item.setSizeHint(0, QSize(0, self.scale))
+                item.__lt__ = types.MethodType(lt, item)
+
+                if file['is_dir']:
+                    icon = QFileIconProvider().icon(QFileIconProvider().IconType.Folder)
+                    item.setIcon(0, icon)
+                else:
+                    file_info = QFileInfo(file['name'])
+                    icon = QFileIconProvider().icon(file_info)
+                    item.setIcon(0, icon)
+                self.ui.treeWidget_search.addTopLevelItem(item)
+
     async def update_free_size(self, remote_name: str, clear: bool = False):
         if clear:
             self.layout_free_size.setText('')
@@ -624,8 +689,15 @@ class MainWindow(QMainWindow):
 
         self.ui.tree_files.setIconSize(
             QSize(sizes_icon[index], sizes_icon[index]))
+        self.ui.treeWidget_search.setIconSize(
+            QSize(sizes_icon[index], sizes_icon[index]))
+
         for i in range(self.ui.tree_files.topLevelItemCount()):
             item = self.ui.tree_files.topLevelItem(i)
+            item.setSizeHint(0, QSize(0, value))
+        
+        for i in range(self.ui.treeWidget_search.topLevelItemCount()):
+            item = self.ui.treeWidget_search.topLevelItem(i)
             item.setSizeHint(0, QSize(0, value))
 
     def dragEnterEvent(self, event: QDragEnterEvent):
@@ -752,6 +824,7 @@ class MainWindow(QMainWindow):
     def update_remotes(self):
         remotes = rc.listremotes(True)
         self.ui.tree_remotes.clear()
+        self.ui.comboBox_search.clear()
         for remote in remotes:
             item = QTreeWidgetItem([remote['name'] + ':', remote['type']])
             item.setSizeHint(0, QSize(0, 32))
@@ -765,6 +838,7 @@ class MainWindow(QMainWindow):
                 file = f'{os.path.dirname(__file__) + os.sep}images{os.sep}unknown{inv}.png'
             item.setIcon(0, QPixmap(file))
             self.ui.tree_remotes.addTopLevelItem(item)
+            self.ui.comboBox_search.addItem(QPixmap(file), remote['name'] + ':')
 
     async def upload_file(self, source_path: str, destination_remote: str, destination_path: str):
         self.tasks.append(Task(operation='Upload', source=source_path,

@@ -16,11 +16,11 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QIcon, QImage, QKeySequence, QLinearGradient,
     QPainter, QPalette, QPixmap, QRadialGradient,
     QTransform)
-from PySide6.QtWidgets import (QAbstractItemView, QApplication, QDockWidget, QFrame,
-    QHBoxLayout, QHeaderView, QMainWindow, QMenu,
-    QMenuBar, QPushButton, QSizePolicy, QSpacerItem,
-    QStatusBar, QTreeWidget, QTreeWidgetItem, QVBoxLayout,
-    QWidget)
+from PySide6.QtWidgets import (QAbstractItemView, QApplication, QComboBox, QDockWidget,
+    QFrame, QHBoxLayout, QHeaderView, QLineEdit,
+    QMainWindow, QMenu, QMenuBar, QPushButton,
+    QSizePolicy, QSpacerItem, QStatusBar, QTabWidget,
+    QTreeWidget, QTreeWidgetItem, QVBoxLayout, QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -55,10 +55,18 @@ class Ui_MainWindow(object):
         self.centralwidget.setObjectName(u"centralwidget")
         self.verticalLayout = QVBoxLayout(self.centralwidget)
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.verticalLayout.setContentsMargins(-1, -1, -1, 0)
+        self.verticalLayout.setContentsMargins(-1, 0, -1, 0)
+        self.tabWidget = QTabWidget(self.centralwidget)
+        self.tabWidget.setObjectName(u"tabWidget")
+        self.tabWidget.setDocumentMode(True)
+        self.tab_explorer = QWidget()
+        self.tab_explorer.setObjectName(u"tab_explorer")
+        self.verticalLayout_3 = QVBoxLayout(self.tab_explorer)
+        self.verticalLayout_3.setObjectName(u"verticalLayout_3")
+        self.verticalLayout_3.setContentsMargins(0, -1, 0, -1)
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setObjectName(u"horizontalLayout")
-        self.button_prev_history = QPushButton(self.centralwidget)
+        self.button_prev_history = QPushButton(self.tab_explorer)
         self.button_prev_history.setObjectName(u"button_prev_history")
         self.button_prev_history.setEnabled(False)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
@@ -74,7 +82,7 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout.addWidget(self.button_prev_history)
 
-        self.button_next_history = QPushButton(self.centralwidget)
+        self.button_next_history = QPushButton(self.tab_explorer)
         self.button_next_history.setObjectName(u"button_next_history")
         self.button_next_history.setEnabled(False)
         sizePolicy.setHeightForWidth(self.button_next_history.sizePolicy().hasHeightForWidth())
@@ -87,7 +95,7 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout.addWidget(self.button_next_history)
 
-        self.button_exit_dir = QPushButton(self.centralwidget)
+        self.button_exit_dir = QPushButton(self.tab_explorer)
         self.button_exit_dir.setObjectName(u"button_exit_dir")
         self.button_exit_dir.setEnabled(False)
         sizePolicy.setHeightForWidth(self.button_exit_dir.sizePolicy().hasHeightForWidth())
@@ -100,7 +108,7 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout.addWidget(self.button_exit_dir)
 
-        self.button_update = QPushButton(self.centralwidget)
+        self.button_update = QPushButton(self.tab_explorer)
         self.button_update.setObjectName(u"button_update")
         self.button_update.setMinimumSize(QSize(34, 34))
         self.button_update.setMaximumSize(QSize(34, 34))
@@ -110,7 +118,7 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout.addWidget(self.button_update)
 
-        self.path_list_frame = QFrame(self.centralwidget)
+        self.path_list_frame = QFrame(self.tab_explorer)
         self.path_list_frame.setObjectName(u"path_list_frame")
         sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         sizePolicy1.setHorizontalStretch(0)
@@ -138,11 +146,11 @@ class Ui_MainWindow(object):
         self.horizontalLayout.addWidget(self.path_list_frame)
 
 
-        self.verticalLayout.addLayout(self.horizontalLayout)
+        self.verticalLayout_3.addLayout(self.horizontalLayout)
 
         self.horizontalLayout_2 = QHBoxLayout()
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
-        self.tree_remotes = QTreeWidget(self.centralwidget)
+        self.tree_remotes = QTreeWidget(self.tab_explorer)
         self.tree_remotes.setObjectName(u"tree_remotes")
         sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
         sizePolicy2.setHorizontalStretch(0)
@@ -155,7 +163,7 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_2.addWidget(self.tree_remotes)
 
-        self.tree_files = QTreeWidget(self.centralwidget)
+        self.tree_files = QTreeWidget(self.tab_explorer)
         self.tree_files.setObjectName(u"tree_files")
         self.tree_files.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.tree_files.setDragEnabled(True)
@@ -168,7 +176,44 @@ class Ui_MainWindow(object):
         self.horizontalLayout_2.addWidget(self.tree_files)
 
 
-        self.verticalLayout.addLayout(self.horizontalLayout_2)
+        self.verticalLayout_3.addLayout(self.horizontalLayout_2)
+
+        self.tabWidget.addTab(self.tab_explorer, icon, "")
+        self.tab_search = QWidget()
+        self.tab_search.setObjectName(u"tab_search")
+        self.verticalLayout_4 = QVBoxLayout(self.tab_search)
+        self.verticalLayout_4.setObjectName(u"verticalLayout_4")
+        self.verticalLayout_4.setContentsMargins(0, -1, 0, -1)
+        self.horizontalLayout_5 = QHBoxLayout()
+        self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
+        self.lineEdit_search = QLineEdit(self.tab_search)
+        self.lineEdit_search.setObjectName(u"lineEdit_search")
+
+        self.horizontalLayout_5.addWidget(self.lineEdit_search)
+
+        self.comboBox_search = QComboBox(self.tab_search)
+        self.comboBox_search.setObjectName(u"comboBox_search")
+
+        self.horizontalLayout_5.addWidget(self.comboBox_search)
+
+        self.button_search = QPushButton(self.tab_search)
+        self.button_search.setObjectName(u"button_search")
+
+        self.horizontalLayout_5.addWidget(self.button_search)
+
+
+        self.verticalLayout_4.addLayout(self.horizontalLayout_5)
+
+        self.treeWidget_search = QTreeWidget(self.tab_search)
+        self.treeWidget_search.setObjectName(u"treeWidget_search")
+        self.treeWidget_search.setRootIsDecorated(False)
+
+        self.verticalLayout_4.addWidget(self.treeWidget_search)
+
+        icon9 = QIcon(QIcon.fromTheme(u"edit-find"))
+        self.tabWidget.addTab(self.tab_search, icon9, "")
+
+        self.verticalLayout.addWidget(self.tabWidget)
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
@@ -217,6 +262,9 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
+        self.tabWidget.setCurrentIndex(0)
+
+
         QMetaObject.connectSlotsByName(MainWindow)
     # setupUi
 
@@ -239,17 +287,26 @@ class Ui_MainWindow(object):
         ___qtreewidgetitem1.setText(2, QCoreApplication.translate("MainWindow", u"Modified", None));
         ___qtreewidgetitem1.setText(1, QCoreApplication.translate("MainWindow", u"Size", None));
         ___qtreewidgetitem1.setText(0, QCoreApplication.translate("MainWindow", u"Name", None));
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_explorer), QCoreApplication.translate("MainWindow", u"Explorer", None))
+        self.button_search.setText(QCoreApplication.translate("MainWindow", u"Search", None))
+        ___qtreewidgetitem2 = self.treeWidget_search.headerItem()
+        ___qtreewidgetitem2.setText(4, QCoreApplication.translate("MainWindow", u"Path", None));
+        ___qtreewidgetitem2.setText(3, QCoreApplication.translate("MainWindow", u"Type", None));
+        ___qtreewidgetitem2.setText(2, QCoreApplication.translate("MainWindow", u"Modified", None));
+        ___qtreewidgetitem2.setText(1, QCoreApplication.translate("MainWindow", u"Size", None));
+        ___qtreewidgetitem2.setText(0, QCoreApplication.translate("MainWindow", u"Name", None));
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_search), QCoreApplication.translate("MainWindow", u"Search", None))
         self.menuClient.setTitle(QCoreApplication.translate("MainWindow", u"Client", None))
         self.menuOther.setTitle(QCoreApplication.translate("MainWindow", u"Other", None))
         self.menuView.setTitle(QCoreApplication.translate("MainWindow", u"View", None))
-        ___qtreewidgetitem2 = self.tasks.headerItem()
-        ___qtreewidgetitem2.setText(7, QCoreApplication.translate("MainWindow", u"Estimated", None));
-        ___qtreewidgetitem2.setText(6, QCoreApplication.translate("MainWindow", u"Speed", None));
-        ___qtreewidgetitem2.setText(5, QCoreApplication.translate("MainWindow", u"Progress", None));
-        ___qtreewidgetitem2.setText(4, QCoreApplication.translate("MainWindow", u"Size", None));
-        ___qtreewidgetitem2.setText(3, QCoreApplication.translate("MainWindow", u"Status", None));
-        ___qtreewidgetitem2.setText(2, QCoreApplication.translate("MainWindow", u"Destination", None));
-        ___qtreewidgetitem2.setText(1, QCoreApplication.translate("MainWindow", u"Source", None));
-        ___qtreewidgetitem2.setText(0, QCoreApplication.translate("MainWindow", u"Operation", None));
+        ___qtreewidgetitem3 = self.tasks.headerItem()
+        ___qtreewidgetitem3.setText(7, QCoreApplication.translate("MainWindow", u"Estimated", None));
+        ___qtreewidgetitem3.setText(6, QCoreApplication.translate("MainWindow", u"Speed", None));
+        ___qtreewidgetitem3.setText(5, QCoreApplication.translate("MainWindow", u"Progress", None));
+        ___qtreewidgetitem3.setText(4, QCoreApplication.translate("MainWindow", u"Size", None));
+        ___qtreewidgetitem3.setText(3, QCoreApplication.translate("MainWindow", u"Status", None));
+        ___qtreewidgetitem3.setText(2, QCoreApplication.translate("MainWindow", u"Destination", None));
+        ___qtreewidgetitem3.setText(1, QCoreApplication.translate("MainWindow", u"Source", None));
+        ___qtreewidgetitem3.setText(0, QCoreApplication.translate("MainWindow", u"Operation", None));
     # retranslateUi
 

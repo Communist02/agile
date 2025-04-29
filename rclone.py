@@ -122,7 +122,7 @@ class Rclone(CheckRclone):
             print(f'Executing: {_command}')
 
         process = subprocess.Popen(_command, shell=True,
-                             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
         if progress:
             await self._stream_process(process)
@@ -161,10 +161,12 @@ class Rclone(CheckRclone):
             print(f'Executing: {_command}')
 
         if not communicate and os.name == 'nt':
-            process = subprocess.Popen(_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
+            process = subprocess.Popen(_command, shell=True, stdout=subprocess.PIPE,
+                                       stderr=subprocess.PIPE, creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
         else:
-            process = subprocess.Popen(_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        
+            process = subprocess.Popen(
+                _command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
         if communicate:
             OUT, _ = process.communicate()
             OUT = OUT.decode()
@@ -194,8 +196,8 @@ class Rclone(CheckRclone):
     async def copy(self, source_path: str, destination_path: str):
         return await self.async_process('copy', f'"{source_path}"', f'"{destination_path}"', '--create-empty-src-dirs')
 
-    async def lsjson(self, path: str):
-        return await self.async_process('lsjson', f'"{path}"')
+    async def lsjson(self, path: str, max_depth: int = -1):
+        return await self.async_process('lsjson', f'"{path}"', f'--max-depth {max_depth}')
 
     def listremotes(self, long=False) -> str | dict[str]:
         if long:
@@ -232,13 +234,13 @@ class Rclone(CheckRclone):
 
     async def deletefile(self, path: str):
         return await self.async_process('deletefile', f'"{path}"')
-    
+
     async def purge(self, path: str):
         return await self.async_process('purge', f'"{path}"')
-    
+
     async def moveto(self, source_path: str, destination_path: str):
         return await self.async_process('moveto', f'"{source_path}"', f'"{destination_path}"')
-    
+
     async def about(self, remote_name: str):
         return await self.async_process('about', f'"{remote_name}"', '--json')
 
