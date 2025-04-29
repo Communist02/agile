@@ -206,6 +206,8 @@ class Ui_MainWindow(object):
 
         self.treeWidget_search = QTreeWidget(self.tab_search)
         self.treeWidget_search.setObjectName(u"treeWidget_search")
+        self.treeWidget_search.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.treeWidget_search.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
         self.treeWidget_search.setRootIsDecorated(False)
 
         self.verticalLayout_4.addWidget(self.treeWidget_search)

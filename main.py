@@ -6,6 +6,7 @@ import os
 import subprocess
 import threading
 import types
+import json
 
 from PySide6.QtNetwork import QLocalServer, QLocalSocket
 from PySide6.QtCore import QFileInfo, QMimeData, QPoint, QSettings, QSize, QUrl, Qt, QTimer, QRegularExpression
@@ -412,6 +413,8 @@ class MainWindow(QMainWindow):
         self.ui = main_window.Ui_MainWindow()
         self.ui.setupUi(self)
 
+        self.search_process_is_running: int = 0
+
         self.setWindowIcon(
             QIcon(f'{os.path.dirname(__file__) + os.sep}favicon.ico'))
 
@@ -456,6 +459,8 @@ class MainWindow(QMainWindow):
 
         self.ui.tree_files.customContextMenuRequested.connect(
             self.show_context_menu_tree)
+        self.ui.treeWidget_search.customContextMenuRequested.connect(
+            self.show_context_menu_tree_search)
         self.ui.tree_remotes.customContextMenuRequested.connect(
             self.show_context_menu_remote)
         self.ui.tasks.customContextMenuRequested.connect(
@@ -475,8 +480,7 @@ class MainWindow(QMainWindow):
         self.slider_scale.valueChanged.connect(self.set_scale)
 
         self.layout_free_size = QLabel('', statusbar_widget)
-        h_layout.addItem(QSpacerItem(
-            0, 0, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
+        h_layout.addItem(QSpacerItem(0, 0, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
         h_layout.addWidget(self.layout_free_size)
         h_layout.addWidget(QLabel('Scale:', statusbar_widget))
         h_layout.addWidget(self.slider_scale)
@@ -599,34 +603,12 @@ class MainWindow(QMainWindow):
         remote_name = self.ui.comboBox_search.currentText()
         text = self.ui.lineEdit_search.text()
 
+        self.search_process_is_running += 1
+        search_process_is_running = self.search_process_is_running
+
         self.ui.statusbar.showMessage(f'Search in {remote_name}')
         self.ui.treeWidget_search.clear()
-        tree = await rc.lsjson(remote_name, 10)
-        self.ui.statusbar.showMessage('')
-
-        for i in range(len(tree)):
-            sizes = ['B', 'KB', 'MB', 'GB', 'TB']
-            index = 0
-            size = tree[i]['Size']
-            name = tree[i]['Name']
-            modified = tree[i]['ModTime']
-            is_dir = tree[i]['IsDir']
-            type = tree[i]['MimeType']
-            path = remote_name + tree[i]['Path']
-
-            if is_dir:
-                size = ''
-            else:
-                for _ in range(4):
-                    if size >= 1024:
-                        size = round(float(size) / 1024, 2)
-                        index += 1
-                size = f'{size} {sizes[index]}'
-
-            modified = modified.replace(
-                'T', ' ').replace('Z', ' ').split('.')[0]
-            tree[i] = {'name': name, 'size': size, 'modified': modified,
-                       'path': path, 'is_dir': is_dir, 'type': type}
+        process = rc.search(remote_name, 10)
 
         def lt(self, other_item):
             column = self.treeWidget().sortColumn()
@@ -635,25 +617,62 @@ class MainWindow(QMainWindow):
             elif other_item.text(3) == 'inode/directory' and self.text(3) != 'inode/directory':
                 return False
             return self.text(column).lower() < other_item.text(column).lower()
+        
+        loop = asyncio.get_running_loop()
 
-        for file in tree:
-            print(file['name'], text, file['name'] in text)
-            if file['name'].lower().rfind(text.lower()) != -1:
-                item = QTreeWidgetItem(
-                    [file['name'], file['size'], file['modified'], file['type'], file['path']])
-                item.setTextAlignment(
-                    1, Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignCenter)
-                item.setSizeHint(0, QSize(0, self.scale))
-                item.__lt__ = types.MethodType(lt, item)
+        while True:
+            line = await loop.run_in_executor(None, process.stdout.readline)
+            if not line or search_process_is_running != self.search_process_is_running:
+                break
+            line = line.decode()
 
-                if file['is_dir']:
-                    icon = QFileIconProvider().icon(QFileIconProvider().IconType.Folder)
-                    item.setIcon(0, icon)
+            if 'error' in line:
+                print(line)
+
+            if len(line) > 10:
+                line = json.loads(line.replace(',\n', ''))
+                sizes = ['B', 'KB', 'MB', 'GB', 'TB']
+                index = 0
+                size = line['Size']
+                name = line['Name']
+                modified = line['ModTime']
+                is_dir = line['IsDir']
+                type = line['MimeType']
+                path = remote_name + line['Path']
+
+                if is_dir:
+                    size = ''
                 else:
-                    file_info = QFileInfo(file['name'])
-                    icon = QFileIconProvider().icon(file_info)
-                    item.setIcon(0, icon)
-                self.ui.treeWidget_search.addTopLevelItem(item)
+                    for _ in range(4):
+                        if size >= 1024:
+                            size = round(float(size) / 1024, 2)
+                            index += 1
+                    size = f'{size} {sizes[index]}'
+
+                modified = modified.replace(
+                    'T', ' ').replace('Z', ' ').split('.')[0]
+                file = {'name': name, 'size': size, 'modified': modified,
+                        'path': path, 'is_dir': is_dir, 'type': type}
+
+                if file['name'].lower().rfind(text.lower()) != -1:
+                    item = QTreeWidgetItem(
+                        [file['name'], file['size'], file['modified'], file['type'], file['path']])
+                    item.setTextAlignment(
+                        1, Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignCenter)
+                    item.setSizeHint(0, QSize(0, self.scale))
+                    item.__lt__ = types.MethodType(lt, item)
+
+                    if file['is_dir']:
+                        icon = QFileIconProvider().icon(QFileIconProvider().IconType.Folder)
+                        item.setIcon(0, icon)
+                    else:
+                        file_info = QFileInfo(file['name'])
+                        icon = QFileIconProvider().icon(file_info)
+                        item.setIcon(0, icon)
+                    self.ui.treeWidget_search.addTopLevelItem(item)
+
+        if search_process_is_running == self.search_process_is_running:
+            self.ui.statusbar.showMessage('')
 
     async def update_free_size(self, remote_name: str, clear: bool = False):
         if clear:
@@ -1352,6 +1371,61 @@ class MainWindow(QMainWindow):
                     lambda: asyncio.ensure_future(self.new_folder()))
                 action.setShortcut(QKeySequence('F7'))
                 menu.addAction(action)
+
+        menu.exec(QCursor.pos())
+
+    def show_context_menu_tree_search(self, point):
+        selected = self.ui.treeWidget_search.selectedItems()
+
+        menu = QMenu()
+
+        selected_files = []
+        for item in selected:
+            selected_files.append(
+                [item.text(0), item.text(3) == 'inode/directory'])
+
+        item = self.ui.treeWidget_search.itemAt(point)
+        file_name = item.text(0)
+        is_dir = item.text(3) == 'inode/directory'
+
+        action = QAction(self)
+        action.setText('Open')
+        action.setIcon(item.icon(0))
+        action.triggered.connect(
+            lambda: self.open_item(file_name, is_dir))
+        menu.addAction(action)
+
+        if not is_dir and os.name == 'nt':
+            action = QAction(self)
+            action.setText('Open With...')
+            action.setIcon(QIcon.fromTheme('document-open'))
+            action.triggered.connect(
+                lambda: self.open_item(file_name, is_dir, True))
+            menu.addAction(action)
+
+        action = QAction(self)
+        action.setText('Download')
+        action.setIcon(QIcon.fromTheme('emblem-downloads'))
+        action.triggered.connect(
+            lambda: self.download_file(selected_files))
+        menu.addAction(action)
+
+        menu.addSeparator()
+
+        action = QAction(self)
+        action.setText('Copy')
+        action.setIcon(QIcon.fromTheme('edit-copy'))
+        action.triggered.connect(lambda: self.copy_file(selected))
+        action.setShortcut(QKeySequence('Ctrl+C'))
+        menu.addAction(action)
+
+        action = QAction(self)
+        action.setText('Delete')
+        action.setIcon(QIcon.fromTheme('edit-delete'))
+        action.triggered.connect(
+            lambda: asyncio.ensure_future(self.delete_file(selected)))
+        action.setShortcut(QKeySequence('Del'))
+        menu.addAction(action)
 
         menu.exec(QCursor.pos())
 

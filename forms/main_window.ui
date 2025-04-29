@@ -346,6 +346,12 @@
         </item>
         <item>
          <widget class="QTreeWidget" name="treeWidget_search">
+          <property name="contextMenuPolicy">
+           <enum>Qt::ContextMenuPolicy::CustomContextMenu</enum>
+          </property>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::SelectionMode::ExtendedSelection</enum>
+          </property>
           <property name="rootIsDecorated">
            <bool>false</bool>
           </property>

@@ -108,11 +108,25 @@ class Rclone(CheckRclone):
                 print(s)
         self.tasks[index]['is_done'] = True
 
-    async def async_process(self, subcommand, arg1='', arg2='', arg3='', arg4='', progress=False, _execute=False, *args):
-        if subcommand in ['copy', 'move', 'sync', 'bisync', 'copyto', 'copyurl'] and not _execute:
+    # def lsjson_process(self, process: subprocess.Popen[bytes]):
+    #     loop = asyncio.get_running_loop()
+
+    #     while True:
+    #         # line = await loop.run_in_executor(None, process.stdout.readline)
+    #         line = process.stdout.readline()
+    #         if not line:
+    #             break
+    #         s: str = line.decode()
+
+    #         if 'error' in s:
+    #             print(s)
+
+    async def async_process(self, subcommand, arg1='', arg2='', arg3='', arg4='', *args):
+        if subcommand in ['copy', 'copyto', 'move', 'sync', 'bisync', 'copyurl']:
             progress = True
             P = '-P'
         else:
+            progress = False
             P = ''
 
         _args = ' '.join(args)
@@ -141,21 +155,14 @@ class Rclone(CheckRclone):
             return json.loads(OUT)
         elif subcommand == 'lsf':
             return OUT.rstrip().split('\n')
-        elif _execute:
-            return OUT.rstrip().replace('\t', ' ')
         elif subcommand == 'config' and 'file' in _command:
             return OUT.strip().split('\n')[-1]
         else:
             return OUT
 
-    def sync_process(self, subcommand, arg1='', arg2='', arg3='', arg4='', _execute=False, communicate=True, *args):
-        if subcommand in ['copy', 'move', 'sync', 'bisync', 'copyto', 'copyurl'] and not _execute:
-            P = '-P'
-        else:
-            P = ''
-
+    def sync_process(self, subcommand, arg1='', arg2='', arg3='', arg4='', communicate=True, *args):
         _args = ' '.join(args)
-        _command = f'{self.rclone} {subcommand} {arg1} {arg2} {arg3} {arg4} {P} {_args}'
+        _command = f'{self.rclone} {subcommand} {arg1} {arg2} {arg3} {arg4} {_args}'
 
         if self.debug:
             print(f'Executing: {_command}')
@@ -181,8 +188,6 @@ class Rclone(CheckRclone):
                 return json.loads(OUT)
             elif subcommand == 'lsf':
                 return OUT.rstrip().split('\n')
-            elif _execute:
-                return OUT.rstrip().replace('\t', ' ')
             elif subcommand == 'config' and 'file' in _command:
                 return OUT.strip().split('\n')[-1]
             else:
@@ -198,6 +203,9 @@ class Rclone(CheckRclone):
 
     async def lsjson(self, path: str, max_depth: int = -1):
         return await self.async_process('lsjson', f'"{path}"', f'--max-depth {max_depth}')
+
+    def search(self, path: str, max_depth: int = -1):
+        return self.sync_process('lsjson', f'"{path}"', f'--max-depth {max_depth}', communicate=False)
 
     def listremotes(self, long=False) -> str | dict[str]:
         if long:
