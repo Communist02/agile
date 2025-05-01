@@ -27,6 +27,7 @@ class Ui_MainWindow(object):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
         MainWindow.resize(1280, 800)
+        MainWindow.setWindowTitle(u"Cloud Explorer")
         self.action_new_remote = QAction(MainWindow)
         self.action_new_remote.setObjectName(u"action_new_remote")
         icon = QIcon(QIcon.fromTheme(u"system-file-manager"))
@@ -273,7 +274,6 @@ class Ui_MainWindow(object):
     # setupUi
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"Cloud Explorer", None))
         self.action_new_remote.setText(QCoreApplication.translate("MainWindow", u"New remote", None))
         self.action_exit.setText(QCoreApplication.translate("MainWindow", u"Exit", None))
         self.action_about.setText(QCoreApplication.translate("MainWindow", u"About", None))
@@ -313,5 +313,6 @@ class Ui_MainWindow(object):
         ___qtreewidgetitem3.setText(2, QCoreApplication.translate("MainWindow", u"Destination", None));
         ___qtreewidgetitem3.setText(1, QCoreApplication.translate("MainWindow", u"Source", None));
         ___qtreewidgetitem3.setText(0, QCoreApplication.translate("MainWindow", u"Operation", None));
+        pass
     # retranslateUi
 

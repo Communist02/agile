@@ -34,7 +34,7 @@
      </property>
      <widget class="QWidget" name="tab_ftp">
       <attribute name="title">
-       <string>FTP</string>
+       <string notr="true">FTP</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
@@ -108,13 +108,13 @@
        <item>
         <widget class="QGroupBox" name="groupBox">
          <property name="title">
-          <string>FTPS</string>
+          <string notr="true">FTPS</string>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_7">
           <item>
            <widget class="QCheckBox" name="checkBox_ftp_tls">
             <property name="text">
-             <string>TLS</string>
+             <string notr="true">TLS</string>
             </property>
            </widget>
           </item>
@@ -174,7 +174,7 @@
      </widget>
      <widget class="QWidget" name="tab_sftp">
       <attribute name="title">
-       <string>SFTP</string>
+       <string notr="true">SFTP</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_18">
        <item>
@@ -262,7 +262,7 @@
      </widget>
      <widget class="QWidget" name="tab_webdav">
       <attribute name="title">
-       <string>WebDAV</string>
+       <string notr="true">WebDAV</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_10">
        <item>
@@ -374,7 +374,7 @@
      </widget>
      <widget class="QWidget" name="tab_google_drive">
       <attribute name="title">
-       <string>Google Drive</string>
+       <string notr="true">Google Drive</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_9">
        <item>
@@ -401,7 +401,7 @@
      </widget>
      <widget class="QWidget" name="tab_yandex_disk">
       <attribute name="title">
-       <string>Yandex Disk</string>
+       <string notr="true">Yandex Disk</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_8">
        <item>
@@ -428,7 +428,7 @@
      </widget>
      <widget class="QWidget" name="tab_onedrive">
       <attribute name="title">
-       <string>Microsoft OneDrive</string>
+       <string notr="true">Microsoft OneDrive</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_12">
        <item>
@@ -488,7 +488,7 @@
      </widget>
      <widget class="QWidget" name="tab_mailru">
       <attribute name="title">
-       <string>Mail.ru Cloud</string>
+       <string notr="true">Mail.ru Cloud</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_25">
        <item>
@@ -570,7 +570,7 @@
      </widget>
      <widget class="QWidget" name="tab_http">
       <attribute name="title">
-       <string>HTTP</string>
+       <string notr="true">HTTP</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>

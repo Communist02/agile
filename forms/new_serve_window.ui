@@ -26,7 +26,7 @@
       <item>
        <widget class="QRadioButton" name="radioButton_ftp">
         <property name="text">
-         <string>FTP</string>
+         <string notr="true">FTP</string>
         </property>
         <property name="checked">
          <bool>true</bool>
@@ -36,28 +36,28 @@
       <item>
        <widget class="QRadioButton" name="radioButton_dnla">
         <property name="text">
-         <string>DNLA</string>
+         <string notr="true">DNLA</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QRadioButton" name="radioButton_http">
         <property name="text">
-         <string>HTTP</string>
+         <string notr="true">HTTP</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QRadioButton" name="radioButton_webdav">
         <property name="text">
-         <string>WebDAV</string>
+         <string notr="true">WebDAV</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QRadioButton" name="radioButton_sftp">
         <property name="text">
-         <string>SFTP</string>
+         <string notr="true">SFTP</string>
         </property>
        </widget>
       </item>
@@ -99,7 +99,7 @@
      <item>
       <widget class="QToolButton" name="button_select_dir">
        <property name="text">
-        <string>...</string>
+        <string notr="true">...</string>
        </property>
       </widget>
      </item>

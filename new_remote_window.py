@@ -113,10 +113,12 @@ class Ui_NewRemoteWindow(object):
 
         self.groupBox = QGroupBox(self.tab_ftp)
         self.groupBox.setObjectName(u"groupBox")
+        self.groupBox.setTitle(u"FTPS")
         self.horizontalLayout_7 = QHBoxLayout(self.groupBox)
         self.horizontalLayout_7.setObjectName(u"horizontalLayout_7")
         self.checkBox_ftp_tls = QCheckBox(self.groupBox)
         self.checkBox_ftp_tls.setObjectName(u"checkBox_ftp_tls")
+        self.checkBox_ftp_tls.setText(u"TLS")
 
         self.horizontalLayout_7.addWidget(self.checkBox_ftp_tls)
 
@@ -145,6 +147,7 @@ class Ui_NewRemoteWindow(object):
         self.verticalLayout_3.addItem(self.verticalSpacer_2)
 
         self.tabWidget.addTab(self.tab_ftp, "")
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_ftp), u"FTP")
         self.tab_sftp = QWidget()
         self.tab_sftp.setObjectName(u"tab_sftp")
         self.verticalLayout_18 = QVBoxLayout(self.tab_sftp)
@@ -225,6 +228,7 @@ class Ui_NewRemoteWindow(object):
         self.verticalLayout_18.addItem(self.verticalSpacer_7)
 
         self.tabWidget.addTab(self.tab_sftp, "")
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_sftp), u"SFTP")
         self.tab_webdav = QWidget()
         self.tab_webdav.setObjectName(u"tab_webdav")
         self.verticalLayout_10 = QVBoxLayout(self.tab_webdav)
@@ -297,6 +301,7 @@ class Ui_NewRemoteWindow(object):
         self.verticalLayout_10.addItem(self.verticalSpacer_5)
 
         self.tabWidget.addTab(self.tab_webdav, "")
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_webdav), u"WebDAV")
         self.tab_google_drive = QWidget()
         self.tab_google_drive.setObjectName(u"tab_google_drive")
         self.verticalLayout_9 = QVBoxLayout(self.tab_google_drive)
@@ -311,6 +316,7 @@ class Ui_NewRemoteWindow(object):
         self.verticalLayout_9.addItem(self.verticalSpacer_3)
 
         self.tabWidget.addTab(self.tab_google_drive, "")
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_google_drive), u"Google Drive")
         self.tab_yandex_disk = QWidget()
         self.tab_yandex_disk.setObjectName(u"tab_yandex_disk")
         self.verticalLayout_8 = QVBoxLayout(self.tab_yandex_disk)
@@ -325,6 +331,7 @@ class Ui_NewRemoteWindow(object):
         self.verticalLayout_8.addItem(self.verticalSpacer_4)
 
         self.tabWidget.addTab(self.tab_yandex_disk, "")
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_yandex_disk), u"Yandex Disk")
         self.tab_onedrive = QWidget()
         self.tab_onedrive.setObjectName(u"tab_onedrive")
         self.verticalLayout_12 = QVBoxLayout(self.tab_onedrive)
@@ -359,6 +366,7 @@ class Ui_NewRemoteWindow(object):
         self.verticalLayout_12.addItem(self.verticalSpacer_6)
 
         self.tabWidget.addTab(self.tab_onedrive, "")
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_onedrive), u"Microsoft OneDrive")
         self.tab_mailru = QWidget()
         self.tab_mailru.setObjectName(u"tab_mailru")
         self.verticalLayout_25 = QVBoxLayout(self.tab_mailru)
@@ -418,6 +426,7 @@ class Ui_NewRemoteWindow(object):
         self.verticalLayout_25.addItem(self.verticalSpacer_10)
 
         self.tabWidget.addTab(self.tab_mailru, "")
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_mailru), u"Mail.ru Cloud")
         self.tab_http = QWidget()
         self.tab_http.setObjectName(u"tab_http")
         self.verticalLayout_2 = QVBoxLayout(self.tab_http)
@@ -437,6 +446,7 @@ class Ui_NewRemoteWindow(object):
         self.verticalLayout_2.addItem(self.verticalSpacer)
 
         self.tabWidget.addTab(self.tab_http, "")
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_http), u"HTTP")
         self.tab_local = QWidget()
         self.tab_local.setObjectName(u"tab_local")
         self.tabWidget.addTab(self.tab_local, "")
@@ -652,16 +662,12 @@ class Ui_NewRemoteWindow(object):
         self.label_16.setText(QCoreApplication.translate("NewRemoteWindow", u"Port", None))
         self.label_4.setText(QCoreApplication.translate("NewRemoteWindow", u"Login", None))
         self.label_5.setText(QCoreApplication.translate("NewRemoteWindow", u"Password", None))
-        self.groupBox.setTitle(QCoreApplication.translate("NewRemoteWindow", u"FTPS", None))
-        self.checkBox_ftp_tls.setText(QCoreApplication.translate("NewRemoteWindow", u"TLS", None))
         self.radioButton_ftp_false.setText(QCoreApplication.translate("NewRemoteWindow", u"Implict", None))
         self.radioButton_ftp_true.setText(QCoreApplication.translate("NewRemoteWindow", u"Explict", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_ftp), QCoreApplication.translate("NewRemoteWindow", u"FTP", None))
         self.label_14.setText(QCoreApplication.translate("NewRemoteWindow", u"Host", None))
         self.label_15.setText(QCoreApplication.translate("NewRemoteWindow", u"Port", None))
         self.label_12.setText(QCoreApplication.translate("NewRemoteWindow", u"Login", None))
         self.label_13.setText(QCoreApplication.translate("NewRemoteWindow", u"Password", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_sftp), QCoreApplication.translate("NewRemoteWindow", u"SFTP", None))
         self.label_7.setText(QCoreApplication.translate("NewRemoteWindow", u"URL", None))
         self.label_8.setText(QCoreApplication.translate("NewRemoteWindow", u"Login", None))
         self.label_9.setText(QCoreApplication.translate("NewRemoteWindow", u"Password", None))
@@ -674,26 +680,20 @@ class Ui_NewRemoteWindow(object):
         self.comboBox_webdav_vendor.setItemText(5, QCoreApplication.translate("NewRemoteWindow", u"Sharepoint with NTLM authentication, usually self-hosted or on-premises", None))
         self.comboBox_webdav_vendor.setItemText(6, QCoreApplication.translate("NewRemoteWindow", u"rclone WebDAV server to serve a remote over HTTP via the WebDAV protocol", None))
 
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_webdav), QCoreApplication.translate("NewRemoteWindow", u"WebDAV", None))
         self.label_3.setText(QCoreApplication.translate("NewRemoteWindow", u"By pressing the OK button your browser will open and you will be needed to authenticate in Google Drive", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_google_drive), QCoreApplication.translate("NewRemoteWindow", u"Google Drive", None))
         self.label_6.setText(QCoreApplication.translate("NewRemoteWindow", u"By pressing the OK button your browser will open and you will be needed to authenticate in Yandex Disk", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_yandex_disk), QCoreApplication.translate("NewRemoteWindow", u"Yandex Disk", None))
         self.label_11.setText(QCoreApplication.translate("NewRemoteWindow", u"By pressing the OK button your browser will open and you will be needed to authenticate in Microsoft OneDrive", None))
         self.label_28.setText(QCoreApplication.translate("NewRemoteWindow", u"Region", None))
         self.comboBox_onedrive_region.setItemText(0, QCoreApplication.translate("NewRemoteWindow", u"Microsoft Cloud Global", None))
         self.comboBox_onedrive_region.setItemText(1, QCoreApplication.translate("NewRemoteWindow", u"Microsoft Cloud for US Government", None))
         self.comboBox_onedrive_region.setItemText(2, QCoreApplication.translate("NewRemoteWindow", u"Azure and Office 365 operated by Vnet Group in China", None))
 
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_onedrive), QCoreApplication.translate("NewRemoteWindow", u"Microsoft OneDrive", None))
         self.label_24.setText(QCoreApplication.translate("NewRemoteWindow", u"Login", None))
         self.label_25.setText(QCoreApplication.translate("NewRemoteWindow", u"Password", None))
         self.label_26.setText(QCoreApplication.translate("NewRemoteWindow", u"To add Mail.ru you will need to generate a password for external applications in the Mail.ru web control panel. Select \"Full access to Mail. Cloud, Calendar (All Protocols)\". You can generate the password in this url", None))
         self.label_27.setText(QCoreApplication.translate("NewRemoteWindow", u"<a href=\"https://id.mail.ru/security\">https://id.mail.ru/security</a>", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_mailru), QCoreApplication.translate("NewRemoteWindow", u"Mail.ru Cloud", None))
         self.label.setText(QCoreApplication.translate("NewRemoteWindow", u"URL", None))
         self.lineEdit_url.setText(QCoreApplication.translate("NewRemoteWindow", u"http://127.0.0.1:8000/", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_http), QCoreApplication.translate("NewRemoteWindow", u"HTTP", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_local), QCoreApplication.translate("NewRemoteWindow", u"Local", None))
         self.label_17.setText(QCoreApplication.translate("NewRemoteWindow", u"Set a new name for a remote or path", None))
         self.label_18.setText(QCoreApplication.translate("NewRemoteWindow", u"Remote or path to alias", None))

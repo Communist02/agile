@@ -9,7 +9,7 @@ import types
 import json
 
 from PySide6.QtNetwork import QLocalServer, QLocalSocket
-from PySide6.QtCore import QFileInfo, QMimeData, QPoint, QSettings, QSize, QUrl, Qt, QTimer, QRegularExpression
+from PySide6.QtCore import QFileInfo, QLibraryInfo, QLocale, QMimeData, QPoint, QSettings, QSize, QTranslator, QUrl, Qt, QTimer, QRegularExpression
 from PySide6.QtGui import QCloseEvent, QColorConstants, QDesktopServices, QDrag, QDragEnterEvent, QIcon, QAction, QCursor, QKeySequence, QPainter, QPixmap, QRegularExpressionValidator, QShortcut
 from PySide6.QtWidgets import QFileIconProvider, QHBoxLayout, QInputDialog, QMainWindow, QApplication, QDialog, QMenu, QFileDialog, QProgressBar, QSizePolicy, QSlider, QStyleFactory, QSystemTrayIcon, QTreeWidgetItem, QPushButton, QMessageBox, QLabel, QWidget, QSpacerItem
 import PySide6.QtAsyncio as QtAsyncio
@@ -114,7 +114,7 @@ class NewServeWindow(QDialog):
             serve_type, path, user, password, address, read_only, args)
         try:
             process.wait(1)
-            QMessageBox.critical(self, 'Error', 'Check the data!')
+            QMessageBox.critical(self, self.tr('Error'), self.tr('Check the data!'))
         except subprocess.TimeoutExpired:
             window.tasks.append(
                 Task(operation='Serve', source=path, destination=serve_type, process=process))
@@ -322,8 +322,8 @@ class NewRemoteWindow(QDialog):
                 case 'tab_union':
                     self.close()
         else:
-            QMessageBox.warning(self, 'Enter name',
-                                'Enter name for new remote')
+            QMessageBox.warning(self, self.tr('Enter name'),
+                                self.tr('Enter name for new remote') + '!')
 
 
 class Task():
@@ -489,7 +489,7 @@ class MainWindow(QMainWindow):
         h_layout.addItem(QSpacerItem(
             0, 0, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
         h_layout.addWidget(self.layout_free_size)
-        h_layout.addWidget(QLabel('Scale:', statusbar_widget))
+        h_layout.addWidget(QLabel(self.tr('Scale') + ':', statusbar_widget))
         h_layout.addWidget(self.slider_scale)
         self.ui.statusbar.addPermanentWidget(statusbar_widget)
 
@@ -694,8 +694,10 @@ class MainWindow(QMainWindow):
                 total = round(float(total) / 1024, 2)
                 index_total += 1
 
+        total_text = self.tr('Total')
+        free_text = self.tr('Free')
         self.layout_free_size.setText(
-            f'Total: {total} {sizes[index_total]} | Free: {free} {sizes[index_free]}    ')
+            f'{total_text}: {total} {sizes[index_total]} | {free_text}: {free} {sizes[index_free]}    ')
 
     def set_scale(self, index: int):
         sizes = [18, 22, 32, 48, 64, 80, 96, 112, 128,
@@ -1099,13 +1101,13 @@ class MainWindow(QMainWindow):
 
     async def delete_files(self, files: list[dict]):
         if len(files) == 1:
-            question = f'Are you sure you want to delete {files[0]['name']} ?'
+            question = self.tr('Are you sure you want to delete') + files[0]['name'] + ' ?'
         else:
-            question = f'Are you sure you want to delete {len(files)} files ?'
+            question = self.tr('Are you sure you want to delete') + str(len(files)) + self.tr('files') + ' ?'
 
         msg_box = QMessageBox(self)
         msg_box.setIcon(QMessageBox.Question)
-        msg_box.setWindowTitle('Delete')
+        msg_box.setWindowTitle(self.tr('Delete'))
         msg_box.setText(question)
         msg_box.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
         msg_box.show()
@@ -1168,7 +1170,7 @@ class MainWindow(QMainWindow):
 
     async def new_folder(self):
         folder_name, ok = QInputDialog.getText(
-            self, "New Folder", "Enter folder name:", text="New Folder")
+            self, self.tr("New Folder"), self.tr("Enter folder name:"), text=self.tr("New Folder"))
 
         destination_remote = self.current_remote
         destination_path = self.remotes_paths[self.current_remote]
@@ -1183,7 +1185,7 @@ class MainWindow(QMainWindow):
 
     async def rename_file(self, file_name: str, is_dir: bool):
         new_file_name, ok = QInputDialog.getText(
-            self, "Rename", "Enter new name:", text=file_name)
+            self, self.tr("Rename"), self.tr("Enter new name:"), text=file_name)
 
         destination_remote = self.current_remote
         destination_path = self.remotes_paths[self.current_remote]
@@ -1296,14 +1298,14 @@ class MainWindow(QMainWindow):
         if self.current_remote != '':
             if len(selected) < 1:
                 action = QAction(self)
-                action.setText('Paste')
+                action.setText(self.tr('Paste'))
                 action.setIcon(QIcon.fromTheme('edit-paste'))
                 action.triggered.connect(self.paste_file)
                 action.setShortcut(QKeySequence('Ctrl+V'))
                 menu.addAction(action)
 
                 action = QAction(self)
-                action.setText('New Folder')
+                action.setText(self.tr('New Folder'))
                 action.setIcon(QIcon.fromTheme('folder-new'))
                 action.triggered.connect(
                     lambda: asyncio.ensure_future(self.new_folder()))
@@ -1317,7 +1319,7 @@ class MainWindow(QMainWindow):
                 file_path = item.data(0, Qt.ItemDataRole.UserRole)['path']
 
                 action = QAction(self)
-                action.setText('Open')
+                action.setText(self.tr('Open'))
                 action.setIcon(item.icon(0))
                 action.triggered.connect(
                     lambda: self.open_item(remote, file_path, file_name, is_dir))
@@ -1325,14 +1327,14 @@ class MainWindow(QMainWindow):
 
                 if not is_dir and os.name == 'nt':
                     action = QAction(self)
-                    action.setText('Open With...')
+                    action.setText(self.tr('Open With...'))
                     action.setIcon(QIcon.fromTheme('document-open'))
                     action.triggered.connect(
                         lambda: self.open_item(remote, file_path, file_name, is_dir, True))
                     menu.addAction(action)
 
                 action = QAction(self)
-                action.setText('Download')
+                action.setText(self.tr('Download'))
                 action.setIcon(QIcon.fromTheme('emblem-downloads'))
                 action.triggered.connect(
                     lambda: self.download_file(selected_files))
@@ -1341,14 +1343,14 @@ class MainWindow(QMainWindow):
                 menu.addSeparator()
 
                 action = QAction(self)
-                action.setText('Copy')
+                action.setText(self.tr('Copy'))
                 action.setIcon(QIcon.fromTheme('edit-copy'))
                 action.triggered.connect(lambda: self.copy_files(selected))
                 action.setShortcut(QKeySequence('Ctrl+C'))
                 menu.addAction(action)
 
                 action = QAction(self)
-                action.setText('Paste')
+                action.setText(self.tr('Paste'))
                 action.setIcon(QIcon.fromTheme('edit-paste'))
                 action.triggered.connect(self.paste_file)
                 action.setShortcut(QKeySequence('Ctrl+V'))
@@ -1357,7 +1359,7 @@ class MainWindow(QMainWindow):
                 menu.addSeparator()
 
                 action = QAction(self)
-                action.setText('Rename')
+                action.setText(self.tr('Rename'))
                 action.setIcon(QIcon.fromTheme('format-text-italic'))
                 action.triggered.connect(lambda: asyncio.ensure_future(
                     self.rename_file(file_name, is_dir)))
@@ -1365,7 +1367,7 @@ class MainWindow(QMainWindow):
                 menu.addAction(action)
 
                 action = QAction(self)
-                action.setText('Delete')
+                action.setText(self.tr('Delete'))
                 action.setIcon(QIcon.fromTheme('edit-delete'))
                 action.triggered.connect(
                     lambda: asyncio.ensure_future(self.delete_files(selected_files)))
@@ -1375,7 +1377,7 @@ class MainWindow(QMainWindow):
                 menu.addSeparator()
 
                 action = QAction(self)
-                action.setText('New Folder')
+                action.setText(self.tr('New Folder'))
                 action.setIcon(QIcon.fromTheme('folder-new'))
                 action.triggered.connect(
                     lambda: asyncio.ensure_future(self.new_folder()))
@@ -1418,23 +1420,24 @@ class MainWindow(QMainWindow):
         menu = QMenu()
 
         action = QAction(self)
-        action.setText('Show')
+        action.setText(self.tr('Show'))
         action.setIcon(QIcon.fromTheme('system-file-manager'))
         action.triggered.connect(lambda: asyncio.ensure_future(show()))
         menu.addAction(action)
 
-        menu.addSeparator()
+        if not is_dir:
+            menu.addSeparator()
 
-        action = QAction(self)
-        action.setText('Open')
-        action.setIcon(item.icon(0))
-        action.triggered.connect(
-            lambda: self.open_item(remote, file_path, file_name, is_dir))
-        menu.addAction(action)
+            action = QAction(self)
+            action.setText(self.tr('Open'))
+            action.setIcon(item.icon(0))
+            action.triggered.connect(
+                lambda: self.open_item(remote, file_path, file_name, is_dir))
+            menu.addAction(action)
 
         if not is_dir and os.name == 'nt':
             action = QAction(self)
-            action.setText('Open With...')
+            action.setText(self.tr('Open With...'))
             action.setIcon(QIcon.fromTheme('document-open'))
             action.triggered.connect(
                 lambda: self.open_item(remote, file_path, file_name, is_dir, True))
@@ -1443,7 +1446,7 @@ class MainWindow(QMainWindow):
         menu.addSeparator()
 
         action = QAction(self)
-        action.setText('Download')
+        action.setText(self.tr('Download'))
         action.setIcon(QIcon.fromTheme('emblem-downloads'))
         action.triggered.connect(
             lambda: self.download_file(selected_files))
@@ -1452,14 +1455,14 @@ class MainWindow(QMainWindow):
         menu.addSeparator()
 
         action = QAction(self)
-        action.setText('Copy')
+        action.setText(self.tr('Copy'))
         action.setIcon(QIcon.fromTheme('edit-copy'))
         action.triggered.connect(lambda: self.copy_files(selected))
         action.setShortcut(QKeySequence('Ctrl+C'))
         menu.addAction(action)
 
         action = QAction(self)
-        action.setText('Delete')
+        action.setText(self.tr('Delete'))
         action.setIcon(QIcon.fromTheme('edit-delete'))
         action.triggered.connect(
             lambda: asyncio.ensure_future(self.delete_files(selected_files)))
@@ -1479,26 +1482,26 @@ class MainWindow(QMainWindow):
         menu = QMenu()
 
         action = QAction(self)
-        action.setText('Open')
+        action.setText(self.tr('Open'))
         action.setIcon(QIcon.fromTheme('folder-open'))
         action.triggered.connect(lambda: self.open_remote(item))
         menu.addAction(action)
 
         action = QAction(self)
-        action.setText('Edit')
+        action.setText(self.tr('Edit'))
         action.setIcon(QIcon.fromTheme('applications-development'))
         action.triggered.connect(lambda: self.edit_remote(item.text(0)))
         menu.addAction(action)
 
         action = QAction(self)
-        action.setText('Mount')
+        action.setText(self.tr('Mount'))
         action.setIcon(QIcon.fromTheme('drive-harddisk'))
         action.triggered.connect(
             lambda: self.mount_remote(item.text(0), item.text(1)))
         menu.addAction(action)
 
         action = QAction(self)
-        action.setText('Delete')
+        action.setText(self.tr('Delete'))
         action.setIcon(QIcon.fromTheme('edit-delete'))
         action.triggered.connect(lambda: self.delete_remote(item.text(0)))
         menu.addAction(action)
@@ -1521,7 +1524,7 @@ class MainWindow(QMainWindow):
 
         if not index.isValid():
             action = QAction(self)
-            action.setText('Clear Completed')
+            action.setText(self.tr('Clear Completed'))
             action.setIcon(QIcon.fromTheme('edit-clear'))
             action.triggered.connect(clear_tasks)
             menu.addAction(action)
@@ -1530,14 +1533,14 @@ class MainWindow(QMainWindow):
 
             if item.text(0) in ['Download', 'Upload', 'Opening']:
                 action = QAction(self)
-                action.setText('Open Folder')
+                action.setText(self.tr('Open Folder'))
                 action.setIcon(QIcon.fromTheme('folder-open'))
                 action.triggered.connect(lambda: self.open_task_dir(item))
                 menu.addAction(action)
 
             if item.text(3) == 'Done':
                 action = QAction(self)
-                action.setText('Clear Task')
+                action.setText(self.tr('Clear Task'))
                 action.setIcon(QIcon.fromTheme('edit-clear'))
                 action.triggered.connect(
                     lambda: self.ui.tasks.topLevelItem(index.row()).setHidden(True))
@@ -1545,12 +1548,12 @@ class MainWindow(QMainWindow):
 
             if item.text(0) in ['Mount', 'Serve']:
                 action = QAction(self)
-                action.setText('Stop')
+                action.setText(self.tr('Stop'))
                 action.triggered.connect(lambda: stop_task(index.row()))
                 menu.addAction(action)
 
             action = QAction(self)
-            action.setText('Clear Completed')
+            action.setText(self.tr('Clear Completed'))
             action.setIcon(QIcon.fromTheme('edit-clear'))
             action.triggered.connect(clear_tasks)
             menu.addAction(action)
@@ -1625,6 +1628,15 @@ if __name__ == '__main__':
     app.setQuitOnLastWindowClosed(False)
     settings = QSettings('Denis Mazur', 'Cloud Explorer')
     app.setStyle(settings.value('style', ''))
+
+    qt_translator = QTranslator()
+    translator = QTranslator()
+
+    qt_translator.load(f'qtbase_{QLocale.system().name()}.qm', QLibraryInfo.path(QLibraryInfo.LibraryPath.TranslationsPath))
+    app.installTranslator(qt_translator)
+
+    if translator.load(f'{os.path.dirname(__file__) + os.sep}translations{os.sep}{QLocale.system().language().name}.qm'):
+        app.installTranslator(translator)
 
     server_name = 'Cloud Explorer'
     server = QLocalServer()

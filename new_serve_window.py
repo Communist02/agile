@@ -34,27 +34,32 @@ class Ui_NewServeWindow(object):
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
         self.radioButton_ftp = QRadioButton(self.groupBox_2)
         self.radioButton_ftp.setObjectName(u"radioButton_ftp")
+        self.radioButton_ftp.setText(u"FTP")
         self.radioButton_ftp.setChecked(True)
 
         self.horizontalLayout_2.addWidget(self.radioButton_ftp)
 
         self.radioButton_dnla = QRadioButton(self.groupBox_2)
         self.radioButton_dnla.setObjectName(u"radioButton_dnla")
+        self.radioButton_dnla.setText(u"DNLA")
 
         self.horizontalLayout_2.addWidget(self.radioButton_dnla)
 
         self.radioButton_http = QRadioButton(self.groupBox_2)
         self.radioButton_http.setObjectName(u"radioButton_http")
+        self.radioButton_http.setText(u"HTTP")
 
         self.horizontalLayout_2.addWidget(self.radioButton_http)
 
         self.radioButton_webdav = QRadioButton(self.groupBox_2)
         self.radioButton_webdav.setObjectName(u"radioButton_webdav")
+        self.radioButton_webdav.setText(u"WebDAV")
 
         self.horizontalLayout_2.addWidget(self.radioButton_webdav)
 
         self.radioButton_sftp = QRadioButton(self.groupBox_2)
         self.radioButton_sftp.setObjectName(u"radioButton_sftp")
+        self.radioButton_sftp.setText(u"SFTP")
 
         self.horizontalLayout_2.addWidget(self.radioButton_sftp)
 
@@ -79,6 +84,7 @@ class Ui_NewServeWindow(object):
 
         self.button_select_dir = QToolButton(NewServeWindow)
         self.button_select_dir.setObjectName(u"button_select_dir")
+        self.button_select_dir.setText(u"...")
 
         self.horizontalLayout_3.addWidget(self.button_select_dir)
 
@@ -164,17 +170,11 @@ class Ui_NewServeWindow(object):
     def retranslateUi(self, NewServeWindow):
         NewServeWindow.setWindowTitle(QCoreApplication.translate("NewServeWindow", u"New serve", None))
         self.groupBox_2.setTitle(QCoreApplication.translate("NewServeWindow", u"Protocol", None))
-        self.radioButton_ftp.setText(QCoreApplication.translate("NewServeWindow", u"FTP", None))
-        self.radioButton_dnla.setText(QCoreApplication.translate("NewServeWindow", u"DNLA", None))
-        self.radioButton_http.setText(QCoreApplication.translate("NewServeWindow", u"HTTP", None))
-        self.radioButton_webdav.setText(QCoreApplication.translate("NewServeWindow", u"WebDAV", None))
-        self.radioButton_sftp.setText(QCoreApplication.translate("NewServeWindow", u"SFTP", None))
         self.label_3.setText(QCoreApplication.translate("NewServeWindow", u"Path", None))
 #if QT_CONFIG(tooltip)
         self.lineEdit_path.setToolTip(QCoreApplication.translate("NewServeWindow", u"Can be \"myremote:path/to/dir\", \"myremote:bucket\", \"myremote:\" or \"/local/path\"", None))
 #endif // QT_CONFIG(tooltip)
         self.lineEdit_path.setPlaceholderText(QCoreApplication.translate("NewServeWindow", u"Can be \"myremote:path/to/dir\", \"myremote:bucket\", \"myremote:\" or \"/local/path\"", None))
-        self.button_select_dir.setText(QCoreApplication.translate("NewServeWindow", u"...", None))
         self.groupBox.setTitle(QCoreApplication.translate("NewServeWindow", u"Optional", None))
         self.label_4.setText(QCoreApplication.translate("NewServeWindow", u"Address", None))
 #if QT_CONFIG(tooltip)
