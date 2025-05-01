@@ -1085,7 +1085,7 @@ class MainWindow(QMainWindow):
             if mount_path is not None and mount_path != '':
                 rc.mount(f'"{name}"', f'"{mount_path}"')
 
-    def copy_file(self, items: list[QTreeWidgetItem]):
+    def copy_files(self, items: list[QTreeWidgetItem]):
         self.copy_files = []
         for item in items:
             self.copy_files.append(item.data(0, Qt.ItemDataRole.UserRole))
@@ -1097,31 +1097,44 @@ class MainWindow(QMainWindow):
         mime_data.setUrls([url])
         clipboard.setMimeData(mime_data)
 
-    async def delete_file(self, files: list[dict]):
+    async def delete_files(self, files: list[dict]):
         if len(files) == 1:
             question = f'Are you sure you want to delete {files[0]['name']} ?'
         else:
             question = f'Are you sure you want to delete {len(files)} files ?'
-        confirmation = QMessageBox.question(self, 'Delete', question)
-        if confirmation == QMessageBox.Yes:
-            for file in files:
-                file_path = file['remote'] + file['path']
 
-                task = Task(operation='Delete', source=file_path)
-                self.tasks.append(task)
+        msg_box = QMessageBox(self)
+        msg_box.setIcon(QMessageBox.Question)
+        msg_box.setWindowTitle('Delete')
+        msg_box.setText(question)
+        msg_box.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        msg_box.show()
 
-                if file['is_dir']:
-                    await rc.purge(file_path)
-                else:
-                    await rc.deletefile(file_path)
-                task.done()
-                items = self.ui.tree_files.findItems(file['name'], Qt.MatchFlag.MatchContains)
-                if len(items) > 0 and items[0].data(0, Qt.ItemDataRole.UserRole)['remote'] == file['remote'] and items[0].data(0, Qt.ItemDataRole.UserRole)['path'] == file['path']:
-                    items[0].setHidden(True)
+        async def delete(button):
+            if msg_box.buttonRole(button) == QMessageBox.YesRole:
+                for file in files:
+                    file_path = file['remote'] + file['path']
 
-                items = self.ui.treeWidget_search.findItems(file['name'], Qt.MatchFlag.MatchContains)
-                if len(items) > 0 and items[0].data(0, Qt.ItemDataRole.UserRole)['remote'] == file['remote'] and items[0].data(0, Qt.ItemDataRole.UserRole)['path'] == file['path']:
-                    items[0].setHidden(True)
+                    task = Task(operation='Delete', source=file_path)
+                    self.tasks.append(task)
+
+                    if file['is_dir']:
+                        await rc.purge(file_path)
+                    else:
+                        await rc.deletefile(file_path)
+                    task.done()
+                    items = self.ui.tree_files.findItems(
+                        file['name'], Qt.MatchFlag.MatchContains)
+                    if len(items) > 0 and items[0].data(0, Qt.ItemDataRole.UserRole)['remote'] == file['remote'] and items[0].data(0, Qt.ItemDataRole.UserRole)['path'] == file['path']:
+                        items[0].setHidden(True)
+
+                    items = self.ui.treeWidget_search.findItems(
+                        file['name'], Qt.MatchFlag.MatchContains)
+                    if len(items) > 0 and items[0].data(0, Qt.ItemDataRole.UserRole)['remote'] == file['remote'] and items[0].data(0, Qt.ItemDataRole.UserRole)['path'] == file['path']:
+                        items[0].setHidden(True)
+
+        msg_box.buttonClicked.connect(lambda button: asyncio.ensure_future(delete(button)))
+        msg_box.show()
 
     async def update_dir(self, remote_name: str, path: str):
         if remote_name != '':
@@ -1216,18 +1229,37 @@ class MainWindow(QMainWindow):
     def shortcuts(self):
         def delete():
             selected = self.ui.tree_files.selectedItems()
+            selected_files = []
+            for item in selected:
+                selected_files.append(item.data(0, Qt.ItemDataRole.UserRole))
             if len(selected) > 0:
-                asyncio.ensure_future(self.delete_file(
-                    self.ui.tree_files.selectedItems()))
+                asyncio.ensure_future(self.delete_files(selected_files))
+
+        def delete_search():
+            selected = self.ui.treeWidget_search.selectedItems()
+            selected_files = []
+            for item in selected:
+                selected_files.append(item.data(0, Qt.ItemDataRole.UserRole))
+            if len(selected) > 0:
+                asyncio.ensure_future(self.delete_files(selected_files))
 
         self.delete_shortcut = QShortcut(
             QKeySequence("Del"), self.ui.tree_files)
         self.delete_shortcut.activated.connect(delete)
 
+        self.delete_shortcut_search = QShortcut(
+            QKeySequence("Del"), self.ui.treeWidget_search)
+        self.delete_shortcut_search.activated.connect(delete_search)
+
         self.copy_shortcut = QShortcut(
             QKeySequence("Ctrl+C"), self.ui.tree_files)
         self.copy_shortcut.activated.connect(
-            lambda: self.copy_file(self.ui.tree_files.selectedItems()))
+            lambda: self.copy_files(self.ui.tree_files.selectedItems()))
+
+        self.copy_shortcut = QShortcut(
+            QKeySequence("Ctrl+C"), self.ui.treeWidget_search)
+        self.copy_shortcut.activated.connect(
+            lambda: self.copy_files(self.ui.treeWidget_search.selectedItems()))
 
         self.paste_shortcut = QShortcut(
             QKeySequence("Ctrl+V"), self.ui.tree_files)
@@ -1255,12 +1287,11 @@ class MainWindow(QMainWindow):
 
     def show_context_menu_tree(self, point):
         selected = self.ui.tree_files.selectedItems()
-
-        menu = QMenu()
-
         selected_files = []
         for item in selected:
             selected_files.append(item.data(0, Qt.ItemDataRole.UserRole))
+
+        menu = QMenu()
 
         if self.current_remote != '':
             if len(selected) < 1:
@@ -1312,7 +1343,7 @@ class MainWindow(QMainWindow):
                 action = QAction(self)
                 action.setText('Copy')
                 action.setIcon(QIcon.fromTheme('edit-copy'))
-                action.triggered.connect(lambda: self.copy_file(selected))
+                action.triggered.connect(lambda: self.copy_files(selected))
                 action.setShortcut(QKeySequence('Ctrl+C'))
                 menu.addAction(action)
 
@@ -1337,7 +1368,7 @@ class MainWindow(QMainWindow):
                 action.setText('Delete')
                 action.setIcon(QIcon.fromTheme('edit-delete'))
                 action.triggered.connect(
-                    lambda: asyncio.ensure_future(self.delete_file(selected_files)))
+                    lambda: asyncio.ensure_future(self.delete_files(selected_files)))
                 action.setShortcut(QKeySequence('Del'))
                 menu.addAction(action)
 
@@ -1355,9 +1386,6 @@ class MainWindow(QMainWindow):
 
     def show_context_menu_tree_search(self, point):
         selected = self.ui.treeWidget_search.selectedItems()
-
-        menu = QMenu()
-
         selected_files = []
         for item in selected:
             selected_files.append(item.data(0, Qt.ItemDataRole.UserRole))
@@ -1374,10 +1402,20 @@ class MainWindow(QMainWindow):
         async def show():
             path = file_path[0:-len(file_name)]
             self.ui.tabWidget.setCurrentIndex(0)
-            await self.open_dir(remote, path)
-            items = self.ui.tree_files.findItems(file_name, Qt.MatchFlag.MatchContains)
+
+            self.ui.tree_remotes.clearSelection()
+            items = self.ui.tree_remotes.findItems(
+                remote, Qt.MatchFlag.MatchContains)
             items[0].setSelected(True)
+
+            await self.open_dir(remote, path)
+            items = self.ui.tree_files.findItems(
+                file_name, Qt.MatchFlag.MatchContains)
+            items[0].setSelected(True)
+
             
+
+        menu = QMenu()
 
         action = QAction(self)
         action.setText('Show')
@@ -1416,7 +1454,7 @@ class MainWindow(QMainWindow):
         action = QAction(self)
         action.setText('Copy')
         action.setIcon(QIcon.fromTheme('edit-copy'))
-        action.triggered.connect(lambda: self.copy_file(selected))
+        action.triggered.connect(lambda: self.copy_files(selected))
         action.setShortcut(QKeySequence('Ctrl+C'))
         menu.addAction(action)
 
@@ -1424,7 +1462,7 @@ class MainWindow(QMainWindow):
         action.setText('Delete')
         action.setIcon(QIcon.fromTheme('edit-delete'))
         action.triggered.connect(
-            lambda: asyncio.ensure_future(self.delete_file(selected_files)))
+            lambda: asyncio.ensure_future(self.delete_files(selected_files)))
         action.setShortcut(QKeySequence('Del'))
         menu.addAction(action)
 
