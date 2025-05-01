@@ -128,11 +128,6 @@
         <translation>Настройки</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1423"/>
-        <source>Show</source>
-        <translation>Размер</translation>
-    </message>
-    <message>
         <location filename="../main.py" line="1322"/>
         <location filename="../main.py" line="1432"/>
         <location filename="../main.py" line="1485"/>
@@ -219,6 +214,11 @@
         <location filename="../main.py" line="1504"/>
         <source>Delete</source>
         <translation>Удалить</translation>
+    </message>
+    <message>
+        <location filename="../main.py" line="1423"/>
+        <source>Open file location</source>
+        <translation>Расположение файла</translation>
     </message>
     <message>
         <location filename="../main.py" line="1491"/>

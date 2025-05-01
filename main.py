@@ -1420,7 +1420,7 @@ class MainWindow(QMainWindow):
         menu = QMenu()
 
         action = QAction(self)
-        action.setText(self.tr('Show'))
+        action.setText(self.tr('Open file location'))
         action.setIcon(QIcon.fromTheme('system-file-manager'))
         action.triggered.connect(lambda: asyncio.ensure_future(show()))
         menu.addAction(action)
