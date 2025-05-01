@@ -330,7 +330,11 @@
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_5">
           <item>
-           <widget class="QLineEdit" name="lineEdit_search"/>
+           <widget class="QLineEdit" name="lineEdit_search">
+            <property name="placeholderText">
+             <string>Search</string>
+            </property>
+           </widget>
           </item>
           <item>
            <widget class="QComboBox" name="comboBox_search"/>
@@ -348,6 +352,12 @@
          <widget class="QTreeWidget" name="treeWidget_search">
           <property name="contextMenuPolicy">
            <enum>Qt::ContextMenuPolicy::CustomContextMenu</enum>
+          </property>
+          <property name="dragEnabled">
+           <bool>true</bool>
+          </property>
+          <property name="dragDropMode">
+           <enum>QAbstractItemView::DragDropMode::DragOnly</enum>
           </property>
           <property name="selectionMode">
            <enum>QAbstractItemView::SelectionMode::ExtendedSelection</enum>

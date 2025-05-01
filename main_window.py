@@ -207,6 +207,8 @@ class Ui_MainWindow(object):
         self.treeWidget_search = QTreeWidget(self.tab_search)
         self.treeWidget_search.setObjectName(u"treeWidget_search")
         self.treeWidget_search.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.treeWidget_search.setDragEnabled(True)
+        self.treeWidget_search.setDragDropMode(QAbstractItemView.DragDropMode.DragOnly)
         self.treeWidget_search.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
         self.treeWidget_search.setRootIsDecorated(False)
 
@@ -290,6 +292,7 @@ class Ui_MainWindow(object):
         ___qtreewidgetitem1.setText(1, QCoreApplication.translate("MainWindow", u"Size", None));
         ___qtreewidgetitem1.setText(0, QCoreApplication.translate("MainWindow", u"Name", None));
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_explorer), QCoreApplication.translate("MainWindow", u"Explorer", None))
+        self.lineEdit_search.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Search", None))
         self.button_search.setText(QCoreApplication.translate("MainWindow", u"Search", None))
         ___qtreewidgetitem2 = self.treeWidget_search.headerItem()
         ___qtreewidgetitem2.setText(4, QCoreApplication.translate("MainWindow", u"Path", None));
