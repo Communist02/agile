@@ -69,7 +69,8 @@ class SettingsWindow(QDialog):
 
         palettes_list = palettes.keys()
         self.ui.comboBox_palette.addItems(palettes_list)
-        self.ui.comboBox_palette.setCurrentText(settings.value('palette', 'System'))
+        self.ui.comboBox_palette.setCurrentText(
+            settings.value('palette', 'System'))
 
         self.ui.buttonBox.accepted.connect(self.ok)
 
@@ -122,7 +123,8 @@ class NewServeWindow(QDialog):
             serve_type, path, user, password, address, read_only, args)
         try:
             process.wait(1)
-            QMessageBox.critical(self, self.tr('Error'), self.tr('Check the data!'))
+            QMessageBox.critical(self, self.tr('Error'),
+                                 self.tr('Check the data!'))
         except subprocess.TimeoutExpired:
             window.tasks.append(
                 Task(operation='Serve', source=path, destination=serve_type, process=process))
@@ -926,6 +928,8 @@ class MainWindow(QMainWindow):
         button.setSizePolicy(QSizePolicy.Policy.Fixed,
                              QSizePolicy.Policy.Expanding)
         button.setFlat(True)
+        button.setStyleSheet('QPushButton {font-weight: bold;}')
+        button.setIcon(self.ui.tree_remotes.findItems(remote_name, Qt.MatchFlag.MatchContains)[0].icon(0))
         button.clicked.connect(lambda t, remote_name=remote_name: asyncio.ensure_future(
             self.open_dir(remote_name)))
         self.ui.path_list.addWidget(button)
@@ -935,11 +939,13 @@ class MainWindow(QMainWindow):
             if name != '':
                 temp_path += name + '/'
                 arrow_label = QLabel("/")
+                arrow_label.setStyleSheet('QLabel {font-weight: bold;}')
                 arrow_label.setAlignment(Qt.AlignCenter)
                 self.ui.path_list.addWidget(arrow_label)
                 button = QPushButton(name)
                 button.setSizePolicy(
                     QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding)
+                button.setStyleSheet('QPushButton {font-weight: bold;}')
                 button.setFlat(True)
                 button.clicked.connect(
                     lambda t, a=self.current_remote, b=temp_path[:-1]: asyncio.ensure_future(self.open_dir(a, b)))
@@ -1109,9 +1115,11 @@ class MainWindow(QMainWindow):
 
     async def delete_files(self, files: list[dict]):
         if len(files) == 1:
-            question = self.tr('Are you sure you want to delete') + files[0]['name'] + ' ?'
+            question = self.tr(
+                'Are you sure you want to delete') + files[0]['name'] + ' ?'
         else:
-            question = self.tr('Are you sure you want to delete') + str(len(files)) + self.tr('files') + ' ?'
+            question = self.tr('Are you sure you want to delete') + \
+                str(len(files)) + self.tr('files') + ' ?'
 
         msg_box = QMessageBox(self)
         msg_box.setIcon(QMessageBox.Question)
@@ -1143,7 +1151,8 @@ class MainWindow(QMainWindow):
                     if len(items) > 0 and items[0].data(0, Qt.ItemDataRole.UserRole)['remote'] == file['remote'] and items[0].data(0, Qt.ItemDataRole.UserRole)['path'] == file['path']:
                         items[0].setHidden(True)
 
-        msg_box.buttonClicked.connect(lambda button: asyncio.ensure_future(delete(button)))
+        msg_box.buttonClicked.connect(
+            lambda button: asyncio.ensure_future(delete(button)))
         msg_box.show()
 
     async def update_dir(self, remote_name: str, path: str):
@@ -1423,8 +1432,6 @@ class MainWindow(QMainWindow):
                 file_name, Qt.MatchFlag.MatchContains)
             items[0].setSelected(True)
 
-            
-
         menu = QMenu()
 
         action = QAction(self)
@@ -1641,7 +1648,8 @@ if __name__ == '__main__':
     qt_translator = QTranslator()
     translator = QTranslator()
 
-    qt_translator.load(f'qtbase_{QLocale.system().name()}.qm', QLibraryInfo.path(QLibraryInfo.LibraryPath.TranslationsPath))
+    qt_translator.load(f'qtbase_{QLocale.system().name()}.qm', QLibraryInfo.path(
+        QLibraryInfo.LibraryPath.TranslationsPath))
     app.installTranslator(qt_translator)
 
     if translator.load(f'{os.path.dirname(__file__) + os.sep}translations{os.sep}{QLocale.system().language().name}.qm'):
