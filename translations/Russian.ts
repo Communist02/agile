@@ -103,6 +103,7 @@
         <translation>Новое подключение</translation>
     </message>
     <message>
+        <location filename="../main.py" line="1596"/>
         <location filename="../forms/main_window.ui" line="529"/>
         <source>Exit</source>
         <translation>Выход</translation>
@@ -128,126 +129,127 @@
         <translation>Настройки</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1322"/>
-        <location filename="../main.py" line="1432"/>
-        <location filename="../main.py" line="1485"/>
+        <location filename="../main.py" line="1330"/>
+        <location filename="../main.py" line="1440"/>
+        <location filename="../main.py" line="1493"/>
+        <location filename="../main.py" line="1583"/>
         <source>Open</source>
         <translation>Открыть</translation>
     </message>
     <message>
-        <location filename="../main.py" line="492"/>
+        <location filename="../main.py" line="500"/>
         <source>Scale</source>
         <translation>Масштаб</translation>
     </message>
     <message>
-        <location filename="../main.py" line="698"/>
+        <location filename="../main.py" line="706"/>
         <source>Total</source>
         <translation>Всего</translation>
     </message>
     <message>
-        <location filename="../main.py" line="699"/>
+        <location filename="../main.py" line="707"/>
         <source>Free</source>
         <translation>Свободно</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1104"/>
-        <location filename="../main.py" line="1106"/>
+        <location filename="../main.py" line="1112"/>
+        <location filename="../main.py" line="1114"/>
         <source>Are you sure you want to delete</source>
         <translation>Вы действительно хотите удалить</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1106"/>
+        <location filename="../main.py" line="1114"/>
         <source>files</source>
         <translation type="unfinished">файлов</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1173"/>
-        <location filename="../main.py" line="1308"/>
-        <location filename="../main.py" line="1380"/>
+        <location filename="../main.py" line="1181"/>
+        <location filename="../main.py" line="1316"/>
+        <location filename="../main.py" line="1388"/>
         <source>New Folder</source>
         <translation>Новая папка</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1173"/>
+        <location filename="../main.py" line="1181"/>
         <source>Enter folder name:</source>
         <translation>Введите имя папки:</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1188"/>
-        <location filename="../main.py" line="1362"/>
+        <location filename="../main.py" line="1196"/>
+        <location filename="../main.py" line="1370"/>
         <source>Rename</source>
         <translation>Переименовать</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1188"/>
+        <location filename="../main.py" line="1196"/>
         <source>Enter new name:</source>
         <translation>Введите новое имя:</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1301"/>
-        <location filename="../main.py" line="1353"/>
+        <location filename="../main.py" line="1309"/>
+        <location filename="../main.py" line="1361"/>
         <source>Paste</source>
         <translation>Вставить</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1330"/>
-        <location filename="../main.py" line="1440"/>
+        <location filename="../main.py" line="1338"/>
+        <location filename="../main.py" line="1448"/>
         <source>Open With...</source>
         <translation>Открыть как...</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1337"/>
-        <location filename="../main.py" line="1449"/>
+        <location filename="../main.py" line="1345"/>
+        <location filename="../main.py" line="1457"/>
         <source>Download</source>
         <translation>Загрузить</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1346"/>
-        <location filename="../main.py" line="1458"/>
+        <location filename="../main.py" line="1354"/>
+        <location filename="../main.py" line="1466"/>
         <source>Copy</source>
         <translation>Копировать</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1110"/>
-        <location filename="../main.py" line="1370"/>
-        <location filename="../main.py" line="1465"/>
-        <location filename="../main.py" line="1504"/>
+        <location filename="../main.py" line="1118"/>
+        <location filename="../main.py" line="1378"/>
+        <location filename="../main.py" line="1473"/>
+        <location filename="../main.py" line="1512"/>
         <source>Delete</source>
         <translation>Удалить</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1423"/>
+        <location filename="../main.py" line="1431"/>
         <source>Open file location</source>
         <translation>Расположение файла</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1491"/>
+        <location filename="../main.py" line="1499"/>
         <source>Edit</source>
         <translation>Редактировать</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1497"/>
+        <location filename="../main.py" line="1505"/>
         <source>Mount</source>
         <translation>Монтировать</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1527"/>
-        <location filename="../main.py" line="1556"/>
+        <location filename="../main.py" line="1535"/>
+        <location filename="../main.py" line="1564"/>
         <source>Clear Completed</source>
         <translation>Очистить завершенные</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1536"/>
+        <location filename="../main.py" line="1544"/>
         <source>Open Folder</source>
         <translation>Открыть папку</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1543"/>
+        <location filename="../main.py" line="1551"/>
         <source>Clear Task</source>
         <translation>Очистить</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1551"/>
+        <location filename="../main.py" line="1559"/>
         <source>Stop</source>
         <translation>Остановить</translation>
     </message>
@@ -260,12 +262,12 @@
         <translation>Новое подключение</translation>
     </message>
     <message>
-        <location filename="../main.py" line="325"/>
+        <location filename="../main.py" line="333"/>
         <source>Enter name</source>
         <translation>Введите имя</translation>
     </message>
     <message>
-        <location filename="../main.py" line="326"/>
+        <location filename="../main.py" line="334"/>
         <location filename="../forms/new_remote_window.ui" line="26"/>
         <source>Enter name for new remote</source>
         <translation>Введите новое имя для подключения</translation>
@@ -699,12 +701,12 @@
         <translation>Только для чтения</translation>
     </message>
     <message>
-        <location filename="../main.py" line="117"/>
+        <location filename="../main.py" line="125"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
     <message>
-        <location filename="../main.py" line="117"/>
+        <location filename="../main.py" line="125"/>
         <source>Check the data!</source>
         <translation>Проверьте данные!</translation>
     </message>
@@ -720,6 +722,11 @@
         <location filename="../forms/settings_window.ui" line="25"/>
         <source>Style</source>
         <translation>Стиль</translation>
+    </message>
+    <message>
+        <location filename="../forms/settings_window.ui" line="39"/>
+        <source>Palette</source>
+        <translation>Цветовая схема</translation>
     </message>
 </context>
 </TS>

@@ -19,6 +19,7 @@ from rclone_python import remote_types
 from rclone import Rclone
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
+from palettes import palettes
 
 import main_window
 import new_remote_window
@@ -66,11 +67,18 @@ class SettingsWindow(QDialog):
         self.ui.comboBox_style.addItems(styles)
         self.ui.comboBox_style.setCurrentText(app.style().name())
 
+        palettes_list = palettes.keys()
+        self.ui.comboBox_palette.addItems(palettes_list)
+        self.ui.comboBox_palette.setCurrentText(settings.value('palette', 'System'))
+
         self.ui.buttonBox.accepted.connect(self.ok)
 
     def ok(self):
         app.setStyle(self.ui.comboBox_style.currentText())
+        app.setPalette(palettes[self.ui.comboBox_palette.currentText()])
+
         settings.setValue('style', self.ui.comboBox_style.currentText())
+        settings.setValue('palette', self.ui.comboBox_palette.currentText())
 
 
 class NewServeWindow(QDialog):
@@ -849,7 +857,7 @@ class MainWindow(QMainWindow):
         for remote in remotes:
             item = QTreeWidgetItem([remote['name'] + ':', remote['type']])
             item.setSizeHint(0, QSize(0, 32))
-            if QApplication.styleHints().colorScheme() == Qt.ColorScheme.Dark and QApplication.style().name() != 'windowsvista':
+            if QApplication.styleHints().colorScheme() == Qt.ColorScheme.Dark and QApplication.style().name() != 'windowsvista' and not (len(settings.value('palette', 'System')) > 5 and settings.value('palette', 'System')[-5:].lower() == 'light'):
                 inv = '_inv'
             else:
                 inv = ''
@@ -1572,7 +1580,7 @@ class MainWindow(QMainWindow):
             self.close()
 
         action = QAction(self)
-        action.setText('Open')
+        action.setText(self.tr('Open'))
         action.setIcon(self.windowIcon())
         action.triggered.connect(open)
         menu.addAction(action)
@@ -1585,7 +1593,7 @@ class MainWindow(QMainWindow):
         menu.addSeparator()
 
         action = QAction(self)
-        action.setText('Exit')
+        action.setText(self.tr('Exit'))
         action.setIcon(QIcon.fromTheme('application-exit'))
         action.triggered.connect(close)
         menu.addAction(action)
@@ -1628,6 +1636,7 @@ if __name__ == '__main__':
     app.setQuitOnLastWindowClosed(False)
     settings = QSettings('Denis Mazur', 'Cloud Explorer')
     app.setStyle(settings.value('style', ''))
+    app.setPalette(palettes[settings.value('palette', 'System')])
 
     qt_translator = QTranslator()
     translator = QTranslator()

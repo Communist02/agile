@@ -42,6 +42,21 @@ class Ui_SettingsWindow(object):
 
         self.verticalLayout.addLayout(self.horizontalLayout)
 
+        self.horizontalLayout_2 = QHBoxLayout()
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.label_2 = QLabel(SettingsWindow)
+        self.label_2.setObjectName(u"label_2")
+
+        self.horizontalLayout_2.addWidget(self.label_2)
+
+        self.comboBox_palette = QComboBox(SettingsWindow)
+        self.comboBox_palette.setObjectName(u"comboBox_palette")
+
+        self.horizontalLayout_2.addWidget(self.comboBox_palette)
+
+
+        self.verticalLayout.addLayout(self.horizontalLayout_2)
+
         self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.verticalLayout.addItem(self.verticalSpacer)
@@ -64,5 +79,6 @@ class Ui_SettingsWindow(object):
     def retranslateUi(self, SettingsWindow):
         SettingsWindow.setWindowTitle(QCoreApplication.translate("SettingsWindow", u"Settings", None))
         self.label.setText(QCoreApplication.translate("SettingsWindow", u"Style", None))
+        self.label_2.setText(QCoreApplication.translate("SettingsWindow", u"Palette", None))
     # retranslateUi
 
