@@ -929,7 +929,8 @@ class MainWindow(QMainWindow):
                              QSizePolicy.Policy.Expanding)
         button.setFlat(True)
         button.setStyleSheet('QPushButton {font-weight: bold;}')
-        button.setIcon(self.ui.tree_remotes.findItems(remote_name, Qt.MatchFlag.MatchContains)[0].icon(0))
+        button.setIcon(self.ui.tree_remotes.findItems(
+            remote_name, Qt.MatchFlag.MatchContains)[0].icon(0))
         button.clicked.connect(lambda t, remote_name=remote_name: asyncio.ensure_future(
             self.open_dir(remote_name)))
         self.ui.path_list.addWidget(button)
@@ -1116,10 +1117,10 @@ class MainWindow(QMainWindow):
     async def delete_files(self, files: list[dict]):
         if len(files) == 1:
             question = self.tr(
-                'Are you sure you want to delete') + files[0]['name'] + ' ?'
+                'Are you sure you want to delete') + ' ' + files[0]['name'] + ' ?'
         else:
             question = self.tr('Are you sure you want to delete') + \
-                str(len(files)) + self.tr('files') + ' ?'
+                ' ' + str(len(files)) + ' ' + self.tr('files') + ' ?'
 
         msg_box = QMessageBox(self)
         msg_box.setIcon(QMessageBox.Question)
