@@ -1,3 +1,4 @@
+from argparse import Action
 import asyncio
 import shutil
 import signal
@@ -1127,7 +1128,6 @@ class MainWindow(QMainWindow):
         msg_box.setWindowTitle(self.tr('Delete'))
         msg_box.setText(question)
         msg_box.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
-        msg_box.show()
 
         async def delete(button):
             if msg_box.buttonRole(button) == QMessageBox.YesRole:
@@ -1187,13 +1187,18 @@ class MainWindow(QMainWindow):
             asyncio.ensure_future(self.open_dir(self.current_remote, path))
 
     async def new_folder(self):
-        folder_name, ok = QInputDialog.getText(
-            self, self.tr("New Folder"), self.tr("Enter folder name:"), text=self.tr("New Folder"))
+        input_dialog = QInputDialog(self)
+        input_dialog.setWindowTitle(self.tr("New Folder"))
+        input_dialog.setLabelText(self.tr("New Folder"))
+        input_dialog.setTextValue(self.tr("New Folder"))
+        input_dialog.setModal(True)
+        input_dialog.show()
 
         destination_remote = self.current_remote
         destination_path = self.remotes_paths[self.current_remote]
 
-        if ok and folder_name.strip():
+        async def create_folder():
+            folder_name = input_dialog.textValue().strip()
             if destination_path != '':
                 folder_path = f'{destination_remote}{destination_path}/{folder_name.strip()}'
             else:
@@ -1201,22 +1206,34 @@ class MainWindow(QMainWindow):
             await rc.mkdir(folder_path)
             await self.update_dir(destination_remote, destination_path)
 
+        input_dialog.accepted.connect(
+            lambda: asyncio.ensure_future(create_folder()))
+
     async def rename_file(self, file_name: str, is_dir: bool):
-        new_file_name, ok = QInputDialog.getText(
-            self, self.tr("Rename"), self.tr("Enter new name:"), text=file_name)
+        input_dialog = QInputDialog(self)
+        input_dialog.setWindowTitle(self.tr("Rename"))
+        input_dialog.setLabelText(self.tr("Enter new name:"))
+        input_dialog.setTextValue(file_name)
+        input_dialog.setModal(True)
+        input_dialog.show()
 
         destination_remote = self.current_remote
         destination_path = self.remotes_paths[self.current_remote]
 
-        if ok and new_file_name.strip():
-            if destination_path != '':
-                new_file_path = f'{destination_remote}{destination_path}/{new_file_name.strip()}'
-                old_file_path = f'{destination_remote}{destination_path}/{file_name}'
-            else:
-                new_file_path = f'{destination_remote}{destination_path}{new_file_name.strip()}'
-                old_file_path = f'{destination_remote}{destination_path}{file_name}'
-            await rc.moveto(old_file_path, new_file_path)
-            await self.update_dir(destination_remote, destination_path)
+        async def rename():
+            new_file_name = input_dialog.textValue().strip()
+            if new_file_name.strip() != '':
+                if destination_path != '':
+                    new_file_path = f'{destination_remote}{destination_path}/{new_file_name.strip()}'
+                    old_file_path = f'{destination_remote}{destination_path}/{file_name}'
+                else:
+                    new_file_path = f'{destination_remote}{destination_path}{new_file_name.strip()}'
+                    old_file_path = f'{destination_remote}{destination_path}{file_name}'
+                await rc.moveto(old_file_path, new_file_path)
+                await self.update_dir(destination_remote, destination_path)
+
+        input_dialog.accepted.connect(
+            lambda: asyncio.ensure_future(rename()))
 
     def delete_remote(self, name: str):
         rc.config('delete', f'"{name[:-1]}"')

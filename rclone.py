@@ -210,13 +210,16 @@ class Rclone(CheckRclone):
     def listremotes(self, long=False) -> str | dict[str]:
         if long:
             remotes = self.sync_process('listremotes', '--long')
-            remotes = remotes[:-1]
-            remotes = remotes.split('\n')
-            result = []
-            for remote in remotes:
-                result.append({'name': remote.split(
-                    ':')[0], 'type': remote.split(':')[-1].strip()})
-            return result
+            if remotes != '':
+                remotes = remotes[:-1]
+                remotes = remotes.split('\n')
+                result = []
+                for remote in remotes:
+                    result.append({'name': remote.split(
+                        ':')[0], 'type': remote.split(':')[-1].strip()})
+                return result
+            else:
+                return []
         else:
             return self.sync_process('listremotes')
 
