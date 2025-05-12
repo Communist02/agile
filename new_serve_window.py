@@ -178,7 +178,7 @@ class Ui_NewServeWindow(object):
         self.groupBox.setTitle(QCoreApplication.translate("NewServeWindow", u"Optional", None))
         self.label_4.setText(QCoreApplication.translate("NewServeWindow", u"Address", None))
 #if QT_CONFIG(tooltip)
-        self.lineEdit_address.setToolTip(QCoreApplication.translate("NewServeWindow", u"<html><head/><body><p>Port or :Port to bind server</p><p>Default:</p><p>FTP - <span style=\" font-family:'Courier New';\">localhost:2121</span></p><p><span style=\" font-family:'Courier New';\">DNLA - :7879</span></p><p><span style=\" font-family:'Courier New';\">HTTP - 127.0.0.1:8080</span></p><p><span style=\" font-family:'Courier New';\">WebDAV - 127.0.0.1:8080</span></p><p><span style=\" font-family:'Courier New';\">SFTP - localhost:2022</span></p></body></html>", None))
+        self.lineEdit_address.setToolTip(QCoreApplication.translate("NewServeWindow", u"<html><head/><body><p>Use this field to indicate which IP address and port the server should listen on, e.g. 1.2.3.4:8000 or :8080 to listen to all IPs</p><p>Default:</p><p>FTP - <span style=\" font-family:'Courier New';\">localhost:2121</span></p><p><span style=\" font-family:'Courier New';\">DNLA - :7879</span></p><p><span style=\" font-family:'Courier New';\">HTTP - 127.0.0.1:8080</span></p><p><span style=\" font-family:'Courier New';\">WebDAV - 127.0.0.1:8080</span></p><p><span style=\" font-family:'Courier New';\">SFTP - localhost:2022</span></p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
         self.label.setText(QCoreApplication.translate("NewServeWindow", u"Username", None))
         self.label_2.setText(QCoreApplication.translate("NewServeWindow", u"Password", None))

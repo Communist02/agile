@@ -217,6 +217,24 @@ class Ui_MainWindow(object):
 
         icon9 = QIcon(QIcon.fromTheme(u"edit-find"))
         self.tabWidget.addTab(self.tab_search, icon9, "")
+        self.tab_serve = QWidget()
+        self.tab_serve.setObjectName(u"tab_serve")
+        self.verticalLayout_5 = QVBoxLayout(self.tab_serve)
+        self.verticalLayout_5.setObjectName(u"verticalLayout_5")
+        self.verticalLayout_5.setContentsMargins(0, -1, 0, -1)
+        self.button_new_serve = QPushButton(self.tab_serve)
+        self.button_new_serve.setObjectName(u"button_new_serve")
+
+        self.verticalLayout_5.addWidget(self.button_new_serve)
+
+        self.treeWidget_serve = QTreeWidget(self.tab_serve)
+        self.treeWidget_serve.setObjectName(u"treeWidget_serve")
+        self.treeWidget_serve.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.treeWidget_serve.setRootIsDecorated(False)
+
+        self.verticalLayout_5.addWidget(self.treeWidget_serve)
+
+        self.tabWidget.addTab(self.tab_serve, icon3, "")
 
         self.verticalLayout.addWidget(self.tabWidget)
 
@@ -301,18 +319,27 @@ class Ui_MainWindow(object):
         ___qtreewidgetitem2.setText(1, QCoreApplication.translate("MainWindow", u"Size", None));
         ___qtreewidgetitem2.setText(0, QCoreApplication.translate("MainWindow", u"Name", None));
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_search), QCoreApplication.translate("MainWindow", u"Search", None))
+        self.button_new_serve.setText(QCoreApplication.translate("MainWindow", u"New serve", None))
+        ___qtreewidgetitem3 = self.treeWidget_serve.headerItem()
+        ___qtreewidgetitem3.setText(5, QCoreApplication.translate("MainWindow", u"Read-only", None));
+        ___qtreewidgetitem3.setText(4, QCoreApplication.translate("MainWindow", u"Password", None));
+        ___qtreewidgetitem3.setText(3, QCoreApplication.translate("MainWindow", u"Username", None));
+        ___qtreewidgetitem3.setText(2, QCoreApplication.translate("MainWindow", u"Address", None));
+        ___qtreewidgetitem3.setText(1, QCoreApplication.translate("MainWindow", u"Path", None));
+        ___qtreewidgetitem3.setText(0, QCoreApplication.translate("MainWindow", u"Protocol", None));
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_serve), QCoreApplication.translate("MainWindow", u"Serve", None))
         self.menuClient.setTitle(QCoreApplication.translate("MainWindow", u"Client", None))
         self.menuOther.setTitle(QCoreApplication.translate("MainWindow", u"Other", None))
         self.menuView.setTitle(QCoreApplication.translate("MainWindow", u"View", None))
-        ___qtreewidgetitem3 = self.tasks.headerItem()
-        ___qtreewidgetitem3.setText(7, QCoreApplication.translate("MainWindow", u"Estimated", None));
-        ___qtreewidgetitem3.setText(6, QCoreApplication.translate("MainWindow", u"Speed", None));
-        ___qtreewidgetitem3.setText(5, QCoreApplication.translate("MainWindow", u"Progress", None));
-        ___qtreewidgetitem3.setText(4, QCoreApplication.translate("MainWindow", u"Size", None));
-        ___qtreewidgetitem3.setText(3, QCoreApplication.translate("MainWindow", u"Status", None));
-        ___qtreewidgetitem3.setText(2, QCoreApplication.translate("MainWindow", u"Destination", None));
-        ___qtreewidgetitem3.setText(1, QCoreApplication.translate("MainWindow", u"Source", None));
-        ___qtreewidgetitem3.setText(0, QCoreApplication.translate("MainWindow", u"Operation", None));
+        ___qtreewidgetitem4 = self.tasks.headerItem()
+        ___qtreewidgetitem4.setText(7, QCoreApplication.translate("MainWindow", u"Estimated", None));
+        ___qtreewidgetitem4.setText(6, QCoreApplication.translate("MainWindow", u"Speed", None));
+        ___qtreewidgetitem4.setText(5, QCoreApplication.translate("MainWindow", u"Progress", None));
+        ___qtreewidgetitem4.setText(4, QCoreApplication.translate("MainWindow", u"Size", None));
+        ___qtreewidgetitem4.setText(3, QCoreApplication.translate("MainWindow", u"Status", None));
+        ___qtreewidgetitem4.setText(2, QCoreApplication.translate("MainWindow", u"Destination", None));
+        ___qtreewidgetitem4.setText(1, QCoreApplication.translate("MainWindow", u"Source", None));
+        ___qtreewidgetitem4.setText(0, QCoreApplication.translate("MainWindow", u"Operation", None));
         pass
     # retranslateUi
 

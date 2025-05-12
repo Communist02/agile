@@ -108,27 +108,37 @@ class NewServeWindow(QDialog):
         read_only = self.ui.checkBox_read_only.isChecked()
         args = ''
         if self.ui.radioButton_ftp.isChecked():
-            serve_type = 'ftp'
+            protocol = 'ftp'
+            if address.strip() == '':
+                address = 'localhost:2121'
         elif self.ui.radioButton_dnla.isChecked():
-            serve_type = 'dnla'
+            protocol = 'dnla'
+            if address.strip() == '':
+                address = ':7879'
         elif self.ui.radioButton_http.isChecked():
-            serve_type = 'http'
+            protocol = 'http'
+            read_only = True
+            if address.strip() == '':
+                address = '127.0.0.1:8080'
         elif self.ui.radioButton_webdav.isChecked():
-            serve_type = 'webdav'
+            protocol = 'webdav'
+            if address.strip() == '':
+                address = '127.0.0.1:8080'
         elif self.ui.radioButton_sftp.isChecked():
-            serve_type = 'sftp'
+            protocol = 'sftp'
             if not user or not password:
                 args += '--no-auth'
+            if address.strip() == '':
+                address = 'localhost:2022'
 
         process: subprocess.Popen = rc.serve(
-            serve_type, path, user, password, address, read_only, args)
+            protocol, path, user, password, address, read_only, args)
         try:
             process.wait(1)
             QMessageBox.critical(self, self.tr('Error'),
                                  self.tr('Check the data!'))
         except subprocess.TimeoutExpired:
-            window.tasks.append(
-                Task(operation='Serve', source=path, destination=serve_type, process=process))
+            window.serve.append(Serve(protocol, path, address, user, password, read_only=read_only, process=process))
             self.close()
 
 
@@ -405,6 +415,15 @@ class Task():
     def set_estimated(self, estimated: str):
         self.estimated = estimated
 
+class Serve():
+    def __init__(self, protocol: str, path: str, address: str, user: str, password: str, read_only: bool, process: subprocess.Popen = None):
+        self.protocol = protocol
+        self.path = path
+        self.address = address
+        self.user = user
+        self.password = password
+        self.read_only = read_only
+        self.process = process
 
 class MainWindow(QMainWindow):
     download_path: str = ''
@@ -418,6 +437,7 @@ class MainWindow(QMainWindow):
     scale: int
     copy_files: list = []
     history: dict = {}
+    serve: list[Serve] = []
 
     def __init__(self):
         super(MainWindow, self).__init__()
@@ -466,6 +486,7 @@ class MainWindow(QMainWindow):
             self.update_dir(self.current_remote, self.remotes_paths.setdefault(self.current_remote, ''))))
         self.ui.button_prev_history.clicked.connect(self.prev_history)
         self.ui.button_next_history.clicked.connect(self.next_history)
+        self.ui.button_new_serve.clicked.connect(self.open_new_serve_window)
         self.ui.button_search.clicked.connect(
             lambda: asyncio.ensure_future(self.search()))
         self.ui.lineEdit_search.editingFinished.connect(
@@ -480,6 +501,8 @@ class MainWindow(QMainWindow):
             self.show_context_menu_tree_search)
         self.ui.tree_remotes.customContextMenuRequested.connect(
             self.show_context_menu_remote)
+        self.ui.treeWidget_serve.customContextMenuRequested.connect(
+            self.show_context_menu_serve)
         self.ui.tasks.customContextMenuRequested.connect(
             self.show_context_menu_task)
 
@@ -530,6 +553,18 @@ class MainWindow(QMainWindow):
             self.download_file(self.copy_files, self.download_path)
             self.download_path = ''
 
+        for i in range(len(self.serve)):
+            if i >= self.ui.treeWidget_serve.topLevelItemCount():
+                item = QTreeWidgetItem()
+                self.ui.treeWidget_serve.addTopLevelItem(item)
+                item.setText(0, self.serve[i].protocol)
+                item.setText(1, self.serve[i].path)
+                item.setText(2, self.serve[i].address)
+                item.setText(3, self.serve[i].user)
+                item.setText(4, self.serve[i].password)
+                item.setText(5, '+' if self.serve[i].read_only else '-')
+
+
         for i in range(len(self.tasks)):
             if i >= self.ui.tasks.topLevelItemCount():
                 item = QTreeWidgetItem()
@@ -542,9 +577,6 @@ class MainWindow(QMainWindow):
                         item.setIcon(0, QIcon.fromTheme('document-open'))
                     case 'Mount':
                         item.setIcon(0, QIcon.fromTheme('drive-harddisk'))
-                    case 'Serve':
-                        item.setIcon(0, QIcon.fromTheme(
-                            'applications-internet'))
                     case 'Delete':
                         item.setIcon(0, QIcon.fromTheme('edit-delete'))
                 self.ui.tasks.addTopLevelItem(item)
@@ -1189,7 +1221,7 @@ class MainWindow(QMainWindow):
     async def new_folder(self):
         input_dialog = QInputDialog(self)
         input_dialog.setWindowTitle(self.tr("New Folder"))
-        input_dialog.setLabelText(self.tr("New Folder"))
+        input_dialog.setLabelText(self.tr("Enter folder name:"))
         input_dialog.setTextValue(self.tr("New Folder"))
         input_dialog.setModal(True)
         input_dialog.show()
@@ -1209,7 +1241,7 @@ class MainWindow(QMainWindow):
         input_dialog.accepted.connect(
             lambda: asyncio.ensure_future(create_folder()))
 
-    async def rename_file(self, file_name: str, is_dir: bool):
+    async def rename_file(self, file_name: str):
         input_dialog = QInputDialog(self)
         input_dialog.setWindowTitle(self.tr("Rename"))
         input_dialog.setLabelText(self.tr("Enter new name:"))
@@ -1305,8 +1337,7 @@ class MainWindow(QMainWindow):
         def rename():
             selected = self.ui.tree_files.selectedItems()
             if len(selected) > 0:
-                asyncio.ensure_future(self.rename_file(selected[0].text(
-                    0), selected[0].text(3) == 'inode/directory'))
+                asyncio.ensure_future(self.rename_file(selected[0].text(0)))
 
         self.rename_shortcut = QShortcut(
             QKeySequence("F2"), self.ui.tree_files)
@@ -1397,7 +1428,7 @@ class MainWindow(QMainWindow):
                 action.setText(self.tr('Rename'))
                 action.setIcon(QIcon.fromTheme('format-text-italic'))
                 action.triggered.connect(lambda: asyncio.ensure_future(
-                    self.rename_file(file_name, is_dir)))
+                    self.rename_file(file_name)))
                 action.setShortcut(QKeySequence('F2'))
                 menu.addAction(action)
 
@@ -1538,6 +1569,23 @@ class MainWindow(QMainWindow):
         action.setIcon(QIcon.fromTheme('edit-delete'))
         action.triggered.connect(lambda: self.delete_remote(item.text(0)))
         menu.addAction(action)
+
+        menu.exec(QCursor.pos())
+
+    def show_context_menu_serve(self, point):
+        index = self.ui.treeWidget_serve.indexAt(point)
+        menu = QMenu()
+
+        def stop_serve(index: int):
+            self.serve[index].process.send_signal(signal.CTRL_BREAK_EVENT)
+            self.ui.treeWidget_serve.takeTopLevelItem(index)
+            del self.serve[index]
+
+        if index.isValid():
+            action = QAction(self)
+            action.setText(self.tr('Stop'))
+            action.triggered.connect(lambda: stop_serve(index.row()))
+            menu.addAction(action)
 
         menu.exec(QCursor.pos())
 

@@ -121,7 +121,7 @@
       <item>
        <widget class="QLineEdit" name="lineEdit_address">
         <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Port or :Port to bind server&lt;/p&gt;&lt;p&gt;Default:&lt;/p&gt;&lt;p&gt;FTP - &lt;span style=&quot; font-family:'Courier New';&quot;&gt;localhost:2121&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Courier New';&quot;&gt;DNLA - :7879&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Courier New';&quot;&gt;HTTP - 127.0.0.1:8080&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Courier New';&quot;&gt;WebDAV - 127.0.0.1:8080&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Courier New';&quot;&gt;SFTP - localhost:2022&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use this field to indicate which IP address and port the server should listen on, e.g. 1.2.3.4:8000 or :8080 to listen to all IPs&lt;/p&gt;&lt;p&gt;Default:&lt;/p&gt;&lt;p&gt;FTP - &lt;span style=&quot; font-family:'Courier New';&quot;&gt;localhost:2121&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Courier New';&quot;&gt;DNLA - :7879&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Courier New';&quot;&gt;HTTP - 127.0.0.1:8080&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Courier New';&quot;&gt;WebDAV - 127.0.0.1:8080&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Courier New';&quot;&gt;SFTP - localhost:2022&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
       </item>

@@ -25,7 +25,7 @@
     <message>
         <location filename="../forms/main_window.ui" line="297"/>
         <location filename="../forms/main_window.ui" line="375"/>
-        <location filename="../forms/main_window.ui" line="493"/>
+        <location filename="../forms/main_window.ui" line="556"/>
         <source>Size</source>
         <translation>Размер</translation>
     </message>
@@ -44,212 +44,246 @@
     </message>
     <message>
         <location filename="../forms/main_window.ui" line="390"/>
+        <location filename="../forms/main_window.ui" line="433"/>
         <source>Path</source>
         <translation>Путь</translation>
     </message>
     <message>
-        <location filename="../forms/main_window.ui" line="412"/>
+        <location filename="../forms/main_window.ui" line="402"/>
+        <source>Serve</source>
+        <translation>Сервер</translation>
+    </message>
+    <message>
+        <location filename="../forms/main_window.ui" line="428"/>
+        <source>Protocol</source>
+        <translation>Протокол</translation>
+    </message>
+    <message>
+        <location filename="../forms/main_window.ui" line="438"/>
+        <source>Address</source>
+        <translation>Адрес</translation>
+    </message>
+    <message>
+        <location filename="../forms/main_window.ui" line="443"/>
+        <source>Username</source>
+        <translation>Имя пользователя</translation>
+    </message>
+    <message>
+        <location filename="../forms/main_window.ui" line="448"/>
+        <source>Password</source>
+        <translation>Пароль</translation>
+    </message>
+    <message>
+        <location filename="../forms/main_window.ui" line="453"/>
+        <source>Read-only</source>
+        <translation>Только для чтения</translation>
+    </message>
+    <message>
+        <location filename="../forms/main_window.ui" line="475"/>
         <source>Client</source>
         <translation>Клиент</translation>
     </message>
     <message>
-        <location filename="../forms/main_window.ui" line="423"/>
+        <location filename="../forms/main_window.ui" line="486"/>
         <source>Other</source>
         <translation>Другое</translation>
     </message>
     <message>
-        <location filename="../forms/main_window.ui" line="429"/>
+        <location filename="../forms/main_window.ui" line="492"/>
         <source>View</source>
         <translation>Вид</translation>
     </message>
     <message>
-        <location filename="../forms/main_window.ui" line="473"/>
+        <location filename="../forms/main_window.ui" line="536"/>
         <source>Operation</source>
         <translation>Операция</translation>
     </message>
     <message>
-        <location filename="../forms/main_window.ui" line="478"/>
+        <location filename="../forms/main_window.ui" line="541"/>
         <source>Source</source>
         <translation>Источник</translation>
     </message>
     <message>
-        <location filename="../forms/main_window.ui" line="483"/>
+        <location filename="../forms/main_window.ui" line="546"/>
         <source>Destination</source>
         <translation>Назначение</translation>
     </message>
     <message>
-        <location filename="../forms/main_window.ui" line="488"/>
+        <location filename="../forms/main_window.ui" line="551"/>
         <source>Status</source>
         <translation>Статус</translation>
     </message>
     <message>
-        <location filename="../forms/main_window.ui" line="498"/>
+        <location filename="../forms/main_window.ui" line="561"/>
         <source>Progress</source>
         <translation>Прогресс</translation>
     </message>
     <message>
-        <location filename="../forms/main_window.ui" line="503"/>
+        <location filename="../forms/main_window.ui" line="566"/>
         <source>Speed</source>
         <translation>Скорость</translation>
     </message>
     <message>
-        <location filename="../forms/main_window.ui" line="508"/>
+        <location filename="../forms/main_window.ui" line="571"/>
         <source>Estimated</source>
         <translation>Осталось</translation>
     </message>
     <message>
-        <location filename="../forms/main_window.ui" line="521"/>
+        <location filename="../forms/main_window.ui" line="584"/>
         <source>New remote</source>
         <translation>Новое подключение</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1604"/>
-        <location filename="../forms/main_window.ui" line="529"/>
+        <location filename="../main.py" line="1669"/>
+        <location filename="../forms/main_window.ui" line="592"/>
         <source>Exit</source>
         <translation>Выход</translation>
     </message>
     <message>
-        <location filename="../forms/main_window.ui" line="537"/>
+        <location filename="../forms/main_window.ui" line="600"/>
         <source>About</source>
         <translation>О программе</translation>
     </message>
     <message>
-        <location filename="../forms/main_window.ui" line="548"/>
+        <location filename="../forms/main_window.ui" line="611"/>
         <source>List remotes</source>
         <translation>Список подключений</translation>
     </message>
     <message>
-        <location filename="../forms/main_window.ui" line="556"/>
+        <location filename="../forms/main_window.ui" line="414"/>
+        <location filename="../forms/main_window.ui" line="619"/>
         <source>New serve</source>
-        <translation>Создание сервера</translation>
+        <translation>Создать сервер</translation>
     </message>
     <message>
-        <location filename="../forms/main_window.ui" line="564"/>
+        <location filename="../forms/main_window.ui" line="627"/>
         <source>Settings</source>
         <translation>Настройки</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1340"/>
-        <location filename="../main.py" line="1448"/>
-        <location filename="../main.py" line="1501"/>
-        <location filename="../main.py" line="1591"/>
+        <location filename="../main.py" line="1388"/>
+        <location filename="../main.py" line="1496"/>
+        <location filename="../main.py" line="1549"/>
+        <location filename="../main.py" line="1656"/>
         <source>Open</source>
         <translation>Открыть</translation>
     </message>
     <message>
-        <location filename="../main.py" line="502"/>
+        <location filename="../main.py" line="526"/>
         <source>Scale</source>
         <translation>Масштаб</translation>
     </message>
     <message>
-        <location filename="../main.py" line="708"/>
+        <location filename="../main.py" line="741"/>
         <source>Total</source>
         <translation>Всего</translation>
     </message>
     <message>
-        <location filename="../main.py" line="709"/>
+        <location filename="../main.py" line="742"/>
         <source>Free</source>
         <translation>Свободно</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1120"/>
-        <location filename="../main.py" line="1123"/>
+        <location filename="../main.py" line="1153"/>
+        <location filename="../main.py" line="1156"/>
         <source>Are you sure you want to delete</source>
         <translation>Вы действительно хотите удалить</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1123"/>
+        <location filename="../main.py" line="1156"/>
         <source>files</source>
         <translation type="unfinished">файлов</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1191"/>
-        <location filename="../main.py" line="1326"/>
-        <location filename="../main.py" line="1398"/>
+        <location filename="../main.py" line="1223"/>
+        <location filename="../main.py" line="1225"/>
+        <location filename="../main.py" line="1374"/>
+        <location filename="../main.py" line="1446"/>
         <source>New Folder</source>
         <translation>Новая папка</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1191"/>
+        <location filename="../main.py" line="1224"/>
         <source>Enter folder name:</source>
         <translation>Введите имя папки:</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1206"/>
-        <location filename="../main.py" line="1380"/>
+        <location filename="../main.py" line="1246"/>
+        <location filename="../main.py" line="1428"/>
         <source>Rename</source>
         <translation>Переименовать</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1206"/>
+        <location filename="../main.py" line="1247"/>
         <source>Enter new name:</source>
         <translation>Введите новое имя:</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1319"/>
-        <location filename="../main.py" line="1371"/>
+        <location filename="../main.py" line="1367"/>
+        <location filename="../main.py" line="1419"/>
         <source>Paste</source>
         <translation>Вставить</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1348"/>
-        <location filename="../main.py" line="1456"/>
+        <location filename="../main.py" line="1396"/>
+        <location filename="../main.py" line="1504"/>
         <source>Open With...</source>
         <translation>Открыть как...</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1355"/>
-        <location filename="../main.py" line="1465"/>
+        <location filename="../main.py" line="1403"/>
+        <location filename="../main.py" line="1513"/>
         <source>Download</source>
         <translation>Загрузить</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1364"/>
-        <location filename="../main.py" line="1474"/>
+        <location filename="../main.py" line="1412"/>
+        <location filename="../main.py" line="1522"/>
         <source>Copy</source>
         <translation>Копировать</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1127"/>
-        <location filename="../main.py" line="1388"/>
-        <location filename="../main.py" line="1481"/>
-        <location filename="../main.py" line="1520"/>
+        <location filename="../main.py" line="1160"/>
+        <location filename="../main.py" line="1436"/>
+        <location filename="../main.py" line="1529"/>
+        <location filename="../main.py" line="1568"/>
         <source>Delete</source>
         <translation>Удалить</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1439"/>
+        <location filename="../main.py" line="1487"/>
         <source>Open file location</source>
         <translation>Расположение файла</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1507"/>
+        <location filename="../main.py" line="1555"/>
         <source>Edit</source>
         <translation>Редактировать</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1513"/>
+        <location filename="../main.py" line="1561"/>
         <source>Mount</source>
         <translation>Монтировать</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1543"/>
-        <location filename="../main.py" line="1572"/>
+        <location filename="../main.py" line="1608"/>
+        <location filename="../main.py" line="1637"/>
         <source>Clear Completed</source>
         <translation>Очистить завершенные</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1552"/>
+        <location filename="../main.py" line="1617"/>
         <source>Open Folder</source>
         <translation>Открыть папку</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1559"/>
+        <location filename="../main.py" line="1624"/>
         <source>Clear Task</source>
         <translation>Очистить</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1567"/>
+        <location filename="../main.py" line="1586"/>
+        <location filename="../main.py" line="1632"/>
         <source>Stop</source>
         <translation>Остановить</translation>
     </message>
@@ -262,12 +296,12 @@
         <translation>Новое подключение</translation>
     </message>
     <message>
-        <location filename="../main.py" line="335"/>
+        <location filename="../main.py" line="346"/>
         <source>Enter name</source>
         <translation>Введите имя</translation>
     </message>
     <message>
-        <location filename="../main.py" line="336"/>
+        <location filename="../main.py" line="347"/>
         <location filename="../forms/new_remote_window.ui" line="26"/>
         <source>Enter name for new remote</source>
         <translation>Введите новое имя для подключения</translation>
@@ -682,8 +716,8 @@
     </message>
     <message>
         <location filename="../forms/new_serve_window.ui" line="124"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Port or :Port to bind server&lt;/p&gt;&lt;p&gt;Default:&lt;/p&gt;&lt;p&gt;FTP - &lt;span style=&quot; font-family:&apos;Courier New&apos;;&quot;&gt;localhost:2121&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-family:&apos;Courier New&apos;;&quot;&gt;DNLA - :7879&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-family:&apos;Courier New&apos;;&quot;&gt;HTTP - 127.0.0.1:8080&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-family:&apos;Courier New&apos;;&quot;&gt;WebDAV - 127.0.0.1:8080&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-family:&apos;Courier New&apos;;&quot;&gt;SFTP - localhost:2022&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Порт или :Порт &lt;/p&gt;&lt;p&gt;По умолчанию:&lt;/p&gt;&lt;p&gt;FTP - &lt;span style=&quot; font-family:&apos;Courier New&apos;;&quot;&gt;localhost:2121&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-family:&apos;Courier New&apos;;&quot;&gt;DNLA - :7879&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-family:&apos;Courier New&apos;;&quot;&gt;HTTP - 127.0.0.1:8080&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-family:&apos;Courier New&apos;;&quot;&gt;WebDAV - 127.0.0.1:8080&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-family:&apos;Courier New&apos;;&quot;&gt;SFTP - localhost:2022&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use this field to indicate which IP address and port the server should listen on, e.g. 1.2.3.4:8000 or :8080 to listen to all IPs&lt;/p&gt;&lt;p&gt;Default:&lt;/p&gt;&lt;p&gt;FTP - &lt;span style=&quot; font-family:&apos;Courier New&apos;;&quot;&gt;localhost:2121&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-family:&apos;Courier New&apos;;&quot;&gt;DNLA - :7879&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-family:&apos;Courier New&apos;;&quot;&gt;HTTP - 127.0.0.1:8080&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-family:&apos;Courier New&apos;;&quot;&gt;WebDAV - 127.0.0.1:8080&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-family:&apos;Courier New&apos;;&quot;&gt;SFTP - localhost:2022&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Используйте это поле, чтобы указать, какой IP-адрес и порт сервер должен прослушивать, например, 1.2.3.4:8000 или :8080, чтобы послушивать все IP-адреса&lt;/p&gt;&lt;p&gt;По умолчанию:&lt;/p&gt;&lt;p&gt;FTP - &lt;span style=&quot; font-family:&apos;Courier New&apos;;&quot;&gt;localhost:2121&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-family:&apos;Courier New&apos;;&quot;&gt;DNLA - :7879&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-family:&apos;Courier New&apos;;&quot;&gt;HTTP - 127.0.0.1:8080&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-family:&apos;Courier New&apos;;&quot;&gt;WebDAV - 127.0.0.1:8080&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-family:&apos;Courier New&apos;;&quot;&gt;SFTP - localhost:2022&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../forms/new_serve_window.ui" line="135"/>
@@ -701,12 +735,12 @@
         <translation>Только для чтения</translation>
     </message>
     <message>
-        <location filename="../main.py" line="126"/>
+        <location filename="../main.py" line="138"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
     <message>
-        <location filename="../main.py" line="127"/>
+        <location filename="../main.py" line="139"/>
         <source>Check the data!</source>
         <translation>Проверьте данные!</translation>
     </message>
