@@ -473,6 +473,7 @@ class MainWindow(QMainWindow):
         self.ui.action_settings.triggered.connect(self.open_settings_window)
         self.ui.action_about.triggered.connect(
             lambda: QMessageBox.aboutQt(self))
+        self.ui.action_show_tasks.triggered.connect(self.ui.dock_tasks.show)
 
         self.ui.tree_remotes.itemClicked.connect(self.open_remote)
         self.ui.tree_files.itemDoubleClicked.connect(
@@ -903,6 +904,8 @@ class MainWindow(QMainWindow):
             item.setIcon(0, QPixmap(file))
             self.ui.tree_remotes.addTopLevelItem(item)
             self.ui.comboBox_search.addItem(
+                QPixmap(file), remote['name'] + ':')
+            self.ui.comboBox_remote.addItem(
                 QPixmap(file), remote['name'] + ':')
 
     async def upload_file(self, source_path: str, destination_remote: str, destination_path: str):
@@ -1558,7 +1561,7 @@ class MainWindow(QMainWindow):
         menu.addAction(action)
 
         action = QAction(self)
-        action.setText(self.tr('Mount'))
+        action.setText(self.tr('Mount', 'verb'))
         action.setIcon(QIcon.fromTheme('drive-harddisk'))
         action.triggered.connect(
             lambda: self.mount_remote(item.text(0), item.text(1)))
