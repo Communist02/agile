@@ -226,8 +226,8 @@ class Rclone(CheckRclone):
     def config(self, command: str, arg1: str = '', arg2: str = '', arg3: str = ''):
         return self.sync_process('config', command, arg1, arg2, arg3)
 
-    def mount(self, remote_name: str, arg1: str = '', arg2: str = ''):
-        return self.sync_process('mount', f'"{remote_name}"', arg1, arg2, communicate=False)
+    def mount(self, remote: str, mount_point: str = '', arg: str = ''):
+        return self.sync_process('mount', f'"{remote}"', f'"{mount_point}"', arg, communicate=False)
 
     def serve(self, serve_type: str, path: str, username: str = '', password: str = '', address: str = '', read_only: bool = False, args: str = ''):
         if read_only:

@@ -1,5 +1,5 @@
-from argparse import Action
 import asyncio
+from multiprocessing import process
 import shutil
 import signal
 import sys
@@ -138,7 +138,8 @@ class NewServeWindow(QDialog):
             QMessageBox.critical(self, self.tr('Error'),
                                  self.tr('Check the data!'))
         except subprocess.TimeoutExpired:
-            window.serve.append(Serve(protocol, path, address, user, password, read_only=read_only, process=process))
+            window.serve.append(Serve(
+                protocol, path, address, user, password, read_only=read_only, process=process))
             self.close()
 
 
@@ -415,6 +416,7 @@ class Task():
     def set_estimated(self, estimated: str):
         self.estimated = estimated
 
+
 class Serve():
     def __init__(self, protocol: str, path: str, address: str, user: str, password: str, read_only: bool, process: subprocess.Popen = None):
         self.protocol = protocol
@@ -424,6 +426,26 @@ class Serve():
         self.password = password
         self.read_only = read_only
         self.process = process
+
+    def stop(self):
+        if os.name == 'nt':
+            self.process.send_signal(signal.CTRL_BREAK_EVENT)
+        else:
+            self.process.terminate()
+
+
+class Mount():
+    def __init__(self, remote: str, mount_point: str, process: subprocess.Popen = None):
+        self.remote = remote
+        self.mount_point = mount_point
+        self.process = process
+
+    def stop(self):
+        if os.name == 'nt':
+            self.process.send_signal(signal.CTRL_BREAK_EVENT)
+        else:
+            self.process.terminate()
+
 
 class MainWindow(QMainWindow):
     download_path: str = ''
@@ -438,6 +460,7 @@ class MainWindow(QMainWindow):
     copy_files: list = []
     history: dict = {}
     serve: list[Serve] = []
+    mount: list[Mount] = []
 
     def __init__(self):
         super(MainWindow, self).__init__()
@@ -504,6 +527,8 @@ class MainWindow(QMainWindow):
             self.show_context_menu_remote)
         self.ui.treeWidget_serve.customContextMenuRequested.connect(
             self.show_context_menu_serve)
+        self.ui.treeWidget.customContextMenuRequested.connect(
+            self.show_context_menu_mount)
         self.ui.tasks.customContextMenuRequested.connect(
             self.show_context_menu_task)
 
@@ -564,7 +589,6 @@ class MainWindow(QMainWindow):
                 item.setText(3, self.serve[i].user)
                 item.setText(4, self.serve[i].password)
                 item.setText(5, '+' if self.serve[i].read_only else '-')
-
 
         for i in range(len(self.tasks)):
             if i >= self.ui.tasks.topLevelItemCount():
@@ -645,7 +669,7 @@ class MainWindow(QMainWindow):
                     pass
         else:
             observer = Observer()
-            observer.schedule(handler, os.environ['HOME'], recursive=True)
+            observer.schedule(handler, os.path.expanduser('~'), recursive=True)
             observer_thread = threading.Thread(target=observer.start)
             observer_thread.daemon = True
             observer_thread.start()
@@ -710,6 +734,9 @@ class MainWindow(QMainWindow):
                     else:
                         file_info = QFileInfo(file['name'])
                         icon = QFileIconProvider().icon(file_info)
+                        if icon.isNull():
+                            file_info = QFileInfo('file')
+                            icon = QFileIconProvider().icon(file_info)
                         item.setIcon(0, icon)
                     item.setData(0, Qt.ItemDataRole.UserRole, {
                                  'name': file['name'], 'remote': remote_name, 'path': line['Path'], 'is_dir': file['is_dir']})
@@ -977,7 +1004,7 @@ class MainWindow(QMainWindow):
                 temp_path += name + '/'
                 arrow_label = QLabel("/")
                 arrow_label.setStyleSheet('QLabel {font-weight: bold;}')
-                arrow_label.setAlignment(Qt.AlignCenter)
+                arrow_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
                 self.ui.path_list.addWidget(arrow_label)
                 button = QPushButton(name)
                 button.setSizePolicy(
@@ -1058,6 +1085,9 @@ class MainWindow(QMainWindow):
                     else:
                         file_info = QFileInfo(file['name'])
                         icon = QFileIconProvider().icon(file_info)
+                        if icon.isNull():
+                            file_info = QFileInfo('file')
+                            icon = QFileIconProvider().icon(file_info)
                         item.setIcon(0, icon)
                     item.setData(0, Qt.ItemDataRole.UserRole, {
                                  'name': file['name'], 'remote': remote_name, 'path': file['path'], 'is_dir': file['is_dir']})
@@ -1125,18 +1155,26 @@ class MainWindow(QMainWindow):
                         asyncio.ensure_future(rc.copy(
                             f'{source_remote}{file_path}', f'{download_path}{base_name}'))
 
-    def mount_remote(self, name: str, type: str):
+    def mount_remote(self, remote: str, type: str, mount_point: str = ''):
         if os.name == 'nt':
-            if type in ['local', 'alias', 'union']:
-                process = rc.mount(name, '*')
-            else:
-                process = rc.mount(name, '*', '--network-mode')
-            self.tasks.append(
-                Task(operation='Mount', source=name, process=process))
+            if mount_point == '':
+                if type in ['local', 'alias', 'union']:
+                    process = rc.mount(remote, '*')
+                else:
+                    process = rc.mount(remote, '*', '--network-mode')
+                self.mount.append(Mount(remote, '*', process=process))
+                self.ui.treeWidget.addTopLevelItem(QTreeWidgetItem([remote, '*']))
         else:
-            mount_path = QFileDialog.getExistingDirectory()
-            if mount_path is not None and mount_path != '':
-                rc.mount(f'"{name}"', f'"{mount_path}"')
+            if mount_point == '':
+                mount_point = f'{os.path.expanduser('~')}/Clouds/{remote.split(':')[0]}'
+                if not os.path.isdir(f'{os.path.expanduser('~')}/Clouds'):
+                    os.mkdir(f'{os.path.expanduser('~')}/Clouds')
+                if not os.path.isdir(mount_point):
+                    os.mkdir(mount_point)
+                
+            process = rc.mount(remote, mount_point)
+            self.mount.append(Mount(remote, mount_point, process=process))
+            self.ui.treeWidget.addTopLevelItem(QTreeWidgetItem([remote, mount_point]))
 
     def copy_files(self, items: list[QTreeWidgetItem]):
         self.copy_files = []
@@ -1580,7 +1618,7 @@ class MainWindow(QMainWindow):
         menu = QMenu()
 
         def stop_serve(index: int):
-            self.serve[index].process.send_signal(signal.CTRL_BREAK_EVENT)
+            self.serve[index].stop()
             self.ui.treeWidget_serve.takeTopLevelItem(index)
             del self.serve[index]
 
@@ -1588,6 +1626,23 @@ class MainWindow(QMainWindow):
             action = QAction(self)
             action.setText(self.tr('Stop'))
             action.triggered.connect(lambda: stop_serve(index.row()))
+            menu.addAction(action)
+
+        menu.exec(QCursor.pos())
+
+    def show_context_menu_mount(self, point):
+        index = self.ui.treeWidget.indexAt(point)
+        menu = QMenu()
+
+        def stop_mount(index: int):
+            self.mount[index].stop()
+            self.ui.treeWidget.takeTopLevelItem(index)
+            del self.mount[index]
+
+        if index.isValid():
+            action = QAction(self)
+            action.setText(self.tr('Stop'))
+            action.triggered.connect(lambda: stop_mount(index.row()))
             menu.addAction(action)
 
         menu.exec(QCursor.pos())
