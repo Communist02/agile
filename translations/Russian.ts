@@ -25,7 +25,7 @@
     <message>
         <location filename="../forms/main_window.ui" line="297"/>
         <location filename="../forms/main_window.ui" line="375"/>
-        <location filename="../forms/main_window.ui" line="667"/>
+        <location filename="../forms/main_window.ui" line="663"/>
         <source>Size</source>
         <translation>Размер</translation>
     </message>
@@ -84,217 +84,211 @@
         <translation>Путь подключения</translation>
     </message>
     <message>
-        <location filename="../forms/main_window.ui" line="495"/>
-        <source>Can be &quot;myremote:path/to/dir&quot;, &quot;myremote:bucket&quot;, &quot;myremote:&quot; or &quot;/local/path&quot;</source>
-        <translation>Например: &quot;myremote:path/to/dir&quot;, &quot;myremote:bucket&quot;, &quot;myremote:&quot; или &quot;/local/path&quot;</translation>
-    </message>
-    <message>
-        <location filename="../forms/main_window.ui" line="508"/>
-        <location filename="../forms/main_window.ui" line="563"/>
+        <location filename="../forms/main_window.ui" line="511"/>
+        <location filename="../forms/main_window.ui" line="559"/>
         <source>Mount point</source>
         <translation>Точка монтирования</translation>
     </message>
     <message>
-        <location filename="../forms/main_window.ui" line="529"/>
         <source>Auto point</source>
-        <translation>Автоматически</translation>
+        <translation type="vanished">Автоматически</translation>
     </message>
     <message>
-        <location filename="../forms/main_window.ui" line="558"/>
+        <location filename="../forms/main_window.ui" line="554"/>
         <source>Remote</source>
         <translation>Подключение</translation>
     </message>
     <message>
-        <location filename="../forms/main_window.ui" line="585"/>
+        <location filename="../forms/main_window.ui" line="581"/>
         <source>Client</source>
         <translation>Клиент</translation>
     </message>
     <message>
-        <location filename="../forms/main_window.ui" line="596"/>
+        <location filename="../forms/main_window.ui" line="592"/>
         <source>Other</source>
         <translation>Другое</translation>
     </message>
     <message>
-        <location filename="../forms/main_window.ui" line="602"/>
+        <location filename="../forms/main_window.ui" line="598"/>
         <source>View</source>
         <translation>Вид</translation>
     </message>
     <message>
-        <location filename="../forms/main_window.ui" line="647"/>
+        <location filename="../forms/main_window.ui" line="643"/>
         <source>Operation</source>
         <translation>Операция</translation>
     </message>
     <message>
-        <location filename="../forms/main_window.ui" line="652"/>
+        <location filename="../forms/main_window.ui" line="648"/>
         <source>Source</source>
         <translation>Источник</translation>
     </message>
     <message>
-        <location filename="../forms/main_window.ui" line="657"/>
+        <location filename="../forms/main_window.ui" line="653"/>
         <source>Destination</source>
         <translation>Назначение</translation>
     </message>
     <message>
-        <location filename="../forms/main_window.ui" line="662"/>
+        <location filename="../forms/main_window.ui" line="658"/>
         <source>Status</source>
         <translation>Статус</translation>
     </message>
     <message>
-        <location filename="../forms/main_window.ui" line="672"/>
+        <location filename="../forms/main_window.ui" line="668"/>
         <source>Progress</source>
         <translation>Прогресс</translation>
     </message>
     <message>
-        <location filename="../forms/main_window.ui" line="677"/>
+        <location filename="../forms/main_window.ui" line="673"/>
         <source>Speed</source>
         <translation>Скорость</translation>
     </message>
     <message>
-        <location filename="../forms/main_window.ui" line="682"/>
+        <location filename="../forms/main_window.ui" line="678"/>
         <source>Estimated</source>
         <translation>Осталось</translation>
     </message>
     <message>
-        <location filename="../forms/main_window.ui" line="695"/>
+        <location filename="../forms/main_window.ui" line="691"/>
         <source>New remote</source>
         <translation>Новое подключение</translation>
     </message>
     <message>
-        <location filename="../forms/main_window.ui" line="743"/>
+        <location filename="../forms/main_window.ui" line="739"/>
         <source>Show tasks</source>
         <translation>Показать задачи</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1672"/>
-        <location filename="../forms/main_window.ui" line="703"/>
+        <location filename="../main.py" line="1739"/>
+        <location filename="../forms/main_window.ui" line="699"/>
         <source>Exit</source>
         <translation>Выход</translation>
     </message>
     <message>
-        <location filename="../forms/main_window.ui" line="711"/>
+        <location filename="../forms/main_window.ui" line="707"/>
         <source>About</source>
         <translation>О программе</translation>
     </message>
     <message>
-        <location filename="../forms/main_window.ui" line="722"/>
+        <location filename="../forms/main_window.ui" line="718"/>
         <source>List remotes</source>
         <translation>Список подключений</translation>
     </message>
     <message>
         <location filename="../forms/main_window.ui" line="414"/>
-        <location filename="../forms/main_window.ui" line="730"/>
+        <location filename="../forms/main_window.ui" line="726"/>
         <source>New serve</source>
         <translation>Создать сервер</translation>
     </message>
     <message>
-        <location filename="../forms/main_window.ui" line="738"/>
+        <location filename="../forms/main_window.ui" line="734"/>
         <source>Settings</source>
         <translation>Настройки</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1391"/>
-        <location filename="../main.py" line="1499"/>
-        <location filename="../main.py" line="1552"/>
-        <location filename="../main.py" line="1659"/>
+        <location filename="../main.py" line="1441"/>
+        <location filename="../main.py" line="1549"/>
+        <location filename="../main.py" line="1602"/>
+        <location filename="../main.py" line="1726"/>
         <source>Open</source>
         <translation>Открыть</translation>
     </message>
     <message>
-        <location filename="../main.py" line="527"/>
+        <location filename="../main.py" line="554"/>
         <source>Scale</source>
         <translation>Масштаб</translation>
     </message>
     <message>
-        <location filename="../main.py" line="742"/>
+        <location filename="../main.py" line="771"/>
         <source>Total</source>
         <translation>Всего</translation>
     </message>
     <message>
-        <location filename="../main.py" line="743"/>
+        <location filename="../main.py" line="772"/>
         <source>Free</source>
         <translation>Свободно</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1156"/>
-        <location filename="../main.py" line="1159"/>
+        <location filename="../main.py" line="1206"/>
+        <location filename="../main.py" line="1209"/>
         <source>Are you sure you want to delete</source>
         <translation>Вы действительно хотите удалить</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1159"/>
+        <location filename="../main.py" line="1209"/>
         <source>files</source>
         <translation type="unfinished">файлов</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1226"/>
-        <location filename="../main.py" line="1228"/>
-        <location filename="../main.py" line="1377"/>
-        <location filename="../main.py" line="1449"/>
+        <location filename="../main.py" line="1276"/>
+        <location filename="../main.py" line="1278"/>
+        <location filename="../main.py" line="1427"/>
+        <location filename="../main.py" line="1499"/>
         <source>New Folder</source>
         <translation>Новая папка</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1227"/>
+        <location filename="../main.py" line="1277"/>
         <source>Enter folder name:</source>
         <translation>Введите имя папки:</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1249"/>
-        <location filename="../main.py" line="1431"/>
+        <location filename="../main.py" line="1299"/>
+        <location filename="../main.py" line="1481"/>
         <source>Rename</source>
         <translation>Переименовать</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1250"/>
+        <location filename="../main.py" line="1300"/>
         <source>Enter new name:</source>
         <translation>Введите новое имя:</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1370"/>
-        <location filename="../main.py" line="1422"/>
+        <location filename="../main.py" line="1420"/>
+        <location filename="../main.py" line="1472"/>
         <source>Paste</source>
         <translation>Вставить</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1399"/>
-        <location filename="../main.py" line="1507"/>
+        <location filename="../main.py" line="1449"/>
+        <location filename="../main.py" line="1557"/>
         <source>Open With...</source>
         <translation>Открыть как...</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1406"/>
-        <location filename="../main.py" line="1516"/>
+        <location filename="../main.py" line="1456"/>
+        <location filename="../main.py" line="1566"/>
         <source>Download</source>
         <translation>Загрузить</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1415"/>
-        <location filename="../main.py" line="1525"/>
+        <location filename="../main.py" line="1465"/>
+        <location filename="../main.py" line="1575"/>
         <source>Copy</source>
         <translation>Копировать</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1564"/>
-        <location filename="../forms/main_window.ui" line="542"/>
+        <location filename="../main.py" line="1614"/>
+        <location filename="../forms/main_window.ui" line="538"/>
         <source>Mount</source>
         <comment>verb</comment>
         <translation>Монтировать</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1163"/>
-        <location filename="../main.py" line="1439"/>
-        <location filename="../main.py" line="1532"/>
-        <location filename="../main.py" line="1571"/>
+        <location filename="../main.py" line="1213"/>
+        <location filename="../main.py" line="1489"/>
+        <location filename="../main.py" line="1582"/>
+        <location filename="../main.py" line="1621"/>
         <source>Delete</source>
         <translation>Удалить</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1490"/>
+        <location filename="../main.py" line="1540"/>
         <source>Open file location</source>
         <translation>Расположение файла</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1558"/>
+        <location filename="../main.py" line="1608"/>
         <source>Edit</source>
         <translation>Редактировать</translation>
     </message>
@@ -305,24 +299,25 @@
         <translation>Монтирование</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1611"/>
-        <location filename="../main.py" line="1640"/>
+        <location filename="../main.py" line="1678"/>
+        <location filename="../main.py" line="1707"/>
         <source>Clear Completed</source>
         <translation>Очистить завершенные</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1620"/>
+        <location filename="../main.py" line="1687"/>
         <source>Open Folder</source>
         <translation>Открыть папку</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1627"/>
+        <location filename="../main.py" line="1694"/>
         <source>Clear Task</source>
         <translation>Очистить</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1589"/>
-        <location filename="../main.py" line="1635"/>
+        <location filename="../main.py" line="1639"/>
+        <location filename="../main.py" line="1656"/>
+        <location filename="../main.py" line="1702"/>
         <source>Stop</source>
         <translation>Остановить</translation>
     </message>
@@ -335,12 +330,12 @@
         <translation>Новое подключение</translation>
     </message>
     <message>
-        <location filename="../main.py" line="346"/>
+        <location filename="../main.py" line="347"/>
         <source>Enter name</source>
         <translation>Введите имя</translation>
     </message>
     <message>
-        <location filename="../main.py" line="347"/>
+        <location filename="../main.py" line="348"/>
         <location filename="../forms/new_remote_window.ui" line="26"/>
         <source>Enter name for new remote</source>
         <translation>Введите новое имя для подключения</translation>
@@ -401,24 +396,6 @@
         <translation>Другие сайты/сервисы или программы</translation>
     </message>
     <message>
-        <location filename="../forms/new_remote_window.ui" line="330"/>
-        <source>Fastmail Files</source>
-        <extracomment>fastmail</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../forms/new_remote_window.ui" line="335"/>
-        <source>Nextcloud</source>
-        <extracomment>nextcloud</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../forms/new_remote_window.ui" line="340"/>
-        <source>Owncloud</source>
-        <extracomment>owncloud</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../forms/new_remote_window.ui" line="345"/>
         <source>Sharepoint Online, authenticated by Microsoft account</source>
         <extracomment>sharepoint</extracomment>
@@ -437,19 +414,29 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../forms/new_remote_window.ui" line="377"/>
+        <source>Google Drive</source>
+        <translation>Google Диск</translation>
+    </message>
+    <message>
         <location filename="../forms/new_remote_window.ui" line="383"/>
         <source>By pressing the OK button your browser will open and you will be needed to authenticate in Google Drive</source>
-        <translation>После нажатия кнопки OK, откроется ваш браузер и вам будет необходимо авторизоваться для подключения к Google Drive</translation>
+        <translation>После нажатия кнопки OK откроется ваш браузер и вам будет необходимо авторизоваться для подключения к Google Drive</translation>
+    </message>
+    <message>
+        <location filename="../forms/new_remote_window.ui" line="404"/>
+        <source>Yandex Disk</source>
+        <translation>Яндекс Диск</translation>
     </message>
     <message>
         <location filename="../forms/new_remote_window.ui" line="410"/>
         <source>By pressing the OK button your browser will open and you will be needed to authenticate in Yandex Disk</source>
-        <translation>После нажатия кнопки OK, откроется ваш браузер и вам будет необходимо авторизоваться для подключения к Яндекс Диску</translation>
+        <translation>После нажатия кнопки OK откроется ваш браузер и вам будет необходимо авторизоваться для подключения к Яндекс Диску</translation>
     </message>
     <message>
         <location filename="../forms/new_remote_window.ui" line="437"/>
         <source>By pressing the OK button your browser will open and you will be needed to authenticate in Microsoft OneDrive</source>
-        <translation>После нажатия кнопки OK, откроется ваш браузер и вам будет необходимо авторизоваться для подключения к Microsoft OneDrive</translation>
+        <translation>После нажатия кнопки OK откроется ваш браузер и вам будет необходимо авторизоваться для подключения к Microsoft OneDrive</translation>
     </message>
     <message>
         <location filename="../forms/new_remote_window.ui" line="451"/>
@@ -478,16 +465,6 @@
         <location filename="../forms/new_remote_window.ui" line="533"/>
         <source>To add Mail.ru you will need to generate a password for external applications in the Mail.ru web control panel. Select &quot;Full access to Mail. Cloud, Calendar (All Protocols)&quot;. You can generate the password in this url</source>
         <translation>Чтобы подключится к Mail.ru, вам необходимо сгенерировать пароль для внешних приложений в панели управления Mail.ru. Выберите «Полный доступ к почте. облаку, календарю (все протоколы)». Вы можете сгенерировать пароль, перейдя по ссылке</translation>
-    </message>
-    <message>
-        <location filename="../forms/new_remote_window.ui" line="543"/>
-        <source>&lt;a href=&quot;https://id.mail.ru/security&quot;&gt;https://id.mail.ru/security&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../forms/new_remote_window.ui" line="586"/>
-        <source>http://127.0.0.1:8000/</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../forms/new_remote_window.ui" line="607"/>
@@ -550,7 +527,7 @@
     <message>
         <location filename="../forms/new_remote_window.ui" line="768"/>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>Нет</translation>
     </message>
     <message>
         <location filename="../forms/new_remote_window.ui" line="773"/>

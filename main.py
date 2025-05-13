@@ -515,6 +515,8 @@ class MainWindow(QMainWindow):
             lambda: asyncio.ensure_future(self.search()))
         self.ui.lineEdit_search.editingFinished.connect(
             lambda: asyncio.ensure_future(self.search()))
+        self.ui.button_mount.clicked.connect(lambda: self.mount_remote(
+            self.ui.comboBox_remote.currentText(), mount_point=self.ui.lineEdit_mount_point.text()))
 
         self.ui.tree_files.startDrag = self.start_drag
         self.ui.treeWidget_search.startDrag = self.start_drag
@@ -527,7 +529,7 @@ class MainWindow(QMainWindow):
             self.show_context_menu_remote)
         self.ui.treeWidget_serve.customContextMenuRequested.connect(
             self.show_context_menu_serve)
-        self.ui.treeWidget.customContextMenuRequested.connect(
+        self.ui.treeWidget_mount.customContextMenuRequested.connect(
             self.show_context_menu_mount)
         self.ui.tasks.customContextMenuRequested.connect(
             self.show_context_menu_task)
@@ -1155,26 +1157,36 @@ class MainWindow(QMainWindow):
                         asyncio.ensure_future(rc.copy(
                             f'{source_remote}{file_path}', f'{download_path}{base_name}'))
 
-    def mount_remote(self, remote: str, type: str, mount_point: str = ''):
+    def mount_remote(self, remote: str, type: str = '', mount_point: str = ''):
         if os.name == 'nt':
-            if mount_point == '':
+            if mount_point.strip() == '':
                 if type in ['local', 'alias', 'union']:
                     process = rc.mount(remote, '*')
                 else:
                     process = rc.mount(remote, '*', '--network-mode')
                 self.mount.append(Mount(remote, '*', process=process))
-                self.ui.treeWidget.addTopLevelItem(QTreeWidgetItem([remote, '*']))
+                self.ui.treeWidget_mount.addTopLevelItem(
+                    QTreeWidgetItem([remote, '*']))
+            else:
+                if type in ['local', 'alias', 'union']:
+                    process = rc.mount(remote, mount_point)
+                else:
+                    process = rc.mount(remote, mount_point, '--network-mode')
+                self.mount.append(Mount(remote, mount_point, process=process))
+                self.ui.treeWidget_mount.addTopLevelItem(
+                    QTreeWidgetItem([remote, mount_point]))
         else:
-            if mount_point == '':
+            if mount_point.strip() == '':
                 mount_point = f'{os.path.expanduser('~')}/Clouds/{remote.split(':')[0]}'
                 if not os.path.isdir(f'{os.path.expanduser('~')}/Clouds'):
                     os.mkdir(f'{os.path.expanduser('~')}/Clouds')
                 if not os.path.isdir(mount_point):
                     os.mkdir(mount_point)
-                
+
             process = rc.mount(remote, mount_point)
             self.mount.append(Mount(remote, mount_point, process=process))
-            self.ui.treeWidget.addTopLevelItem(QTreeWidgetItem([remote, mount_point]))
+            self.ui.treeWidget_mount.addTopLevelItem(
+                QTreeWidgetItem([remote, mount_point]))
 
     def copy_files(self, items: list[QTreeWidgetItem]):
         self.copy_files = []
@@ -1631,12 +1643,12 @@ class MainWindow(QMainWindow):
         menu.exec(QCursor.pos())
 
     def show_context_menu_mount(self, point):
-        index = self.ui.treeWidget.indexAt(point)
+        index = self.ui.treeWidget_mount.indexAt(point)
         menu = QMenu()
 
         def stop_mount(index: int):
             self.mount[index].stop()
-            self.ui.treeWidget.takeTopLevelItem(index)
+            self.ui.treeWidget_mount.takeTopLevelItem(index)
             del self.mount[index]
 
         if index.isValid():

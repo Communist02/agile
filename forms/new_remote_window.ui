@@ -327,17 +327,17 @@
          </item>
          <item>
           <property name="text">
-           <string extracomment="fastmail">Fastmail Files</string>
+           <string notr="true" extracomment="fastmail">Fastmail Files</string>
           </property>
          </item>
          <item>
           <property name="text">
-           <string extracomment="nextcloud">Nextcloud</string>
+           <string notr="true" extracomment="nextcloud">Nextcloud</string>
           </property>
          </item>
          <item>
           <property name="text">
-           <string extracomment="owncloud">Owncloud</string>
+           <string notr="true" extracomment="owncloud">Owncloud</string>
           </property>
          </item>
          <item>
@@ -374,7 +374,7 @@
      </widget>
      <widget class="QWidget" name="tab_google_drive">
       <attribute name="title">
-       <string notr="true">Google Drive</string>
+       <string>Google Drive</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_9">
        <item>
@@ -401,7 +401,7 @@
      </widget>
      <widget class="QWidget" name="tab_yandex_disk">
       <attribute name="title">
-       <string notr="true">Yandex Disk</string>
+       <string>Yandex Disk</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_8">
        <item>
@@ -540,7 +540,7 @@
        <item>
         <widget class="QLabel" name="label_27">
          <property name="text">
-          <string>&lt;a href=&quot;https://id.mail.ru/security&quot;&gt;https://id.mail.ru/security&lt;/a&gt;</string>
+          <string notr="true">&lt;a href=&quot;https://id.mail.ru/security&quot;&gt;https://id.mail.ru/security&lt;/a&gt;</string>
          </property>
          <property name="textFormat">
           <enum>Qt::TextFormat::RichText</enum>
@@ -583,7 +583,7 @@
        <item>
         <widget class="QLineEdit" name="lineEdit_url">
          <property name="text">
-          <string>http://127.0.0.1:8000/</string>
+          <string notr="true">http://127.0.0.1:8000/</string>
          </property>
         </widget>
        </item>
@@ -680,7 +680,7 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>203</width>
+            <width>584</width>
             <height>338</height>
            </rect>
           </property>
@@ -716,7 +716,7 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>350</width>
+                <width>582</width>
                 <height>144</height>
                </rect>
               </property>

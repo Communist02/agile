@@ -16,12 +16,12 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QIcon, QImage, QKeySequence, QLinearGradient,
     QPainter, QPalette, QPixmap, QRadialGradient,
     QTransform)
-from PySide6.QtWidgets import (QAbstractItemView, QApplication, QCheckBox, QComboBox,
-    QDockWidget, QFrame, QHBoxLayout, QHeaderView,
-    QLabel, QLineEdit, QMainWindow, QMenu,
-    QMenuBar, QPushButton, QSizePolicy, QSpacerItem,
-    QStatusBar, QTabWidget, QToolButton, QTreeWidget,
-    QTreeWidgetItem, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QAbstractItemView, QApplication, QComboBox, QDockWidget,
+    QFrame, QHBoxLayout, QHeaderView, QLabel,
+    QLineEdit, QMainWindow, QMenu, QMenuBar,
+    QPushButton, QSizePolicy, QSpacerItem, QStatusBar,
+    QTabWidget, QToolButton, QTreeWidget, QTreeWidgetItem,
+    QVBoxLayout, QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -257,6 +257,8 @@ class Ui_MainWindow(object):
 
         self.comboBox_remote = QComboBox(self.tab_mount)
         self.comboBox_remote.setObjectName(u"comboBox_remote")
+        sizePolicy1.setHeightForWidth(self.comboBox_remote.sizePolicy().hasHeightForWidth())
+        self.comboBox_remote.setSizePolicy(sizePolicy1)
         self.comboBox_remote.setEditable(True)
 
         self.horizontalLayout_6.addWidget(self.comboBox_remote)
@@ -279,11 +281,6 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_6.addWidget(self.toolButton_mount_point)
 
-        self.checkBox = QCheckBox(self.tab_mount)
-        self.checkBox.setObjectName(u"checkBox")
-
-        self.horizontalLayout_6.addWidget(self.checkBox)
-
         self.button_mount = QPushButton(self.tab_mount)
         self.button_mount.setObjectName(u"button_mount")
         sizePolicy.setHeightForWidth(self.button_mount.sizePolicy().hasHeightForWidth())
@@ -294,12 +291,12 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_6.addLayout(self.horizontalLayout_6)
 
-        self.treeWidget = QTreeWidget(self.tab_mount)
-        self.treeWidget.setObjectName(u"treeWidget")
-        self.treeWidget.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-        self.treeWidget.setRootIsDecorated(False)
+        self.treeWidget_mount = QTreeWidget(self.tab_mount)
+        self.treeWidget_mount.setObjectName(u"treeWidget_mount")
+        self.treeWidget_mount.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.treeWidget_mount.setRootIsDecorated(False)
 
-        self.verticalLayout_6.addWidget(self.treeWidget)
+        self.verticalLayout_6.addWidget(self.treeWidget_mount)
 
         icon10 = QIcon(QIcon.fromTheme(u"drive-harddisk"))
         self.tabWidget.addTab(self.tab_mount, icon10, "")
@@ -399,12 +396,10 @@ class Ui_MainWindow(object):
         ___qtreewidgetitem3.setText(0, QCoreApplication.translate("MainWindow", u"Protocol", None));
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_serve), QCoreApplication.translate("MainWindow", u"Serve", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"Remote path", None))
-        self.comboBox_remote.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Can be \"myremote:path/to/dir\", \"myremote:bucket\", \"myremote:\" or \"/local/path\"", None))
         self.label_2.setText(QCoreApplication.translate("MainWindow", u"Mount point", None))
         self.lineEdit_mount_point.setText("")
-        self.checkBox.setText(QCoreApplication.translate("MainWindow", u"Auto point", None))
         self.button_mount.setText(QCoreApplication.translate("MainWindow", u"Mount", u"verb"))
-        ___qtreewidgetitem4 = self.treeWidget.headerItem()
+        ___qtreewidgetitem4 = self.treeWidget_mount.headerItem()
         ___qtreewidgetitem4.setText(1, QCoreApplication.translate("MainWindow", u"Mount point", None));
         ___qtreewidgetitem4.setText(0, QCoreApplication.translate("MainWindow", u"Remote", None));
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_mount), QCoreApplication.translate("MainWindow", u"Mount", None))

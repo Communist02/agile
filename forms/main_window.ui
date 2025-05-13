@@ -488,11 +488,14 @@
           </item>
           <item>
            <widget class="QComboBox" name="comboBox_remote">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="editable">
              <bool>true</bool>
-            </property>
-            <property name="placeholderText">
-             <string>Can be &quot;myremote:path/to/dir&quot;, &quot;myremote:bucket&quot;, &quot;myremote:&quot; or &quot;/local/path&quot;</string>
             </property>
            </widget>
           </item>
@@ -524,13 +527,6 @@
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="checkBox">
-            <property name="text">
-             <string>Auto point</string>
-            </property>
-           </widget>
-          </item>
-          <item>
            <widget class="QPushButton" name="button_mount">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -546,7 +542,7 @@
          </layout>
         </item>
         <item>
-         <widget class="QTreeWidget" name="treeWidget">
+         <widget class="QTreeWidget" name="treeWidget_mount">
           <property name="contextMenuPolicy">
            <enum>Qt::ContextMenuPolicy::CustomContextMenu</enum>
           </property>
