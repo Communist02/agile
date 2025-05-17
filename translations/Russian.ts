@@ -159,7 +159,7 @@
         <translation>Показать задачи</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1739"/>
+        <location filename="../main.py" line="1749"/>
         <location filename="../forms/main_window.ui" line="699"/>
         <source>Exit</source>
         <translation>Выход</translation>
@@ -186,10 +186,10 @@
         <translation>Настройки</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1441"/>
-        <location filename="../main.py" line="1549"/>
-        <location filename="../main.py" line="1602"/>
-        <location filename="../main.py" line="1726"/>
+        <location filename="../main.py" line="1451"/>
+        <location filename="../main.py" line="1559"/>
+        <location filename="../main.py" line="1612"/>
+        <location filename="../main.py" line="1736"/>
         <source>Open</source>
         <translation>Открыть</translation>
     </message>
@@ -199,96 +199,96 @@
         <translation>Масштаб</translation>
     </message>
     <message>
-        <location filename="../main.py" line="771"/>
+        <location filename="../main.py" line="775"/>
         <source>Total</source>
         <translation>Всего</translation>
     </message>
     <message>
-        <location filename="../main.py" line="772"/>
+        <location filename="../main.py" line="765"/>
         <source>Free</source>
         <translation>Свободно</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1206"/>
-        <location filename="../main.py" line="1209"/>
+        <location filename="../main.py" line="1216"/>
+        <location filename="../main.py" line="1219"/>
         <source>Are you sure you want to delete</source>
         <translation>Вы действительно хотите удалить</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1209"/>
+        <location filename="../main.py" line="1219"/>
         <source>files</source>
         <translation type="unfinished">файлов</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1276"/>
-        <location filename="../main.py" line="1278"/>
-        <location filename="../main.py" line="1427"/>
-        <location filename="../main.py" line="1499"/>
+        <location filename="../main.py" line="1286"/>
+        <location filename="../main.py" line="1288"/>
+        <location filename="../main.py" line="1437"/>
+        <location filename="../main.py" line="1509"/>
         <source>New Folder</source>
         <translation>Новая папка</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1277"/>
+        <location filename="../main.py" line="1287"/>
         <source>Enter folder name:</source>
         <translation>Введите имя папки:</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1299"/>
-        <location filename="../main.py" line="1481"/>
+        <location filename="../main.py" line="1309"/>
+        <location filename="../main.py" line="1491"/>
         <source>Rename</source>
         <translation>Переименовать</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1300"/>
+        <location filename="../main.py" line="1310"/>
         <source>Enter new name:</source>
         <translation>Введите новое имя:</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1420"/>
-        <location filename="../main.py" line="1472"/>
+        <location filename="../main.py" line="1430"/>
+        <location filename="../main.py" line="1482"/>
         <source>Paste</source>
         <translation>Вставить</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1449"/>
-        <location filename="../main.py" line="1557"/>
+        <location filename="../main.py" line="1459"/>
+        <location filename="../main.py" line="1567"/>
         <source>Open With...</source>
         <translation>Открыть как...</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1456"/>
-        <location filename="../main.py" line="1566"/>
+        <location filename="../main.py" line="1466"/>
+        <location filename="../main.py" line="1576"/>
         <source>Download</source>
         <translation>Загрузить</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1465"/>
-        <location filename="../main.py" line="1575"/>
+        <location filename="../main.py" line="1475"/>
+        <location filename="../main.py" line="1585"/>
         <source>Copy</source>
         <translation>Копировать</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1614"/>
+        <location filename="../main.py" line="1624"/>
         <location filename="../forms/main_window.ui" line="538"/>
         <source>Mount</source>
         <comment>verb</comment>
         <translation>Монтировать</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1213"/>
-        <location filename="../main.py" line="1489"/>
-        <location filename="../main.py" line="1582"/>
-        <location filename="../main.py" line="1621"/>
+        <location filename="../main.py" line="1223"/>
+        <location filename="../main.py" line="1499"/>
+        <location filename="../main.py" line="1592"/>
+        <location filename="../main.py" line="1631"/>
         <source>Delete</source>
         <translation>Удалить</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1540"/>
+        <location filename="../main.py" line="1550"/>
         <source>Open file location</source>
         <translation>Расположение файла</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1608"/>
+        <location filename="../main.py" line="1618"/>
         <source>Edit</source>
         <translation>Редактировать</translation>
     </message>
@@ -299,25 +299,25 @@
         <translation>Монтирование</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1678"/>
-        <location filename="../main.py" line="1707"/>
+        <location filename="../main.py" line="1688"/>
+        <location filename="../main.py" line="1717"/>
         <source>Clear Completed</source>
         <translation>Очистить завершенные</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1687"/>
+        <location filename="../main.py" line="1697"/>
         <source>Open Folder</source>
         <translation>Открыть папку</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1694"/>
+        <location filename="../main.py" line="1704"/>
         <source>Clear Task</source>
         <translation>Очистить</translation>
     </message>
     <message>
-        <location filename="../main.py" line="1639"/>
-        <location filename="../main.py" line="1656"/>
-        <location filename="../main.py" line="1702"/>
+        <location filename="../main.py" line="1649"/>
+        <location filename="../main.py" line="1666"/>
+        <location filename="../main.py" line="1712"/>
         <source>Stop</source>
         <translation>Остановить</translation>
     </message>
@@ -733,7 +733,7 @@
     <message>
         <location filename="../forms/new_serve_window.ui" line="124"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use this field to indicate which IP address and port the server should listen on, e.g. 1.2.3.4:8000 or :8080 to listen to all IPs&lt;/p&gt;&lt;p&gt;Default:&lt;/p&gt;&lt;p&gt;FTP - &lt;span style=&quot; font-family:&apos;Courier New&apos;;&quot;&gt;localhost:2121&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-family:&apos;Courier New&apos;;&quot;&gt;DNLA - :7879&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-family:&apos;Courier New&apos;;&quot;&gt;HTTP - 127.0.0.1:8080&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-family:&apos;Courier New&apos;;&quot;&gt;WebDAV - 127.0.0.1:8080&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-family:&apos;Courier New&apos;;&quot;&gt;SFTP - localhost:2022&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Используйте это поле, чтобы указать, какой IP-адрес и порт сервер должен прослушивать, например, 1.2.3.4:8000 или :8080, чтобы послушивать все IP-адреса&lt;/p&gt;&lt;p&gt;По умолчанию:&lt;/p&gt;&lt;p&gt;FTP - &lt;span style=&quot; font-family:&apos;Courier New&apos;;&quot;&gt;localhost:2121&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-family:&apos;Courier New&apos;;&quot;&gt;DNLA - :7879&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-family:&apos;Courier New&apos;;&quot;&gt;HTTP - 127.0.0.1:8080&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-family:&apos;Courier New&apos;;&quot;&gt;WebDAV - 127.0.0.1:8080&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-family:&apos;Courier New&apos;;&quot;&gt;SFTP - localhost:2022&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Используйте это поле, чтобы указать, какой IP-адрес и порт должен прослушивать сервер, например, 1.2.3.4:8000 или :8080, чтобы прослушивать все IP-адреса&lt;/p&gt;&lt;p&gt;По умолчанию:&lt;/p&gt;&lt;p&gt;FTP - &lt;span style=&quot; font-family:&apos;Courier New&apos;;&quot;&gt;localhost:2121&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-family:&apos;Courier New&apos;;&quot;&gt;DNLA - :7879&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-family:&apos;Courier New&apos;;&quot;&gt;HTTP - 127.0.0.1:8080&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-family:&apos;Courier New&apos;;&quot;&gt;WebDAV - 127.0.0.1:8080&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-family:&apos;Courier New&apos;;&quot;&gt;SFTP - localhost:2022&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../forms/new_serve_window.ui" line="135"/>

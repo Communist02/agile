@@ -152,7 +152,10 @@ class Rclone(CheckRclone):
                 ' (')[1].split(')')[0].split(' Byte')[0])
             return {'total_objects': total_objects, 'total_size': total_size}
         elif subcommand == 'lsjson' or subcommand == 'config' and arg1 == 'dump' or subcommand == 'about':
-            return json.loads(OUT)
+            try:
+                return json.loads(OUT)
+            except json.decoder.JSONDecodeError:
+                return {}
         elif subcommand == 'lsf':
             return OUT.rstrip().split('\n')
         elif subcommand == 'config' and 'file' in _command:

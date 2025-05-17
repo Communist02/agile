@@ -751,26 +751,35 @@ class MainWindow(QMainWindow):
         if clear:
             self.layout_free_size.setText('')
         size = await rc.about(remote_name)
-        free = size['free']
-        total = size['total']
+        free = size.get('free', None)
+        total = size.get('total', None)
 
         sizes = ['B', 'KB', 'MB', 'GB', 'TB']
+
         index_free = 0
-        for _ in range(4):
-            if free >= 1024:
-                free = round(float(free) / 1024, 2)
-                index_free += 1
+        if free is not None:
+            for _ in range(4):
+                if free >= 1024:
+                    free = round(float(free) / 1024, 2)
+                    index_free += 1
+            free_text = self.tr('Free') + f': {free} {sizes[index_free]}'
+        else:
+            free_text = ''
 
-        index_total = 0
-        for _ in range(4):
-            if total >= 1024:
-                total = round(float(total) / 1024, 2)
-                index_total += 1
+        if total is not None:
+            index_total = 0
+            for _ in range(4):
+                if total >= 1024:
+                    total = round(float(total) / 1024, 2)
+                    index_total += 1
+            total_text = self.tr('Total') + f': {total} {sizes[index_total]}'
+        else:
+            total_text = ''
 
-        total_text = self.tr('Total')
-        free_text = self.tr('Free')
-        self.layout_free_size.setText(
-            f'{total_text}: {total} {sizes[index_total]} | {free_text}: {free} {sizes[index_free]}    ')
+        if total_text != '':
+            self.layout_free_size.setText(f'{total_text} | {free_text}    ')
+        else:
+            self.layout_free_size.setText(f'{free_text}    ')
 
     def set_scale(self, index: int):
         sizes = [18, 22, 32, 48, 64, 80, 96, 112, 128,
@@ -919,13 +928,14 @@ class MainWindow(QMainWindow):
         remotes.sort(key=lambda x: x['name'].lower())
         self.ui.tree_remotes.clear()
         self.ui.comboBox_search.clear()
+        self.ui.comboBox_remote.clear()
         for remote in remotes:
             item = QTreeWidgetItem([remote['name'] + ':', remote['type']])
             item.setSizeHint(0, QSize(0, 32))
-            if QApplication.styleHints().colorScheme() == Qt.ColorScheme.Dark and QApplication.style().name() != 'windowsvista' and not (len(settings.value('palette', 'System')) > 5 and settings.value('palette', 'System')[-5:].lower() == 'light'):
-                inv = '_inv'
-            else:
+            if (QApplication.styleHints().colorScheme() == Qt.ColorScheme.Light and (len(settings.value('palette', 'System')) > 4 and (settings.value('palette', 'System')[-4:].lower() != 'dark'))) or QApplication.style().name() == 'windowsvista' or (len(settings.value('palette', 'System')) > 5 and (settings.value('palette', 'System')[-5:].lower() == 'light')):
                 inv = ''
+            else:
+                inv = '_inv'
 
             file = f'{os.path.dirname(__file__) + os.sep}images{os.sep}{remote['type']}{inv}.png'
             if not os.path.isfile(file):
@@ -1064,7 +1074,7 @@ class MainWindow(QMainWindow):
                     self.cache[remote_name] = {path_dir: tree}
 
             if f'{self.current_remote}{self.remotes_paths[self.current_remote]}' == f'{remote_name}{path_dir}':
-                def lt(self, other_item):
+                def lt(self, other_item) -> bool:
                     column = self.treeWidget().sortColumn()
                     if self.text(3) == 'inode/directory' and other_item.text(3) != 'inode/directory':
                         return True
