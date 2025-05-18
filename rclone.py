@@ -108,19 +108,6 @@ class Rclone(CheckRclone):
                 print(s)
         self.tasks[index]['is_done'] = True
 
-    # def lsjson_process(self, process: subprocess.Popen[bytes]):
-    #     loop = asyncio.get_running_loop()
-
-    #     while True:
-    #         # line = await loop.run_in_executor(None, process.stdout.readline)
-    #         line = process.stdout.readline()
-    #         if not line:
-    #             break
-    #         s: str = line.decode()
-
-    #         if 'error' in s:
-    #             print(s)
-
     async def async_process(self, subcommand, arg1='', arg2='', arg3='', arg4='', *args):
         if subcommand in ['copy', 'copyto', 'move', 'sync', 'bisync', 'copyurl']:
             progress = True

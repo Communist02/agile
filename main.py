@@ -1,5 +1,4 @@
 import asyncio
-from multiprocessing import process
 import shutil
 import signal
 import sys
@@ -516,7 +515,12 @@ class MainWindow(QMainWindow):
         self.ui.lineEdit_search.editingFinished.connect(
             lambda: asyncio.ensure_future(self.search()))
         self.ui.button_mount.clicked.connect(lambda: self.mount_remote(
-            self.ui.comboBox_remote.currentText(), mount_point=self.ui.lineEdit_mount_point.text()))
+            self.ui.comboBox_remote.currentText(), type=self.ui.comboBox_remote.currentData(Qt.ItemDataRole.UserRole), mount_point=self.ui.lineEdit_mount_point.text()))
+
+        if os.name == "nt":
+            self.ui.toolButton_mount_point.hide()
+        else:
+            self.ui.toolButton_mount_point.clicked.connect(self.mount_point)
 
         self.ui.tree_files.startDrag = self.start_drag
         self.ui.treeWidget_search.startDrag = self.start_drag
@@ -611,12 +615,28 @@ class MainWindow(QMainWindow):
             else:
                 item = self.ui.tasks.topLevelItem(i)
 
-            item.setText(0, self.tasks[i].operation)
+            match self.tasks[i].operation:
+                case 'Download':
+                    item.setText(0, self.tr('Download', 'noun'))
+                case 'Upload':
+                    item.setText(0, self.tr('Upload'))
+                case 'Opening':
+                    item.setText(0, self.tr('Opening'))
+                case _:
+                    item.setText(0, self.tasks[i].operation)
+
             item.setText(1, self.tasks[i].source)
             item.setText(2, self.tasks[i].destination)
-            item.setText(3, self.tasks[i].status)
 
-            if self.tasks[i].index != -1:
+            match self.tasks[i].status:
+                case 'Done':
+                    item.setText(3, self.tr('Done'))
+                case 'Running':
+                    item.setText(3, self.tr('Running'))
+                case _:
+                    item.setText(3, self.tasks[i].status)
+
+            if self.tasks[i].index != -1 and len(rc.tasks) > self.tasks[i].index:
                 if self.tasks[i].operation in ['Upload', 'Download', 'Opening']:
                     self.tasks[i].set_full_size(
                         rc.tasks[self.tasks[i].index]['full_size'])
@@ -629,7 +649,6 @@ class MainWindow(QMainWindow):
                     self.tasks[i].set_status(
                         rc.tasks[self.tasks[i].index]['is_done'])
 
-                    item.setText(3, self.tasks[i].status)
                     item.setText(4, self.tasks[i].size)
                     self.ui.tasks.setItemWidget(
                         item, 5, QProgressBar(value=self.tasks[i].progress))
@@ -683,7 +702,7 @@ class MainWindow(QMainWindow):
         self.search_process_is_running += 1
         search_process_is_running = self.search_process_is_running
 
-        self.ui.statusbar.showMessage(f'Search in {remote_name}')
+        self.ui.statusbar.showMessage(self.tr('Search in') + ' ' + remote_name)
         self.ui.treeWidget_search.clear()
         process = rc.search(remote_name, 20)
 
@@ -945,7 +964,7 @@ class MainWindow(QMainWindow):
             self.ui.comboBox_search.addItem(
                 QPixmap(file), remote['name'] + ':')
             self.ui.comboBox_remote.addItem(
-                QPixmap(file), remote['name'] + ':')
+                QPixmap(file), remote['name'] + ':', remote['type'])
 
     async def upload_file(self, source_path: str, destination_remote: str, destination_path: str):
         self.tasks.append(Task(operation='Upload', source=source_path,
@@ -1027,13 +1046,16 @@ class MainWindow(QMainWindow):
                     lambda t, a=self.current_remote, b=temp_path[:-1]: asyncio.ensure_future(self.open_dir(a, b)))
                 self.ui.path_list.addWidget(button)
 
-        self.ui.statusbar.showMessage(f'Opening {remote_name}{path_dir}')
+        if update:
+            self.ui.statusbar.showMessage(self.tr('Updating') + ' ' + remote_name + path_dir)
+        else:
+            self.ui.statusbar.showMessage(self.tr('Opening') + ' ' + remote_name + path_dir)
         while True:
             if remote_name in self.cache and path_dir in self.cache[remote_name] and not update:
                 tree = self.cache[remote_name][path_dir]
                 update = True
                 self.ui.statusbar.showMessage(
-                    f'Updating {remote_name}{path_dir}')
+                    self.tr('Updating') + ' ' + remote_name + path_dir)
             else:
                 if not update:
                     self.ui.tree_files.clear()
@@ -1167,24 +1189,29 @@ class MainWindow(QMainWindow):
                         asyncio.ensure_future(rc.copy(
                             f'{source_remote}{file_path}', f'{download_path}{base_name}'))
 
+    def mount_point(self):
+        path = QFileDialog.getExistingDirectory()
+        if path is not None and path != '':
+            self.ui.lineEdit_mount_point.setText(path)
+
     def mount_remote(self, remote: str, type: str = '', mount_point: str = ''):
         if os.name == 'nt':
             if mount_point.strip() == '':
-                if type in ['local', 'alias', 'union']:
+                if type in ['local', 'alias', 'union', '']:
                     process = rc.mount(remote, '*')
                 else:
                     process = rc.mount(remote, '*', '--network-mode')
                 self.mount.append(Mount(remote, '*', process=process))
                 self.ui.treeWidget_mount.addTopLevelItem(
-                    QTreeWidgetItem([remote, '*']))
+                    QTreeWidgetItem([remote, type, '*']))
             else:
-                if type in ['local', 'alias', 'union']:
+                if type in ['local', 'alias', 'union', '']:
                     process = rc.mount(remote, mount_point)
                 else:
                     process = rc.mount(remote, mount_point, '--network-mode')
                 self.mount.append(Mount(remote, mount_point, process=process))
                 self.ui.treeWidget_mount.addTopLevelItem(
-                    QTreeWidgetItem([remote, mount_point]))
+                    QTreeWidgetItem([remote, type, mount_point]))
         else:
             if mount_point.strip() == '':
                 mount_point = f'{os.path.expanduser('~')}/Clouds/{remote.split(':')[0]}'
@@ -1196,7 +1223,7 @@ class MainWindow(QMainWindow):
             process = rc.mount(remote, mount_point)
             self.mount.append(Mount(remote, mount_point, process=process))
             self.ui.treeWidget_mount.addTopLevelItem(
-                QTreeWidgetItem([remote, mount_point]))
+                QTreeWidgetItem([remote, type, mount_point]))
 
     def copy_files(self, items: list[QTreeWidgetItem]):
         self.copy_files = []
@@ -1692,14 +1719,14 @@ class MainWindow(QMainWindow):
         else:
             item = self.ui.tasks.itemAt(point)
 
-            if item.text(0) in ['Download', 'Upload', 'Opening']:
+            if item.text(0) in [self.tr('Download'), self.tr('Upload'), self.tr('Opening')]:
                 action = QAction(self)
                 action.setText(self.tr('Open Folder'))
                 action.setIcon(QIcon.fromTheme('folder-open'))
                 action.triggered.connect(lambda: self.open_task_dir(item))
                 menu.addAction(action)
 
-            if item.text(3) == 'Done':
+            if item.text(3) == self.tr('Done'):
                 action = QAction(self)
                 action.setText(self.tr('Clear Task'))
                 action.setIcon(QIcon.fromTheme('edit-clear'))
