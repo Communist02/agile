@@ -1,1 +1,0 @@
-pyside6-lupdate ../main.py ../forms/main_window.ui ../forms/settings_window.ui ../forms/new_remote_window.ui ../forms/new_serve_window.ui -ts Russian.ts

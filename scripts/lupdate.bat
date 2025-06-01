@@ -1,0 +1,1 @@
+pyside6-lupdate ../main.py ../ui/main_window.ui ../ui/settings_window.ui ../ui/new_remote_window.ui ../ui/new_serve_window.ui -ts ../translations/Russian.ts
