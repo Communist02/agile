@@ -117,12 +117,12 @@ class Rclone(CheckRclone):
             P = ''
 
         _args = ' '.join(args)
-        _command = f'{self.rclone} {subcommand} {arg1} {arg2} {arg3} {arg4} {P} {_args}'
+        command = f'{self.rclone} {subcommand} {arg1} {arg2} {arg3} {arg4} {P} {_args}'
 
         if self.debug:
-            print(f'Executing: {_command}')
+            print(f'Executing: {command}')
 
-        process = subprocess.Popen(_command, shell=True,
+        process = subprocess.Popen(command, shell=True,
                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
         if progress:
@@ -145,24 +145,29 @@ class Rclone(CheckRclone):
                 return {}
         elif subcommand == 'lsf':
             return OUT.rstrip().split('\n')
-        elif subcommand == 'config' and 'file' in _command:
+        elif subcommand == 'config' and 'file' in command:
             return OUT.strip().split('\n')[-1]
         else:
             return OUT
 
     def sync_process(self, subcommand, arg1='', arg2='', arg3='', arg4='', communicate=True, *args):
+        if subcommand in ['copy', 'copyto']:
+            P = '-P'
+        else:
+            P = ''
+
         _args = ' '.join(args)
-        _command = f'{self.rclone} {subcommand} {arg1} {arg2} {arg3} {arg4} {_args}'
+        command = f'{self.rclone} {subcommand} {arg1} {arg2} {arg3} {arg4} {P} {_args}'
 
         if self.debug:
-            print(f'Executing: {_command}')
+            print(f'Executing: {command}')
 
         if not communicate and os.name == 'nt':
-            process = subprocess.Popen(_command, shell=True, stdout=subprocess.PIPE,
+            process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE,
                                        stderr=subprocess.PIPE, creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
         else:
             process = subprocess.Popen(
-                _command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
         if communicate:
             OUT, _ = process.communicate()
@@ -178,7 +183,7 @@ class Rclone(CheckRclone):
                 return json.loads(OUT)
             elif subcommand == 'lsf':
                 return OUT.rstrip().split('\n')
-            elif subcommand == 'config' and 'file' in _command:
+            elif subcommand == 'config' and 'file' in command:
                 return OUT.strip().split('\n')[-1]
             else:
                 return OUT
@@ -188,8 +193,8 @@ class Rclone(CheckRclone):
     async def mkdir(self, folder_path: str):
         return await self.async_process('mkdir', f'"{folder_path}"')
 
-    async def copy(self, source_path: str, destination_path: str):
-        return await self.async_process('copy', f'"{source_path}"', f'"{destination_path}"', '--create-empty-src-dirs')
+    def copy(self, source_path: str, destination_path: str):
+        return self.sync_process('copy', f'"{source_path}"', f'"{destination_path}"', '--create-empty-src-dirs', communicate=False)
 
     async def lsjson(self, path: str, max_depth: int = -1):
         return await self.async_process('lsjson', f'"{path}"', f'--max-depth {max_depth}')

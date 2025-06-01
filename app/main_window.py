@@ -1,4 +1,5 @@
 import asyncio
+from asyncio import tasks
 import json
 import os
 import shutil
@@ -69,6 +70,9 @@ class Task():
 
     def done(self):
         self.status = 'Done'
+        self.progress = 100
+        self.speed = '-'
+        self.estimated = '-'
 
     def set_full_size(self, size: float):
         self.full_size = size
@@ -89,15 +93,6 @@ class Task():
             self.progress = round((size / full_size) * 100)
         else:
             self.progress = 0
-
-    def set_status(self, is_done: bool):
-        if is_done:
-            self.progress = 100
-            self.speed = '-'
-            self.estimated = '-'
-            self.status = 'Done'
-        else:
-            self.status = 'Running'
 
     def set_speed(self, speed: float):
         sizes = ['B/s', 'KB/s', 'MB/s', 'GB/s', 'TB/s']
@@ -334,24 +329,10 @@ class MainWindow(QMainWindow):
                 case _:
                     item.setText(3, self.tasks[i].status)
 
-            if self.tasks[i].index != -1 and len(rc.tasks) > self.tasks[i].index:
-                if self.tasks[i].operation in ['Upload', 'Download', 'Opening']:
-                    self.tasks[i].set_full_size(
-                        rc.tasks[self.tasks[i].index]['full_size'])
-                    self.tasks[i].set_size(
-                        rc.tasks[self.tasks[i].index]['current_size'])
-                    self.tasks[i].set_speed(
-                        rc.tasks[self.tasks[i].index]['speed'])
-                    self.tasks[i].set_estimated(
-                        rc.tasks[self.tasks[i].index]['estimated'])
-                    self.tasks[i].set_status(
-                        rc.tasks[self.tasks[i].index]['is_done'])
-
-                    item.setText(4, self.tasks[i].size)
-                    self.ui.tasks.setItemWidget(
-                        item, 5, QProgressBar(value=self.tasks[i].progress))
-                    item.setText(6, self.tasks[i].speed)
-                    item.setText(7, self.tasks[i].estimated)
+            item.setText(4, self.tasks[i].size)
+            self.ui.tasks.setItemWidget(item, 5, QProgressBar(value=self.tasks[i].progress))
+            item.setText(6, self.tasks[i].speed)
+            item.setText(7, self.tasks[i].estimated)
 
     def closeEvent(self, event: QCloseEvent):
         if self.isVisible():
@@ -499,12 +480,16 @@ class MainWindow(QMainWindow):
             self.layout_free_size.setText(f'{free_text}    ')
 
     def set_scale(self, index: int):
-        sizes = [18, 22, 32, 48, 64, 80, 96, 112, 128,
+        sizes = [16, 20, 32, 48, 64, 80, 96, 112, 128,
                  144, 160, 176, 192, 208, 224, 240, 256]
-        sizes_icon = [16, 16, 22, 34, 48, 64, 80, 96,
-                      112, 128, 144, 160, 176, 192, 208, 224, 240]
+        sizes_icon = [16, 16, 32, 48, 64, 80, 96, 112,
+                      128, 144, 160, 176, 192, 208, 224, 240, 256]
         value = sizes[index]
         self.scale = value
+        if index == 2 or index == 3:
+            self.scale += 2
+        elif index > 3:
+            self.scale += 4
         self.slider_scale.setToolTip(f'{value}px')
 
         self.ui.tree_files.setIconSize(
@@ -514,11 +499,11 @@ class MainWindow(QMainWindow):
 
         for i in range(self.ui.tree_files.topLevelItemCount()):
             item = self.ui.tree_files.topLevelItem(i)
-            item.setSizeHint(0, QSize(0, value))
+            item.setSizeHint(0, QSize(0, self.scale))
 
         for i in range(self.ui.treeWidget_search.topLevelItemCount()):
             item = self.ui.treeWidget_search.topLevelItem(i)
-            item.setSizeHint(0, QSize(0, value))
+            item.setSizeHint(0, QSize(0, self.scale))
 
     def dragEnterEvent(self, event: QDragEnterEvent):
         if event.mimeData().hasUrls() and event.mimeData().text() != '.cloud_explorer_file_temp':
@@ -668,11 +653,8 @@ class MainWindow(QMainWindow):
                 QPixmap(file), remote['name'] + ':', remote['type'])
 
     async def upload_file(self, source_path: str, destination_remote: str, destination_path: str):
-        self.tasks.append(Task(operation='Upload', source=source_path,
-                          destination=f'{destination_remote}{destination_path}'))
-        is_dir = await rc.is_dir(source_path)
-
         dest_path = destination_path
+        is_dir = await rc.is_dir(source_path)
         if is_dir:
             if len(destination_path) > 0 and destination_path[-1] != '/':
                 dest_path += '/' + \
@@ -682,8 +664,78 @@ class MainWindow(QMainWindow):
                 dest_path += source_path.replace('\\',
                                                  '/').split(':')[-1].split('/')[-1]
 
-        await rc.copy(source_path, f'{destination_remote}{dest_path}')
+        process = rc.copy(
+            source_path, f'{destination_remote}{destination_path}')
+        task = Task(operation='Upload', source=source_path,
+                    destination=f'{destination_remote}{destination_path}', process=process)
+        self.tasks.append(task)
+
+        await self.copy(task)
         await self.update_dir(destination_remote, destination_path)
+
+    async def copy(self, task: Task):
+        loop = asyncio.get_running_loop()
+
+        while True:
+            line = await loop.run_in_executor(None, task.process.stdout.readline)
+            if not line:
+                break
+            line = line.decode()
+
+            if 'error' in line:
+                print(line)
+
+            s: str = line
+            if 'ETA' in s:
+                s = s.split('Transferred:')[1]
+                s = s.strip()
+                s = s.replace(',', '')
+                # print(s)  # 66.996 MiB / 81.884 MiB 82% 5.003 MiB/s ETA 2s
+                current_size = float(s.split(' ')[0])
+                size_unit = s.split(' ')[1]
+                full_size = float(s.split(' ')[3])
+                size_unit_full_size = s.split(' ')[4]
+                speed = float(s.split(' ')[6])
+                size_unit_speed = s.split(' ')[7]
+                estimated = s.split(' ')[9]
+
+                match size_unit:
+                    case 'KiB':
+                        current_size *= 1024
+                    case 'MiB':
+                        current_size *= 1048576
+                    case 'GiB':
+                        current_size *= 1073741824
+                    case 'TiB':
+                        current_size *= 1099511627776
+
+                match size_unit_full_size:
+                    case 'KiB':
+                        full_size *= 1024
+                    case 'MiB':
+                        full_size *= 1048576
+                    case 'GiB':
+                        full_size *= 1073741824
+                    case 'TiB':
+                        full_size *= 1099511627776
+
+                match size_unit_speed:
+                    case 'KiB/s':
+                        speed *= 1024
+                    case 'MiB/s':
+                        speed *= 1048576
+                    case 'GiB/s':
+                        speed *= 1073741824
+                    case 'TiB/s':
+                        speed *= 1099511627776
+
+                task.set_size(current_size)
+                task.set_full_size(full_size)
+                task.set_speed(speed)
+                task.set_estimated(estimated)
+                if full_size != 0 and current_size == full_size:
+                    break
+        task.done()
 
     def open_new_remote_window(self):
         open_win = NewRemoteWindow()
@@ -845,9 +897,12 @@ class MainWindow(QMainWindow):
     async def open_file(self, remote: str, file_path: str, file_name: str, is_with: bool = False):
         if self.temp_dir == '':
             self.temp_dir = rclone.tempfile.mkdtemp(prefix='cloud_explorer-')
-        self.tasks.append(Task(
-            operation='Opening', source=remote + file_path, destination=self.temp_dir))
-        await rc.copy(remote + file_path, self.temp_dir)
+        process = rc.copy(remote + file_path, self.temp_dir)
+        task = Task(operation='Opening', source=remote + file_path,
+                    destination=self.temp_dir, process=process)
+        self.tasks.append(task)
+        await self.copy(task)
+
         if not is_with:
             QDesktopServices.openUrl(QUrl.fromLocalFile(
                 self.temp_dir + '/' + file_name))
@@ -878,19 +933,20 @@ class MainWindow(QMainWindow):
                 file_path = file['path']
                 source_remote = file['remote']
 
-                self.tasks.append(Task(
-                    operation='Download', source=f'{source_remote}{file_path}', destination=download_path))
-
                 if not file['is_dir']:
-                    asyncio.ensure_future(
-                        rc.copy(source_remote + file_path, download_path))
+                    process = rc.copy(source_remote + file_path, download_path)
                 else:
                     if len(download_path) > 0 and download_path[-1] != '/' and download_path[-1] != '\\':
-                        asyncio.ensure_future(rc.copy(
-                            f'{source_remote}{file_path}', f'{download_path}/{base_name}'))
+                        process = rc.copy(
+                            f'{source_remote}{file_path}', f'{download_path}/{base_name}')
                     else:
-                        asyncio.ensure_future(rc.copy(
-                            f'{source_remote}{file_path}', f'{download_path}{base_name}'))
+                        process = rc.copy(
+                            f'{source_remote}{file_path}', f'{download_path}{base_name}')
+
+                task = Task(
+                    operation='Download', source=f'{source_remote}{file_path}', destination=download_path, process=process)
+                self.tasks.append(task)
+                asyncio.ensure_future(self.copy(task))
 
     def mount_point(self):
         path = QFileDialog.getExistingDirectory()
@@ -928,10 +984,10 @@ class MainWindow(QMainWindow):
             self.ui.treeWidget_mount.addTopLevelItem(
                 QTreeWidgetItem([remote, type, mount_point]))
 
-    def copy_files(self, items: list[QTreeWidgetItem]):
+    def copy_file(self, files: dict):
         self.copy_files = []
-        for item in items:
-            self.copy_files.append(item.data(0, Qt.ItemDataRole.UserRole))
+        for file in files:
+            self.copy_files.append(file)
 
         clipboard = QApplication.clipboard()
         mime_data = QMimeData()
@@ -997,7 +1053,7 @@ class MainWindow(QMainWindow):
         if clipboard.mimeData().text() == '.cloud_explorer_file_temp':
             for file in self.copy_files:
                 asyncio.ensure_future(self.upload_file(
-                    file[0], destination_remote, destination_path))
+                    file['remote'] + file['path'], destination_remote, destination_path))
         else:
             for url in clipboard.mimeData().urls():
                 source_path = url.toLocalFile()
@@ -1104,6 +1160,14 @@ class MainWindow(QMainWindow):
                 selected_files.append(item.data(0, Qt.ItemDataRole.UserRole))
             if len(selected) > 0:
                 asyncio.ensure_future(self.delete_files(selected_files))
+        
+        def copy():
+            selected = self.ui.tree_files.selectedItems()
+            selected_files = []
+            for item in selected:
+                selected_files.append(item.data(0, Qt.ItemDataRole.UserRole))
+            if len(selected) > 0:
+                self.copy_file(selected_files)
 
         self.delete_shortcut = QShortcut(
             QKeySequence("Del"), self.ui.tree_files)
@@ -1120,8 +1184,7 @@ class MainWindow(QMainWindow):
 
         self.copy_shortcut = QShortcut(
             QKeySequence("Ctrl+C"), self.ui.treeWidget_search)
-        self.copy_shortcut.activated.connect(
-            lambda: self.copy_files(self.ui.treeWidget_search.selectedItems()))
+        self.copy_shortcut.activated.connect(copy)
 
         self.paste_shortcut = QShortcut(
             QKeySequence("Ctrl+V"), self.ui.tree_files)
@@ -1204,7 +1267,7 @@ class MainWindow(QMainWindow):
                 action = QAction(self)
                 action.setText(self.tr('Copy'))
                 action.setIcon(QIcon.fromTheme('edit-copy'))
-                action.triggered.connect(lambda: self.copy_files(selected))
+                action.triggered.connect(lambda: self.copy_file(selected_files))
                 action.setShortcut(QKeySequence('Ctrl+C'))
                 menu.addAction(action)
 
@@ -1413,6 +1476,11 @@ class MainWindow(QMainWindow):
             self.ui.tasks.takeTopLevelItem(index)
             del self.tasks[index]
 
+        def cancel_task(index: int):
+            self.tasks[index].process.send_signal(signal.CTRL_BREAK_EVENT)
+            self.ui.tasks.topLevelItem(index).setHidden(True)
+            self.tasks[index].status = 'Stop'
+
         if not index.isValid():
             action = QAction(self)
             action.setText(self.tr('Clear Completed'))
@@ -1422,7 +1490,7 @@ class MainWindow(QMainWindow):
         else:
             item = self.ui.tasks.itemAt(point)
 
-            if item.text(0) in [self.tr('Download'), self.tr('Upload'), self.tr('Opening')]:
+            if item.text(0) in [self.tr('Download', 'noun'), self.tr('Upload'), self.tr('Opening')]:
                 action = QAction(self)
                 action.setText(self.tr('Open Folder'))
                 action.setIcon(QIcon.fromTheme('folder-open'))
@@ -1441,6 +1509,13 @@ class MainWindow(QMainWindow):
                 action = QAction(self)
                 action.setText(self.tr('Stop'))
                 action.triggered.connect(lambda: stop_task(index.row()))
+                menu.addAction(action)
+
+            if item.text(0) in [self.tr('Download', 'noun'), self.tr('Upload'), self.tr('Opening')] and item.text(3) != self.tr('Done'):
+                action = QAction(self)
+                action.setText(self.tr('Сancel'))
+                action.setIcon(QIcon.fromTheme('media-playback-stop'))
+                action.triggered.connect(lambda: cancel_task(index.row()))
                 menu.addAction(action)
 
             action = QAction(self)
