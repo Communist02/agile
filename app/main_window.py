@@ -7,6 +7,7 @@ import signal
 import subprocess
 import threading
 import types
+import sys
 
 from PySide6.QtCore import QFileInfo, QMimeData, QPoint, QSettings, QSize, QTimer, QUrl, Qt
 from PySide6.QtGui import QAction, QCloseEvent, QColorConstants, QCursor, QDesktopServices, QDrag, QDragEnterEvent, QIcon, QKeySequence, QPainter, QPixmap, QShortcut
