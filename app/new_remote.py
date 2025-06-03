@@ -17,7 +17,7 @@ class NewRemoteWindow(QDialog):
         rc = Rclone()
 
         self.setWindowIcon(
-            QIcon(f'{os.path.dirname(__file__) + os.sep}favicon.ico'))
+            QIcon(os.path.dirname(__file__) + '/resources/' + 'favicon.ico'))
 
         self.ui.buttonBox.accepted.connect(
             lambda: self.new_remote(edit_mode, remote_name))

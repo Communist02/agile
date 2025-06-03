@@ -17,7 +17,7 @@ class NewServeWindow(QDialog):
         self.parent = parent
 
         self.setWindowIcon(
-            QIcon(f'{os.path.dirname(__file__) + os.sep}favicon.ico'))
+            QIcon(os.path.dirname(__file__) + '/resources/' + 'favicon.ico'))
 
         self.ui.buttonBox.accepted.connect(self.new_serve)
         self.ui.button_select_dir.clicked.connect(self.select_dir)

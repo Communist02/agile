@@ -16,7 +16,7 @@ class SettingsWindow(QDialog):
         self.settings = QSettings('Denis Mazur', 'Cloud Explorer')
 
         self.setWindowIcon(
-            QIcon(f'{os.path.dirname(__file__) + os.sep}favicon.ico'))
+            QIcon(os.path.dirname(__file__) + '/resources/' + 'favicon.ico'))
 
         styles = QStyleFactory.keys()
         for i in range(len(styles)):

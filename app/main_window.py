@@ -1,5 +1,5 @@
 import asyncio
-from asyncio import tasks
+import tempfile
 import json
 import os
 import shutil
@@ -10,7 +10,6 @@ import types
 from PySide6.QtCore import QFileInfo, QMimeData, QPoint, QSettings, QSize, QTimer, QUrl, Qt
 from PySide6.QtGui import QAction, QCloseEvent, QColorConstants, QCursor, QDesktopServices, QDrag, QDragEnterEvent, QIcon, QKeySequence, QPainter, QPixmap, QShortcut
 from PySide6.QtWidgets import QApplication, QFileDialog, QFileIconProvider, QHBoxLayout, QInputDialog, QLabel, QMainWindow, QMenu, QMessageBox, QProgressBar, QPushButton, QSizePolicy, QSlider, QSpacerItem, QSystemTrayIcon, QTreeWidgetItem, QWidget
-from rclone_python import rclone
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
 from app.new_remote import NewRemoteWindow
@@ -162,7 +161,7 @@ class MainWindow(QMainWindow):
         self.search_process_is_running: int = 0
 
         self.setWindowIcon(
-            QIcon(f'{os.path.dirname(__file__) + os.sep}favicon.ico'))
+            QIcon(os.path.dirname(__file__) + '/resources/' + 'favicon.ico'))
 
         self.ui.tree_files.header().resizeSection(0, 300)
         self.ui.tree_files.header().resizeSection(1, 80)
@@ -349,8 +348,8 @@ class MainWindow(QMainWindow):
 
     def start_file_monitor(self):
         if self.temp_dir == '':
-            self.temp_dir = rclone.tempfile.mkdtemp(prefix='cloud_explorer-')
-        open(self.temp_dir + '/.cloud_explorer_file_temp', 'a').close()
+            self.temp_dir = tempfile.mkdtemp(prefix='cloud_explorer_')
+        open(self.temp_dir + os.sep + '.cloud_explorer_file_temp', 'a').close()
 
         handler = FileMonitorHandler(self, '.cloud_explorer_file_temp')
 
@@ -532,12 +531,12 @@ class MainWindow(QMainWindow):
         self.download_path = ''
 
         if self.temp_dir == '':
-            self.temp_dir = rclone.tempfile.mkdtemp(prefix='cloud_explorer-')
-        open(self.temp_dir + '/.cloud_explorer_file_temp', 'a').close()
+            self.temp_dir = tempfile.mkdtemp(prefix='cloud_explorer_')
+        open(self.temp_dir + os.sep + '.cloud_explorer_file_temp', 'a').close()
 
         mime_data = QMimeData()
         mime_data.setText('.cloud_explorer_file_temp')
-        url = QUrl.fromLocalFile(self.temp_dir + '/.cloud_explorer_file_temp')
+        url = QUrl.fromLocalFile(self.temp_dir + os.sep + '.cloud_explorer_file_temp')
         mime_data.setUrls([url])
 
         drag: QDrag = QDrag(self)
@@ -896,7 +895,7 @@ class MainWindow(QMainWindow):
 
     async def open_file(self, remote: str, file_path: str, file_name: str, is_with: bool = False):
         if self.temp_dir == '':
-            self.temp_dir = rclone.tempfile.mkdtemp(prefix='cloud_explorer-')
+            self.temp_dir = tempfile.mkdtemp(prefix='cloud_explorer_')
         process = rc.copy(remote + file_path, self.temp_dir)
         task = Task(operation='Opening', source=remote + file_path,
                     destination=self.temp_dir, process=process)
@@ -992,7 +991,7 @@ class MainWindow(QMainWindow):
         clipboard = QApplication.clipboard()
         mime_data = QMimeData()
         mime_data.setText('.cloud_explorer_file_temp')
-        url = QUrl.fromLocalFile(self.temp_dir + '/.cloud_explorer_file_temp')
+        url = QUrl.fromLocalFile(self.temp_dir + os.sep + '.cloud_explorer_file_temp')
         mime_data.setUrls([url])
         clipboard.setMimeData(mime_data)
 
