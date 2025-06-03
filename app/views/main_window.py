@@ -400,6 +400,7 @@ class Ui_MainWindow(object):
         self.lineEdit_mount_point.setText("")
         self.button_mount.setText(QCoreApplication.translate("MainWindow", u"Mount", u"verb"))
         ___qtreewidgetitem4 = self.treeWidget_mount.headerItem()
+        ___qtreewidgetitem4.setText(3, QCoreApplication.translate("MainWindow", u"Remember", None));
         ___qtreewidgetitem4.setText(2, QCoreApplication.translate("MainWindow", u"Mount point", None));
         ___qtreewidgetitem4.setText(1, QCoreApplication.translate("MainWindow", u"Type", None));
         ___qtreewidgetitem4.setText(0, QCoreApplication.translate("MainWindow", u"Remote", None));

@@ -564,6 +564,11 @@
             <string>Mount point</string>
            </property>
           </column>
+          <column>
+           <property name="text">
+            <string>Remember</string>
+           </property>
+          </column>
          </widget>
         </item>
        </layout>

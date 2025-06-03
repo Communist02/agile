@@ -9,7 +9,7 @@ import types
 
 from PySide6.QtCore import QFileInfo, QMimeData, QPoint, QSettings, QSize, QTimer, QUrl, Qt
 from PySide6.QtGui import QAction, QCloseEvent, QColorConstants, QCursor, QDesktopServices, QDrag, QDragEnterEvent, QIcon, QKeySequence, QPainter, QPixmap, QShortcut
-from PySide6.QtWidgets import QApplication, QFileDialog, QFileIconProvider, QHBoxLayout, QInputDialog, QLabel, QMainWindow, QMenu, QMessageBox, QProgressBar, QPushButton, QSizePolicy, QSlider, QSpacerItem, QSystemTrayIcon, QTreeWidgetItem, QWidget
+from PySide6.QtWidgets import QApplication, QCheckBox, QFileDialog, QFileIconProvider, QHBoxLayout, QInputDialog, QLabel, QMainWindow, QMenu, QMessageBox, QProgressBar, QPushButton, QSizePolicy, QSlider, QSpacerItem, QSystemTrayIcon, QTreeWidgetItem, QWidget
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
 from app.new_remote import NewRemoteWindow
@@ -263,8 +263,10 @@ class MainWindow(QMainWindow):
         self.tray_icon.activated.connect(self.tray_icon_activated)
         self.tray_icon.show()
 
-        self.start_file_monitor()
         self.shortcuts()
+        self.recovery_mount()
+
+        self.start_file_monitor()
 
     def tray_icon_activated(self, reason: QSystemTrayIcon.ActivationReason):
         match reason:
@@ -776,7 +778,7 @@ class MainWindow(QMainWindow):
         button.setFlat(True)
         button.setStyleSheet('QPushButton {font-weight: bold;}')
         button.setIcon(self.ui.tree_remotes.findItems(
-            remote_name, Qt.MatchFlag.MatchContains)[0].icon(0))
+            remote_name, Qt.MatchFlag.MatchCaseSensitive)[0].icon(0))
         button.clicked.connect(lambda t, remote_name=remote_name: asyncio.ensure_future(
             self.open_dir(remote_name)))
         self.ui.path_list.addWidget(button)
@@ -952,24 +954,14 @@ class MainWindow(QMainWindow):
         if path is not None and path != '':
             self.ui.lineEdit_mount_point.setText(path)
 
-    def mount_remote(self, remote: str, type: str = '', mount_point: str = ''):
+    def mount_remote(self, remote: str, type: str = '', mount_point: str = '', is_remember: bool = False):
         if os.name == 'nt':
             if mount_point.strip() == '':
-                if type in ['local', 'alias', 'union', '']:
-                    process = rc.mount(remote, '*')
-                else:
-                    process = rc.mount(remote, '*', '--network-mode')
-                self.mount.append(Mount(remote, '*', process=process))
-                self.ui.treeWidget_mount.addTopLevelItem(
-                    QTreeWidgetItem([remote, type, '*']))
+                mount_point = '*'
+            if type in ['local', 'alias', 'union', '']:
+                process = rc.mount(remote, mount_point)
             else:
-                if type in ['local', 'alias', 'union', '']:
-                    process = rc.mount(remote, mount_point)
-                else:
-                    process = rc.mount(remote, mount_point, '--network-mode')
-                self.mount.append(Mount(remote, mount_point, process=process))
-                self.ui.treeWidget_mount.addTopLevelItem(
-                    QTreeWidgetItem([remote, type, mount_point]))
+                process = rc.mount(remote, mount_point, '--network-mode')
         else:
             if mount_point.strip() == '':
                 mount_point = f'{os.path.expanduser('~')}/Clouds/{remote.split(':')[0]}'
@@ -979,9 +971,29 @@ class MainWindow(QMainWindow):
                     os.mkdir(mount_point)
 
             process = rc.mount(remote, mount_point)
-            self.mount.append(Mount(remote, mount_point, process=process))
-            self.ui.treeWidget_mount.addTopLevelItem(
-                QTreeWidgetItem([remote, type, mount_point]))
+
+        def remember(check_state: Qt.CheckState.Checked, remote: str, type: str, mount_point: str):
+            settings = QSettings('Denis Mazur', 'Cloud Explorer')
+            mount: dict = settings.value('mount', {})
+            if check_state == Qt.CheckState.Checked:
+                mount[remote] = {'remote': remote, 'type': type, "mount_point": mount_point}
+            else:
+                mount.pop(remote)
+            settings.setValue('mount', mount)
+
+        self.mount.append(Mount(remote, mount_point, process=process))
+        item = QTreeWidgetItem([remote, type, mount_point])
+        self.ui.treeWidget_mount.addTopLevelItem(item)
+        checkbox = QCheckBox()
+        checkbox.setChecked(is_remember)
+        checkbox.checkStateChanged.connect(lambda check_state, remote=remote, type=type, mount_point=mount_point: remember(check_state, remote, type, mount_point))      
+        self.ui.treeWidget_mount.setItemWidget(item, 3, checkbox)
+
+    def recovery_mount(self):
+        settings = QSettings('Denis Mazur', 'Cloud Explorer')
+        mount: dict = settings.value('mount', {})
+        for key, value in mount.items():
+            self.mount_remote(key, value['type'], value['mount_point'], True)
 
     def copy_file(self, files: dict):
         self.copy_files = []
@@ -1023,12 +1035,12 @@ class MainWindow(QMainWindow):
                         await rc.deletefile(file_path)
                     task.done()
                     items = self.ui.tree_files.findItems(
-                        file['name'], Qt.MatchFlag.MatchContains)
+                        file['name'], Qt.MatchFlag.MatchCaseSensitive)
                     if len(items) > 0 and items[0].data(0, Qt.ItemDataRole.UserRole)['remote'] == file['remote'] and items[0].data(0, Qt.ItemDataRole.UserRole)['path'] == file['path']:
                         items[0].setHidden(True)
 
                     items = self.ui.treeWidget_search.findItems(
-                        file['name'], Qt.MatchFlag.MatchContains)
+                        file['name'], Qt.MatchFlag.MatchCaseSensitive)
                     if len(items) > 0 and items[0].data(0, Qt.ItemDataRole.UserRole)['remote'] == file['remote'] and items[0].data(0, Qt.ItemDataRole.UserRole)['path'] == file['path']:
                         items[0].setHidden(True)
 
@@ -1328,12 +1340,12 @@ class MainWindow(QMainWindow):
 
             self.ui.tree_remotes.clearSelection()
             items = self.ui.tree_remotes.findItems(
-                remote, Qt.MatchFlag.MatchContains)
+                remote, Qt.MatchFlag.MatchCaseSensitive)
             items[0].setSelected(True)
 
             await self.open_dir(remote, path)
             items = self.ui.tree_files.findItems(
-                file_name, Qt.MatchFlag.MatchContains)
+                file_name, Qt.MatchFlag.MatchCaseSensitive)
             items[0].setSelected(True)
 
         menu = QMenu()
