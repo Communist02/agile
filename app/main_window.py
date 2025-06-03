@@ -5,6 +5,7 @@ import os
 import shutil
 import signal
 import subprocess
+import threading
 import types
 
 from PySide6.QtCore import QFileInfo, QMimeData, QPoint, QSettings, QSize, QTimer, QUrl, Qt
