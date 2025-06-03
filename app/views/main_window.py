@@ -154,30 +154,30 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_2 = QHBoxLayout()
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
-        self.tree_remotes = QTreeWidget(self.tab_explorer)
-        self.tree_remotes.setObjectName(u"tree_remotes")
+        self.treeWidget_remotes = QTreeWidget(self.tab_explorer)
+        self.treeWidget_remotes.setObjectName(u"treeWidget_remotes")
         sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
         sizePolicy2.setHorizontalStretch(0)
         sizePolicy2.setVerticalStretch(0)
-        sizePolicy2.setHeightForWidth(self.tree_remotes.sizePolicy().hasHeightForWidth())
-        self.tree_remotes.setSizePolicy(sizePolicy2)
-        self.tree_remotes.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-        self.tree_remotes.setRootIsDecorated(False)
-        self.tree_remotes.setSortingEnabled(True)
+        sizePolicy2.setHeightForWidth(self.treeWidget_remotes.sizePolicy().hasHeightForWidth())
+        self.treeWidget_remotes.setSizePolicy(sizePolicy2)
+        self.treeWidget_remotes.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.treeWidget_remotes.setRootIsDecorated(False)
+        self.treeWidget_remotes.setSortingEnabled(True)
 
-        self.horizontalLayout_2.addWidget(self.tree_remotes)
+        self.horizontalLayout_2.addWidget(self.treeWidget_remotes)
 
-        self.tree_files = QTreeWidget(self.tab_explorer)
-        self.tree_files.setObjectName(u"tree_files")
-        self.tree_files.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-        self.tree_files.setDragEnabled(True)
-        self.tree_files.setDragDropMode(QAbstractItemView.DragDropMode.DragOnly)
-        self.tree_files.setDefaultDropAction(Qt.DropAction.CopyAction)
-        self.tree_files.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
-        self.tree_files.setRootIsDecorated(False)
-        self.tree_files.setSortingEnabled(True)
+        self.treeWidget_files = QTreeWidget(self.tab_explorer)
+        self.treeWidget_files.setObjectName(u"treeWidget_files")
+        self.treeWidget_files.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.treeWidget_files.setDragEnabled(True)
+        self.treeWidget_files.setDragDropMode(QAbstractItemView.DragDropMode.DragOnly)
+        self.treeWidget_files.setDefaultDropAction(Qt.DropAction.CopyAction)
+        self.treeWidget_files.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
+        self.treeWidget_files.setRootIsDecorated(False)
+        self.treeWidget_files.setSortingEnabled(True)
 
-        self.horizontalLayout_2.addWidget(self.tree_files)
+        self.horizontalLayout_2.addWidget(self.treeWidget_files)
 
 
         self.verticalLayout_3.addLayout(self.horizontalLayout_2)
@@ -270,10 +270,13 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_6.addWidget(self.label_2)
 
-        self.lineEdit_mount_point = QLineEdit(self.tab_mount)
-        self.lineEdit_mount_point.setObjectName(u"lineEdit_mount_point")
+        self.comboBox_mount_point = QComboBox(self.tab_mount)
+        self.comboBox_mount_point.setObjectName(u"comboBox_mount_point")
+        sizePolicy1.setHeightForWidth(self.comboBox_mount_point.sizePolicy().hasHeightForWidth())
+        self.comboBox_mount_point.setSizePolicy(sizePolicy1)
+        self.comboBox_mount_point.setEditable(True)
 
-        self.horizontalLayout_6.addWidget(self.lineEdit_mount_point)
+        self.horizontalLayout_6.addWidget(self.comboBox_mount_point)
 
         self.toolButton_mount_point = QToolButton(self.tab_mount)
         self.toolButton_mount_point.setObjectName(u"toolButton_mount_point")
@@ -326,12 +329,12 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.setSpacing(0)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
-        self.tasks = QTreeWidget(self.dockWidgetContents)
-        self.tasks.setObjectName(u"tasks")
-        self.tasks.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-        self.tasks.setRootIsDecorated(False)
+        self.treeWidget_tasks = QTreeWidget(self.dockWidgetContents)
+        self.treeWidget_tasks.setObjectName(u"treeWidget_tasks")
+        self.treeWidget_tasks.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.treeWidget_tasks.setRootIsDecorated(False)
 
-        self.verticalLayout_2.addWidget(self.tasks)
+        self.verticalLayout_2.addWidget(self.treeWidget_tasks)
 
         self.dock_tasks.setWidget(self.dockWidgetContents)
         MainWindow.addDockWidget(Qt.DockWidgetArea.BottomDockWidgetArea, self.dock_tasks)
@@ -368,10 +371,10 @@ class Ui_MainWindow(object):
         self.button_prev_history.setText("")
         self.button_next_history.setText("")
         self.button_exit_dir.setText("")
-        ___qtreewidgetitem = self.tree_remotes.headerItem()
+        ___qtreewidgetitem = self.treeWidget_remotes.headerItem()
         ___qtreewidgetitem.setText(1, QCoreApplication.translate("MainWindow", u"Type", None));
         ___qtreewidgetitem.setText(0, QCoreApplication.translate("MainWindow", u"Name", None));
-        ___qtreewidgetitem1 = self.tree_files.headerItem()
+        ___qtreewidgetitem1 = self.treeWidget_files.headerItem()
         ___qtreewidgetitem1.setText(3, QCoreApplication.translate("MainWindow", u"Type", None));
         ___qtreewidgetitem1.setText(2, QCoreApplication.translate("MainWindow", u"Modified", None));
         ___qtreewidgetitem1.setText(1, QCoreApplication.translate("MainWindow", u"Size", None));
@@ -397,7 +400,6 @@ class Ui_MainWindow(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_serve), QCoreApplication.translate("MainWindow", u"Serve", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"Remote path", None))
         self.label_2.setText(QCoreApplication.translate("MainWindow", u"Mount point", None))
-        self.lineEdit_mount_point.setText("")
         self.button_mount.setText(QCoreApplication.translate("MainWindow", u"Mount", u"verb"))
         ___qtreewidgetitem4 = self.treeWidget_mount.headerItem()
         ___qtreewidgetitem4.setText(3, QCoreApplication.translate("MainWindow", u"Remember", None));
@@ -408,7 +410,7 @@ class Ui_MainWindow(object):
         self.menuClient.setTitle(QCoreApplication.translate("MainWindow", u"Client", None))
         self.menuOther.setTitle(QCoreApplication.translate("MainWindow", u"Other", None))
         self.menuView.setTitle(QCoreApplication.translate("MainWindow", u"View", None))
-        ___qtreewidgetitem5 = self.tasks.headerItem()
+        ___qtreewidgetitem5 = self.treeWidget_tasks.headerItem()
         ___qtreewidgetitem5.setText(7, QCoreApplication.translate("MainWindow", u"Estimated", None));
         ___qtreewidgetitem5.setText(6, QCoreApplication.translate("MainWindow", u"Speed", None));
         ___qtreewidgetitem5.setText(5, QCoreApplication.translate("MainWindow", u"Progress", None));

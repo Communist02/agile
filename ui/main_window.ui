@@ -236,7 +236,7 @@
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
-           <widget class="QTreeWidget" name="tree_remotes">
+           <widget class="QTreeWidget" name="treeWidget_remotes">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
               <horstretch>0</horstretch>
@@ -265,7 +265,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QTreeWidget" name="tree_files">
+           <widget class="QTreeWidget" name="treeWidget_files">
             <property name="contextMenuPolicy">
              <enum>Qt::ContextMenuPolicy::CustomContextMenu</enum>
             </property>
@@ -513,9 +513,15 @@
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="lineEdit_mount_point">
-            <property name="text">
-             <string/>
+           <widget class="QComboBox" name="comboBox_mount_point">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="editable">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -641,7 +647,7 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="QTreeWidget" name="tasks">
+      <widget class="QTreeWidget" name="treeWidget_tasks">
        <property name="contextMenuPolicy">
         <enum>Qt::ContextMenuPolicy::CustomContextMenu</enum>
        </property>

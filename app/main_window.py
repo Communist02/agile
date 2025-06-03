@@ -163,16 +163,17 @@ class MainWindow(QMainWindow):
         self.setWindowIcon(
             QIcon(os.path.dirname(__file__) + '/resources/' + 'favicon.ico'))
 
-        self.ui.tree_files.header().resizeSection(0, 300)
-        self.ui.tree_files.header().resizeSection(1, 80)
-        self.ui.tree_files.header().resizeSection(2, 120)
+        self.ui.treeWidget_files.header().resizeSection(0, 300)
+        self.ui.treeWidget_files.header().resizeSection(1, 80)
+        self.ui.treeWidget_files.header().resizeSection(2, 120)
         self.ui.treeWidget_search.header().resizeSection(0, 300)
         self.ui.treeWidget_search.header().resizeSection(1, 80)
         self.ui.treeWidget_search.header().resizeSection(2, 120)
 
-        self.ui.tree_files.header().setSortIndicator(0, Qt.SortOrder.AscendingOrder)
-        self.ui.tree_remotes.header().setSortIndicator(0, Qt.SortOrder.AscendingOrder)
-        self.ui.tree_remotes.setIconSize(QSize(28, 28))
+        self.ui.treeWidget_files.header().setSortIndicator(0, Qt.SortOrder.AscendingOrder)
+        self.ui.treeWidget_remotes.header().setSortIndicator(
+            0, Qt.SortOrder.AscendingOrder)
+        self.ui.treeWidget_remotes.setIconSize(QSize(28, 28))
         self.ui.dock_tasks.hide()
 
         def close():
@@ -189,12 +190,12 @@ class MainWindow(QMainWindow):
             lambda: QMessageBox.aboutQt(self))
         self.ui.action_show_tasks.triggered.connect(self.ui.dock_tasks.show)
 
-        self.ui.tree_remotes.itemClicked.connect(self.open_remote)
-        self.ui.tree_files.itemDoubleClicked.connect(
+        self.ui.treeWidget_remotes.itemClicked.connect(self.open_remote)
+        self.ui.treeWidget_files.itemDoubleClicked.connect(
             lambda item: self.open_item(item.data(0, Qt.ItemDataRole.UserRole)['remote'], item.data(0, Qt.ItemDataRole.UserRole)['path'], item.data(0, Qt.ItemDataRole.UserRole)['name'], item.data(0, Qt.ItemDataRole.UserRole)['is_dir']))
         self.ui.treeWidget_search.itemDoubleClicked.connect(
             lambda item: self.open_item(item.data(0, Qt.ItemDataRole.UserRole)['remote'], item.data(0, Qt.ItemDataRole.UserRole)['path'], item.data(0, Qt.ItemDataRole.UserRole)['name'], item.data(0, Qt.ItemDataRole.UserRole)['is_dir']))
-        self.ui.tasks.itemDoubleClicked.connect(self.open_task_dir)
+        self.ui.treeWidget_tasks.itemDoubleClicked.connect(self.open_task_dir)
 
         self.ui.button_exit_dir.clicked.connect(self.exit_folder)
         self.ui.button_update.clicked.connect(lambda: asyncio.ensure_future(
@@ -207,27 +208,27 @@ class MainWindow(QMainWindow):
         self.ui.lineEdit_search.editingFinished.connect(
             lambda: asyncio.ensure_future(self.search()))
         self.ui.button_mount.clicked.connect(lambda: self.mount_remote(
-            self.ui.comboBox_remote.currentText(), type=self.ui.comboBox_remote.currentData(Qt.ItemDataRole.UserRole), mount_point=self.ui.lineEdit_mount_point.text()))
+            self.ui.comboBox_remote.currentText(), type=self.ui.comboBox_remote.currentData(Qt.ItemDataRole.UserRole), mount_point=self.ui.comboBox_mount_point.currentText()))
 
         if os.name == "nt":
             self.ui.toolButton_mount_point.hide()
         else:
             self.ui.toolButton_mount_point.clicked.connect(self.mount_point)
 
-        self.ui.tree_files.startDrag = self.start_drag
+        self.ui.treeWidget_files.startDrag = self.start_drag
         self.ui.treeWidget_search.startDrag = self.start_drag
 
-        self.ui.tree_files.customContextMenuRequested.connect(
+        self.ui.treeWidget_files.customContextMenuRequested.connect(
             self.show_context_menu_tree)
         self.ui.treeWidget_search.customContextMenuRequested.connect(
             self.show_context_menu_tree_search)
-        self.ui.tree_remotes.customContextMenuRequested.connect(
+        self.ui.treeWidget_remotes.customContextMenuRequested.connect(
             self.show_context_menu_remote)
         self.ui.treeWidget_serve.customContextMenuRequested.connect(
             self.show_context_menu_serve)
         self.ui.treeWidget_mount.customContextMenuRequested.connect(
             self.show_context_menu_mount)
-        self.ui.tasks.customContextMenuRequested.connect(
+        self.ui.treeWidget_tasks.customContextMenuRequested.connect(
             self.show_context_menu_task)
 
         statusbar_widget = QWidget()
@@ -264,8 +265,10 @@ class MainWindow(QMainWindow):
         self.tray_icon.show()
 
         self.shortcuts()
-        self.recovery_mount()
 
+        self.recovery_mount()
+        if os.name == 'nt':
+            self.check_free_drives()
         self.start_file_monitor()
 
     def tray_icon_activated(self, reason: QSystemTrayIcon.ActivationReason):
@@ -291,7 +294,7 @@ class MainWindow(QMainWindow):
                 item.setText(5, '+' if self.serve[i].read_only else '-')
 
         for i in range(len(self.tasks)):
-            if i >= self.ui.tasks.topLevelItemCount():
+            if i >= self.ui.treeWidget_tasks.topLevelItemCount():
                 item = QTreeWidgetItem()
                 match self.tasks[i].operation:
                     case 'Download':
@@ -304,10 +307,10 @@ class MainWindow(QMainWindow):
                         item.setIcon(0, QIcon.fromTheme('drive-harddisk'))
                     case 'Delete':
                         item.setIcon(0, QIcon.fromTheme('edit-delete'))
-                self.ui.tasks.addTopLevelItem(item)
+                self.ui.treeWidget_tasks.addTopLevelItem(item)
                 self.ui.dock_tasks.show()
             else:
-                item = self.ui.tasks.topLevelItem(i)
+                item = self.ui.treeWidget_tasks.topLevelItem(i)
 
             match self.tasks[i].operation:
                 case 'Download':
@@ -331,7 +334,8 @@ class MainWindow(QMainWindow):
                     item.setText(3, self.tasks[i].status)
 
             item.setText(4, self.tasks[i].size)
-            self.ui.tasks.setItemWidget(item, 5, QProgressBar(value=self.tasks[i].progress))
+            self.ui.treeWidget_tasks.setItemWidget(
+                item, 5, QProgressBar(value=self.tasks[i].progress))
             item.setText(6, self.tasks[i].speed)
             item.setText(7, self.tasks[i].estimated)
 
@@ -374,6 +378,15 @@ class MainWindow(QMainWindow):
             observer_thread = threading.Thread(target=observer.start)
             observer_thread.daemon = True
             observer_thread.start()
+
+    def check_free_drives(self):
+        all_drives = set(chr(ord('A') + i) + ':' for i in range(26))
+        occupied_drives = win32api.GetLogicalDriveStrings()
+        occupied_drives = set(occupied_drives.replace(
+            '\x00', '').split('\\')[:-1])
+        free_drives = sorted(all_drives - occupied_drives, reverse=True)
+        self.ui.comboBox_mount_point.clear()
+        self.ui.comboBox_mount_point.addItems(free_drives)
 
     async def search(self):
         remote_name = self.ui.comboBox_search.currentText()
@@ -493,13 +506,13 @@ class MainWindow(QMainWindow):
             self.scale += 4
         self.slider_scale.setToolTip(f'{value}px')
 
-        self.ui.tree_files.setIconSize(
+        self.ui.treeWidget_files.setIconSize(
             QSize(sizes_icon[index], sizes_icon[index]))
         self.ui.treeWidget_search.setIconSize(
             QSize(sizes_icon[index], sizes_icon[index]))
 
-        for i in range(self.ui.tree_files.topLevelItemCount()):
-            item = self.ui.tree_files.topLevelItem(i)
+        for i in range(self.ui.treeWidget_files.topLevelItemCount()):
+            item = self.ui.treeWidget_files.topLevelItem(i)
             item.setSizeHint(0, QSize(0, self.scale))
 
         for i in range(self.ui.treeWidget_search.topLevelItemCount()):
@@ -523,7 +536,7 @@ class MainWindow(QMainWindow):
     def start_drag(self, supportedActions):
         match self.ui.tabWidget.currentIndex():
             case 0:
-                items = self.ui.tree_files.selectedItems()
+                items = self.ui.treeWidget_files.selectedItems()
             case 1:
                 items = self.ui.treeWidget_search.selectedItems()
 
@@ -538,7 +551,8 @@ class MainWindow(QMainWindow):
 
         mime_data = QMimeData()
         mime_data.setText('.cloud_explorer_file_temp')
-        url = QUrl.fromLocalFile(self.temp_dir + os.sep + '.cloud_explorer_file_temp')
+        url = QUrl.fromLocalFile(
+            self.temp_dir + os.sep + '.cloud_explorer_file_temp')
         mime_data.setUrls([url])
 
         drag: QDrag = QDrag(self)
@@ -629,7 +643,7 @@ class MainWindow(QMainWindow):
     def update_remotes(self):
         remotes = rc.listremotes(True)
         remotes.sort(key=lambda x: x['name'].lower())
-        self.ui.tree_remotes.clear()
+        self.ui.treeWidget_remotes.clear()
         self.ui.comboBox_search.clear()
         self.ui.comboBox_remote.clear()
         settings = QSettings('Denis Mazur', 'Cloud Explorer')
@@ -647,7 +661,7 @@ class MainWindow(QMainWindow):
             if not os.path.isfile(file):
                 file = path + f'unknown{inv}.png'
             item.setIcon(0, QPixmap(file))
-            self.ui.tree_remotes.addTopLevelItem(item)
+            self.ui.treeWidget_remotes.addTopLevelItem(item)
             self.ui.comboBox_search.addItem(
                 QPixmap(file), remote['name'] + ':')
             self.ui.comboBox_remote.addItem(
@@ -748,7 +762,8 @@ class MainWindow(QMainWindow):
         open_win.exec()
 
     def open_list_remotes(self):
-        self.ui.tree_remotes.setVisible(not self.ui.tree_remotes.isVisible())
+        self.ui.treeWidget_remotes.setVisible(
+            not self.ui.treeWidget_remotes.isVisible())
 
     def open_settings_window(self):
         open_win = SettingsWindow()
@@ -777,7 +792,7 @@ class MainWindow(QMainWindow):
                              QSizePolicy.Policy.Expanding)
         button.setFlat(True)
         button.setStyleSheet('QPushButton {font-weight: bold;}')
-        button.setIcon(self.ui.tree_remotes.findItems(
+        button.setIcon(self.ui.treeWidget_remotes.findItems(
             remote_name, Qt.MatchFlag.MatchCaseSensitive)[0].icon(0))
         button.clicked.connect(lambda t, remote_name=remote_name: asyncio.ensure_future(
             self.open_dir(remote_name)))
@@ -814,7 +829,7 @@ class MainWindow(QMainWindow):
                     self.tr('Updating') + ' ' + remote_name + path_dir)
             else:
                 if not update:
-                    self.ui.tree_files.clear()
+                    self.ui.treeWidget_files.clear()
                 update = False
                 tree = await rc.lsjson(f'{remote_name}{path_dir}')
                 self.ui.statusbar.showMessage('')
@@ -860,7 +875,7 @@ class MainWindow(QMainWindow):
                         return False
                     return self.text(column).lower() < other_item.text(column).lower()
 
-                self.ui.tree_files.clear()
+                self.ui.treeWidget_files.clear()
                 for file in tree:
                     item = QTreeWidgetItem(
                         [file['name'], file['size'], file['modified'], file['type']])
@@ -881,7 +896,7 @@ class MainWindow(QMainWindow):
                         item.setIcon(0, icon)
                     item.setData(0, Qt.ItemDataRole.UserRole, {
                                  'name': file['name'], 'remote': remote_name, 'path': file['path'], 'is_dir': file['is_dir']})
-                    self.ui.tree_files.addTopLevelItem(item)
+                    self.ui.treeWidget_files.addTopLevelItem(item)
 
             if not update:
                 break
@@ -952,9 +967,23 @@ class MainWindow(QMainWindow):
     def mount_point(self):
         path = QFileDialog.getExistingDirectory()
         if path is not None and path != '':
-            self.ui.lineEdit_mount_point.setText(path)
+            self.ui.comboBox_mount_point.setCurrentText(path)
 
     def mount_remote(self, remote: str, type: str = '', mount_point: str = '', is_remember: bool = False):
+        remote = remote.strip()
+        mount_point = mount_point.strip()
+        i = 0
+        while i < len(self.mount):
+            if self.mount[i].remote == remote or self.mount[i].mount_point == mount_point and mount_point not in ['', '*']:
+                self.mount[i].stop()
+                del self.mount[i]
+                items = self.ui.treeWidget_mount.findItems(remote, Qt.MatchFlag.MatchCaseSensitive) + self.ui.treeWidget_mount.findItems(mount_point, Qt.MatchFlag.MatchCaseSensitive, 2)
+                for item in items:
+                    self.remember_mount(Qt.CheckState.Unchecked, item.text(0))
+                    self.ui.treeWidget_mount.takeTopLevelItem(self.ui.treeWidget_mount.indexOfTopLevelItem(item))
+            else:
+                i += 1
+
         if os.name == 'nt':
             if mount_point.strip() == '':
                 mount_point = '*'
@@ -972,22 +1001,24 @@ class MainWindow(QMainWindow):
 
             process = rc.mount(remote, mount_point)
 
-        def remember(check_state: Qt.CheckState.Checked, remote: str, type: str, mount_point: str):
-            settings = QSettings('Denis Mazur', 'Cloud Explorer')
-            mount: dict = settings.value('mount', {})
-            if check_state == Qt.CheckState.Checked:
-                mount[remote] = {'remote': remote, 'type': type, "mount_point": mount_point}
-            else:
-                mount.pop(remote)
-            settings.setValue('mount', mount)
-
         self.mount.append(Mount(remote, mount_point, process=process))
         item = QTreeWidgetItem([remote, type, mount_point])
         self.ui.treeWidget_mount.addTopLevelItem(item)
         checkbox = QCheckBox()
         checkbox.setChecked(is_remember)
-        checkbox.checkStateChanged.connect(lambda check_state, remote=remote, type=type, mount_point=mount_point: remember(check_state, remote, type, mount_point))      
+        checkbox.checkStateChanged.connect(lambda check_state, remote=remote, type=type,
+                                           mount_point=mount_point: self.remember_mount(check_state, remote, type, mount_point))
         self.ui.treeWidget_mount.setItemWidget(item, 3, checkbox)
+
+    def remember_mount(self, check_state: Qt.CheckState, remote: str, type: str = '', mount_point: str = ''):
+        settings = QSettings('Denis Mazur', 'Cloud Explorer')
+        mount: dict = settings.value('mount', {})
+        if check_state == Qt.CheckState.Checked:
+            mount[remote] = {'remote': remote,
+                             'type': type, "mount_point": mount_point}
+        else:
+            mount.pop(remote, None)
+        settings.setValue('mount', mount)
 
     def recovery_mount(self):
         settings = QSettings('Denis Mazur', 'Cloud Explorer')
@@ -1003,7 +1034,8 @@ class MainWindow(QMainWindow):
         clipboard = QApplication.clipboard()
         mime_data = QMimeData()
         mime_data.setText('.cloud_explorer_file_temp')
-        url = QUrl.fromLocalFile(self.temp_dir + os.sep + '.cloud_explorer_file_temp')
+        url = QUrl.fromLocalFile(
+            self.temp_dir + os.sep + '.cloud_explorer_file_temp')
         mime_data.setUrls([url])
         clipboard.setMimeData(mime_data)
 
@@ -1034,7 +1066,7 @@ class MainWindow(QMainWindow):
                     else:
                         await rc.deletefile(file_path)
                     task.done()
-                    items = self.ui.tree_files.findItems(
+                    items = self.ui.treeWidget_files.findItems(
                         file['name'], Qt.MatchFlag.MatchCaseSensitive)
                     if len(items) > 0 and items[0].data(0, Qt.ItemDataRole.UserRole)['remote'] == file['remote'] and items[0].data(0, Qt.ItemDataRole.UserRole)['path'] == file['path']:
                         items[0].setHidden(True)
@@ -1157,7 +1189,7 @@ class MainWindow(QMainWindow):
 
     def shortcuts(self):
         def delete():
-            selected = self.ui.tree_files.selectedItems()
+            selected = self.ui.treeWidget_files.selectedItems()
             selected_files = []
             for item in selected:
                 selected_files.append(item.data(0, Qt.ItemDataRole.UserRole))
@@ -1171,9 +1203,9 @@ class MainWindow(QMainWindow):
                 selected_files.append(item.data(0, Qt.ItemDataRole.UserRole))
             if len(selected) > 0:
                 asyncio.ensure_future(self.delete_files(selected_files))
-        
+
         def copy():
-            selected = self.ui.tree_files.selectedItems()
+            selected = self.ui.treeWidget_files.selectedItems()
             selected_files = []
             for item in selected:
                 selected_files.append(item.data(0, Qt.ItemDataRole.UserRole))
@@ -1181,7 +1213,7 @@ class MainWindow(QMainWindow):
                 self.copy_file(selected_files)
 
         self.delete_shortcut = QShortcut(
-            QKeySequence("Del"), self.ui.tree_files)
+            QKeySequence("Del"), self.ui.treeWidget_files)
         self.delete_shortcut.activated.connect(delete)
 
         self.delete_shortcut_search = QShortcut(
@@ -1189,39 +1221,39 @@ class MainWindow(QMainWindow):
         self.delete_shortcut_search.activated.connect(delete_search)
 
         self.copy_shortcut = QShortcut(
-            QKeySequence("Ctrl+C"), self.ui.tree_files)
+            QKeySequence("Ctrl+C"), self.ui.treeWidget_files)
         self.copy_shortcut.activated.connect(
-            lambda: self.copy_files(self.ui.tree_files.selectedItems()))
+            lambda: self.copy_files(self.ui.treeWidget_files.selectedItems()))
 
         self.copy_shortcut = QShortcut(
             QKeySequence("Ctrl+C"), self.ui.treeWidget_search)
         self.copy_shortcut.activated.connect(copy)
 
         self.paste_shortcut = QShortcut(
-            QKeySequence("Ctrl+V"), self.ui.tree_files)
+            QKeySequence("Ctrl+V"), self.ui.treeWidget_files)
         self.paste_shortcut.activated.connect(self.paste_file)
 
         def rename():
-            selected = self.ui.tree_files.selectedItems()
+            selected = self.ui.treeWidget_files.selectedItems()
             if len(selected) > 0:
                 asyncio.ensure_future(self.rename_file(selected[0].text(0)))
 
         self.rename_shortcut = QShortcut(
-            QKeySequence("F2"), self.ui.tree_files)
+            QKeySequence("F2"), self.ui.treeWidget_files)
         self.rename_shortcut.activated.connect(rename)
 
         self.update_shortcut = QShortcut(
-            QKeySequence("F5"), self.ui.tree_files)
+            QKeySequence("F5"), self.ui.treeWidget_files)
         self.update_shortcut.activated.connect(lambda: asyncio.ensure_future(
             self.update_dir(self.current_remote, self.remotes_paths.setdefault(self.current_remote, ''))))
 
         self.new_folder_shortcut = QShortcut(
-            QKeySequence("F7"), self.ui.tree_files)
+            QKeySequence("F7"), self.ui.treeWidget_files)
         self.new_folder_shortcut.activated.connect(
             lambda: asyncio.ensure_future(self.new_folder()))
 
     def show_context_menu_tree(self, point):
-        selected = self.ui.tree_files.selectedItems()
+        selected = self.ui.treeWidget_files.selectedItems()
         selected_files = []
         for item in selected:
             selected_files.append(item.data(0, Qt.ItemDataRole.UserRole))
@@ -1278,7 +1310,8 @@ class MainWindow(QMainWindow):
                 action = QAction(self)
                 action.setText(self.tr('Copy'))
                 action.setIcon(QIcon.fromTheme('edit-copy'))
-                action.triggered.connect(lambda: self.copy_file(selected_files))
+                action.triggered.connect(
+                    lambda: self.copy_file(selected_files))
                 action.setShortcut(QKeySequence('Ctrl+C'))
                 menu.addAction(action)
 
@@ -1338,13 +1371,13 @@ class MainWindow(QMainWindow):
             path = file_path[0:-len(file_name)]
             self.ui.tabWidget.setCurrentIndex(0)
 
-            self.ui.tree_remotes.clearSelection()
-            items = self.ui.tree_remotes.findItems(
+            self.ui.treeWidget_remotes.clearSelection()
+            items = self.ui.treeWidget_remotes.findItems(
                 remote, Qt.MatchFlag.MatchCaseSensitive)
             items[0].setSelected(True)
 
             await self.open_dir(remote, path)
-            items = self.ui.tree_files.findItems(
+            items = self.ui.treeWidget_files.findItems(
                 file_name, Qt.MatchFlag.MatchCaseSensitive)
             items[0].setSelected(True)
 
@@ -1403,12 +1436,12 @@ class MainWindow(QMainWindow):
         menu.exec(QCursor.pos())
 
     def show_context_menu_remote(self, point):
-        index = self.ui.tree_remotes.indexAt(point)
+        index = self.ui.treeWidget_remotes.indexAt(point)
 
         if not index.isValid():
             return
 
-        item = self.ui.tree_remotes.itemAt(point)
+        item = self.ui.treeWidget_remotes.itemAt(point)
 
         menu = QMenu()
 
@@ -1462,6 +1495,8 @@ class MainWindow(QMainWindow):
 
         def stop_mount(index: int):
             self.mount[index].stop()
+            item = self.ui.treeWidget_mount.itemAt(point)
+            self.remember_mount(Qt.CheckState.Unchecked, item.text(0))
             self.ui.treeWidget_mount.takeTopLevelItem(index)
             del self.mount[index]
 
@@ -1474,22 +1509,22 @@ class MainWindow(QMainWindow):
         menu.exec(QCursor.pos())
 
     def show_context_menu_task(self, point):
-        index = self.ui.tasks.indexAt(point)
+        index = self.ui.treeWidget_tasks.indexAt(point)
         menu = QMenu()
 
         def clear_tasks():
             for i in range(len(self.tasks)):
                 if self.tasks[i].status == 'Done':
-                    self.ui.tasks.topLevelItem(i).setHidden(True)
+                    self.ui.treeWidget_tasks.topLevelItem(i).setHidden(True)
 
         def stop_task(index: int):
             self.tasks[index].process.send_signal(signal.CTRL_BREAK_EVENT)
-            self.ui.tasks.takeTopLevelItem(index)
+            self.ui.treeWidget_tasks.takeTopLevelItem(index)
             del self.tasks[index]
 
         def cancel_task(index: int):
             self.tasks[index].process.send_signal(signal.CTRL_BREAK_EVENT)
-            self.ui.tasks.topLevelItem(index).setHidden(True)
+            self.ui.treeWidget_tasks.topLevelItem(index).setHidden(True)
             self.tasks[index].status = 'Stop'
 
         if not index.isValid():
@@ -1499,7 +1534,7 @@ class MainWindow(QMainWindow):
             action.triggered.connect(clear_tasks)
             menu.addAction(action)
         else:
-            item = self.ui.tasks.itemAt(point)
+            item = self.ui.treeWidget_tasks.itemAt(point)
 
             if item.text(0) in [self.tr('Download', 'noun'), self.tr('Upload'), self.tr('Opening')]:
                 action = QAction(self)
@@ -1513,13 +1548,7 @@ class MainWindow(QMainWindow):
                 action.setText(self.tr('Clear Task'))
                 action.setIcon(QIcon.fromTheme('edit-clear'))
                 action.triggered.connect(
-                    lambda: self.ui.tasks.topLevelItem(index.row()).setHidden(True))
-                menu.addAction(action)
-
-            if item.text(0) in ['Mount', 'Serve']:
-                action = QAction(self)
-                action.setText(self.tr('Stop'))
-                action.triggered.connect(lambda: stop_task(index.row()))
+                    lambda: self.ui.treeWidget_tasks.topLevelItem(index.row()).setHidden(True))
                 menu.addAction(action)
 
             if item.text(0) in [self.tr('Download', 'noun'), self.tr('Upload'), self.tr('Opening')] and item.text(3) != self.tr('Done'):
