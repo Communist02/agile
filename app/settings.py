@@ -13,7 +13,7 @@ class SettingsWindow(QDialog):
         self.ui = settings_window.Ui_SettingsWindow()
         self.ui.setupUi(self)
 
-        self.settings = QSettings('Denis Mazur', 'Cloud Explorer')
+        self.settings = QSettings('Cloud Explorer', 'Cloud Explorer')
 
         self.setWindowIcon(
             QIcon(os.path.dirname(__file__) + '/resources/' + 'favicon.ico'))
@@ -24,8 +24,12 @@ class SettingsWindow(QDialog):
         self.ui.comboBox_style.addItems(styles)
         self.ui.comboBox_style.setCurrentText(self.settings.value('style', self.style().name()))
 
-        palettes_list = palettes.keys()
-        self.ui.comboBox_palette.addItems(palettes_list)
+        palettes_list: list = list(palettes.keys())
+        # if self.ui.comboBox_style.currentText() != 'fusion' and self.ui.comboBox_style.currentText() != 'windows':
+        for i in range(len(palettes_list)):
+            palettes_list[i] = palettes_list[i].replace(' Dark', '').replace(' Light', '')
+
+        self.ui.comboBox_palette.addItems(set(palettes_list))
         self.ui.comboBox_palette.setCurrentText(
             self.settings.value('palette', 'System'))
 

@@ -23,9 +23,6 @@
     </property>
     <item>
      <widget class="QTabWidget" name="tabWidget">
-      <property name="currentIndex">
-       <number>0</number>
-      </property>
       <property name="documentMode">
        <bool>true</bool>
       </property>
@@ -188,6 +185,11 @@
               <width>16777215</width>
               <height>34</height>
              </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QPushButton {
+	background-color: rgba(255, 255, 255, 0);
+}</string>
             </property>
             <property name="frameShape">
              <enum>QFrame::Shape::StyledPanel</enum>

@@ -648,7 +648,7 @@ class MainWindow(QMainWindow):
         self.ui.treeWidget_remotes.clear()
         self.ui.comboBox_search.clear()
         self.ui.comboBox_remote.clear()
-        settings = QSettings('Denis Mazur', 'Cloud Explorer')
+        settings = QSettings('Cloud Explorer', 'Cloud Explorer')
         for remote in remotes:
             item = QTreeWidgetItem([remote['name'] + ':', remote['type']])
             item.setSizeHint(0, QSize(0, 32))
@@ -1013,7 +1013,7 @@ class MainWindow(QMainWindow):
         self.ui.treeWidget_mount.setItemWidget(item, 3, checkbox)
 
     def remember_mount(self, check_state: Qt.CheckState, remote: str, type: str = '', mount_point: str = ''):
-        settings = QSettings('Denis Mazur', 'Cloud Explorer')
+        settings = QSettings('Cloud Explorer', 'Cloud Explorer')
         mount: dict = settings.value('mount', {})
         if check_state == Qt.CheckState.Checked:
             mount[remote] = {'remote': remote,
@@ -1023,7 +1023,7 @@ class MainWindow(QMainWindow):
         settings.setValue('mount', mount)
 
     def recovery_mount(self):
-        settings = QSettings('Denis Mazur', 'Cloud Explorer')
+        settings = QSettings('Cloud Explorer', 'Cloud Explorer')
         mount: dict = settings.value('mount', {})
         for key, value in mount.items():
             self.mount_remote(key, value['type'], value['mount_point'], True)
@@ -1279,7 +1279,7 @@ class MainWindow(QMainWindow):
                 action.setShortcut(QKeySequence('F7'))
                 menu.addAction(action)
             else:
-                item = self.ui.tree_files.itemAt(point)
+                item = self.ui.treeWidget_files.itemAt(point)
                 file_name = item.data(0, Qt.ItemDataRole.UserRole)['name']
                 is_dir = item.data(0, Qt.ItemDataRole.UserRole)['is_dir']
                 remote = item.data(0, Qt.ItemDataRole.UserRole)['remote']

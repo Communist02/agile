@@ -131,6 +131,9 @@ class Ui_MainWindow(object):
         self.path_list_frame.setSizePolicy(sizePolicy1)
         self.path_list_frame.setMinimumSize(QSize(0, 34))
         self.path_list_frame.setMaximumSize(QSize(16777215, 34))
+        self.path_list_frame.setStyleSheet(u"QPushButton {\n"
+"	background-color: rgba(255, 255, 255, 0);\n"
+"}")
         self.path_list_frame.setFrameShape(QFrame.Shape.StyledPanel)
         self.horizontalLayout_3 = QHBoxLayout(self.path_list_frame)
         self.horizontalLayout_3.setSpacing(3)
@@ -353,9 +356,6 @@ class Ui_MainWindow(object):
         self.menuView.addAction(self.action_list_remotes)
 
         self.retranslateUi(MainWindow)
-
-        self.tabWidget.setCurrentIndex(0)
-
 
         QMetaObject.connectSlotsByName(MainWindow)
     # setupUi

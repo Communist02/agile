@@ -3,7 +3,7 @@ import os
 import PySide6.QtAsyncio as QtAsyncio
 
 from PySide6.QtNetwork import QLocalServer, QLocalSocket
-from PySide6.QtCore import QLibraryInfo, QLocale, QSettings, QTranslator
+from PySide6.QtCore import QLibraryInfo, QLocale, QSettings, QTranslator, Qt
 from PySide6.QtWidgets import QApplication
 
 from app.palettes import palettes
@@ -24,7 +24,7 @@ def is_already_running(server_name: str):
 def start_server(window: MainWindow, server_name: str):
     server = QLocalServer()
     try:
-        server.removeServer(server_name)  # На случай краша предыдущего запуска
+        server.removeServer(server_name)
     except:
         pass
     server.listen(server_name)
@@ -43,9 +43,15 @@ def start_server(window: MainWindow, server_name: str):
 if __name__ == '__main__':
     app = QApplication()
     app.setQuitOnLastWindowClosed(False)
-    settings = QSettings('Denis Mazur', 'Cloud Explorer')
+    settings = QSettings('Cloud Explorer', 'Cloud Explorer')
     app.setStyle(settings.value('style', ''))
-    app.setPalette(palettes[settings.value('palette', 'System')])
+    pallete = settings.value('palette', 'System')
+    if pallete not in palettes.keys():
+        if app.styleHints().colorScheme() == Qt.ColorScheme.Light:
+            pallete += ' Light'
+        else:
+            pallete += ' Dark'
+    app.setPalette(palettes.get(pallete, palettes['System']))
 
     qt_translator = QTranslator()
     translator = QTranslator()
