@@ -29,7 +29,12 @@ class SettingsWindow(QDialog):
         for i in range(len(palettes_list)):
             palettes_list[i] = palettes_list[i].replace(' Dark', '').replace(' Light', '')
 
-        self.ui.comboBox_palette.addItems(set(palettes_list))
+        unique_list = []
+        for palette in palettes_list:
+            if palette not in unique_list:
+                unique_list.append(palette)
+
+        self.ui.comboBox_palette.addItems(unique_list)
         self.ui.comboBox_palette.setCurrentText(
             self.settings.value('palette', 'System'))
 

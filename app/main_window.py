@@ -11,7 +11,7 @@ import sys
 
 from PySide6.QtCore import QFileInfo, QMimeData, QPoint, QSettings, QSize, QTimer, QUrl, Qt
 from PySide6.QtGui import QAction, QCloseEvent, QColorConstants, QCursor, QDesktopServices, QDrag, QDragEnterEvent, QIcon, QKeySequence, QPainter, QPixmap, QShortcut
-from PySide6.QtWidgets import QApplication, QCheckBox, QFileDialog, QFileIconProvider, QHBoxLayout, QInputDialog, QLabel, QMainWindow, QMenu, QMessageBox, QProgressBar, QPushButton, QSizePolicy, QSlider, QSpacerItem, QSystemTrayIcon, QTreeWidgetItem, QWidget
+from PySide6.QtWidgets import QApplication, QCheckBox, QFileDialog, QFileIconProvider, QHBoxLayout, QInputDialog, QLabel, QLineEdit, QMainWindow, QMenu, QMessageBox, QProgressBar, QPushButton, QSizePolicy, QSlider, QSpacerItem, QSystemTrayIcon, QTreeWidgetItem, QWidget
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
 from app.new_remote import NewRemoteWindow
@@ -177,6 +177,11 @@ class MainWindow(QMainWindow):
             0, Qt.SortOrder.AscendingOrder)
         self.ui.treeWidget_remotes.setIconSize(QSize(28, 28))
         self.ui.dock_tasks.hide()
+        self.ui.lineEdit_input_path.hide()
+
+        if QApplication.style().name().lower() == 'windows11':
+            # arrow_label.setStyleSheet('QLabel {font-weight: bold;}')
+            self.ui.path_list_frame.setStyleSheet('QPushButton {background-color: rgba(255, 255, 255, 0);font-weight: bold;}QLabel {font-weight: bold;}')
 
         def close():
             self.hide()
@@ -211,6 +216,8 @@ class MainWindow(QMainWindow):
             lambda: asyncio.ensure_future(self.search()))
         self.ui.button_mount.clicked.connect(lambda: self.mount_remote(
             self.ui.comboBox_remote.currentText(), type=self.ui.comboBox_remote.currentData(Qt.ItemDataRole.UserRole), mount_point=self.ui.comboBox_mount_point.currentText()))
+        self.ui.pushButton_input_path.clicked.connect(self.start_input_path)
+        self.ui.lineEdit_input_path.editingFinished.connect(self.enter_input_path)
 
         if os.name == "nt":
             self.ui.toolButton_mount_point.hide()
@@ -602,6 +609,25 @@ class MainWindow(QMainWindow):
         drag.setHotSpot(QPoint(i / 2, -9))
         drag.exec(Qt.DropAction.CopyAction)
 
+    def start_input_path(self):
+        self.ui.lineEdit_input_path.setText(self.current_remote + self.remotes_paths[self.current_remote])
+        self.ui.path_list_frame.hide()
+        self.ui.lineEdit_input_path.show()
+        self.ui.lineEdit_input_path.setFocus()
+
+    def enter_input_path(self):
+        is_focused = self.ui.lineEdit_input_path.hasFocus()
+        self.ui.path_list_frame.show()
+        self.ui.lineEdit_input_path.hide()
+
+        index = self.ui.lineEdit_input_path.text().find(':')
+
+        if index != -1 and is_focused:
+            remote_name = self.ui.lineEdit_input_path.text()[:index + 1]
+            path = self.ui.lineEdit_input_path.text()[index + 1:]
+
+            asyncio.ensure_future(self.open_dir(remote_name, path))
+
     def prev_history(self):
         if self.current_remote in self.history.keys():
             if self.history[self.current_remote][1] > 0:
@@ -789,29 +815,32 @@ class MainWindow(QMainWindow):
         for i in range(self.ui.path_list.count()):
             self.ui.path_list.itemAt(i).widget().deleteLater()
 
-        button = QPushButton(remote_name)
+        button = QPushButton(remote_name[:-1])
         button.setSizePolicy(QSizePolicy.Policy.Fixed,
                              QSizePolicy.Policy.Expanding)
         button.setFlat(True)
-        button.setStyleSheet('QPushButton {font-weight: bold;}')
         button.setIcon(self.ui.treeWidget_remotes.findItems(
             remote_name, Qt.MatchFlag.MatchCaseSensitive)[0].icon(0))
         button.clicked.connect(lambda t, remote_name=remote_name: asyncio.ensure_future(
             self.open_dir(remote_name)))
         self.ui.path_list.addWidget(button)
+        arrow_label = QLabel(':')
+        arrow_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.ui.path_list.addWidget(arrow_label)
 
         temp_path = ''
+        count = 0
         for name in path_dir.split('/'):
-            if name != '':
-                temp_path += name + '/'
-                arrow_label = QLabel("/")
-                arrow_label.setStyleSheet('QLabel {font-weight: bold;}')
-                arrow_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-                self.ui.path_list.addWidget(arrow_label)
+            count += 1
+            temp_path += name + '/'
+            if name != '' or count > 1:
+                if count > 1:
+                    arrow_label = QLabel('/')
+                    arrow_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+                    self.ui.path_list.addWidget(arrow_label)
                 button = QPushButton(name)
                 button.setSizePolicy(
                     QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding)
-                button.setStyleSheet('QPushButton {font-weight: bold;}')
                 button.setFlat(True)
                 button.clicked.connect(
                     lambda t, a=self.current_remote, b=temp_path[:-1]: asyncio.ensure_future(self.open_dir(a, b)))
@@ -854,10 +883,10 @@ class MainWindow(QMainWindow):
                                 index += 1
                         size = f'{size} {sizes[index]}'
 
-                    if path_dir != '':
+                    if path_dir != '' and path_dir[-1] != '/':
                         path = path_dir + '/' + tree[i]['Path']
                     else:
-                        path = tree[i]['Path']
+                        path = path_dir + tree[i]['Path']
 
                     modified = modified.replace(
                         'T', ' ').replace('Z', ' ').split('.')[0]

@@ -19,9 +19,9 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
 from PySide6.QtWidgets import (QAbstractItemView, QApplication, QComboBox, QDockWidget,
     QFrame, QHBoxLayout, QHeaderView, QLabel,
     QLineEdit, QMainWindow, QMenu, QMenuBar,
-    QPushButton, QSizePolicy, QSpacerItem, QStatusBar,
-    QTabWidget, QToolButton, QTreeWidget, QTreeWidgetItem,
-    QVBoxLayout, QWidget)
+    QPushButton, QSizePolicy, QStatusBar, QTabWidget,
+    QToolButton, QTreeWidget, QTreeWidgetItem, QVBoxLayout,
+    QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -131,9 +131,6 @@ class Ui_MainWindow(object):
         self.path_list_frame.setSizePolicy(sizePolicy1)
         self.path_list_frame.setMinimumSize(QSize(0, 34))
         self.path_list_frame.setMaximumSize(QSize(16777215, 34))
-        self.path_list_frame.setStyleSheet(u"QPushButton {\n"
-"	background-color: rgba(255, 255, 255, 0);\n"
-"}")
         self.path_list_frame.setFrameShape(QFrame.Shape.StyledPanel)
         self.horizontalLayout_3 = QHBoxLayout(self.path_list_frame)
         self.horizontalLayout_3.setSpacing(3)
@@ -145,12 +142,30 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_3.addLayout(self.path_list)
 
-        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        self.pushButton_input_path = QPushButton(self.path_list_frame)
+        self.pushButton_input_path.setObjectName(u"pushButton_input_path")
+        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        sizePolicy2.setHorizontalStretch(0)
+        sizePolicy2.setVerticalStretch(0)
+        sizePolicy2.setHeightForWidth(self.pushButton_input_path.sizePolicy().hasHeightForWidth())
+        self.pushButton_input_path.setSizePolicy(sizePolicy2)
+        self.pushButton_input_path.setText(u"")
+        self.pushButton_input_path.setFlat(True)
 
-        self.horizontalLayout_3.addItem(self.horizontalSpacer)
+        self.horizontalLayout_3.addWidget(self.pushButton_input_path)
 
 
         self.horizontalLayout.addWidget(self.path_list_frame)
+
+        self.lineEdit_input_path = QLineEdit(self.tab_explorer)
+        self.lineEdit_input_path.setObjectName(u"lineEdit_input_path")
+        sizePolicy3 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        sizePolicy3.setHorizontalStretch(0)
+        sizePolicy3.setVerticalStretch(0)
+        sizePolicy3.setHeightForWidth(self.lineEdit_input_path.sizePolicy().hasHeightForWidth())
+        self.lineEdit_input_path.setSizePolicy(sizePolicy3)
+
+        self.horizontalLayout.addWidget(self.lineEdit_input_path)
 
 
         self.verticalLayout_3.addLayout(self.horizontalLayout)
@@ -159,11 +174,11 @@ class Ui_MainWindow(object):
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
         self.treeWidget_remotes = QTreeWidget(self.tab_explorer)
         self.treeWidget_remotes.setObjectName(u"treeWidget_remotes")
-        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
-        sizePolicy2.setHorizontalStretch(0)
-        sizePolicy2.setVerticalStretch(0)
-        sizePolicy2.setHeightForWidth(self.treeWidget_remotes.sizePolicy().hasHeightForWidth())
-        self.treeWidget_remotes.setSizePolicy(sizePolicy2)
+        sizePolicy4 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
+        sizePolicy4.setHorizontalStretch(0)
+        sizePolicy4.setVerticalStretch(0)
+        sizePolicy4.setHeightForWidth(self.treeWidget_remotes.sizePolicy().hasHeightForWidth())
+        self.treeWidget_remotes.setSizePolicy(sizePolicy4)
         self.treeWidget_remotes.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.treeWidget_remotes.setRootIsDecorated(False)
         self.treeWidget_remotes.setSortingEnabled(True)
@@ -250,11 +265,11 @@ class Ui_MainWindow(object):
         self.horizontalLayout_6.setObjectName(u"horizontalLayout_6")
         self.label = QLabel(self.tab_mount)
         self.label.setObjectName(u"label")
-        sizePolicy3 = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Preferred)
-        sizePolicy3.setHorizontalStretch(0)
-        sizePolicy3.setVerticalStretch(0)
-        sizePolicy3.setHeightForWidth(self.label.sizePolicy().hasHeightForWidth())
-        self.label.setSizePolicy(sizePolicy3)
+        sizePolicy5 = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Preferred)
+        sizePolicy5.setHorizontalStretch(0)
+        sizePolicy5.setVerticalStretch(0)
+        sizePolicy5.setHeightForWidth(self.label.sizePolicy().hasHeightForWidth())
+        self.label.setSizePolicy(sizePolicy5)
 
         self.horizontalLayout_6.addWidget(self.label)
 
@@ -268,8 +283,8 @@ class Ui_MainWindow(object):
 
         self.label_2 = QLabel(self.tab_mount)
         self.label_2.setObjectName(u"label_2")
-        sizePolicy3.setHeightForWidth(self.label_2.sizePolicy().hasHeightForWidth())
-        self.label_2.setSizePolicy(sizePolicy3)
+        sizePolicy5.setHeightForWidth(self.label_2.sizePolicy().hasHeightForWidth())
+        self.label_2.setSizePolicy(sizePolicy5)
 
         self.horizontalLayout_6.addWidget(self.label_2)
 
