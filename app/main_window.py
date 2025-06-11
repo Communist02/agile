@@ -11,7 +11,7 @@ import sys
 
 from PySide6.QtCore import QFileInfo, QMimeData, QPoint, QSettings, QSize, QTimer, QUrl, Qt
 from PySide6.QtGui import QAction, QCloseEvent, QColorConstants, QCursor, QDesktopServices, QDrag, QDragEnterEvent, QIcon, QKeySequence, QPainter, QPixmap, QShortcut
-from PySide6.QtWidgets import QApplication, QCheckBox, QFileDialog, QFileIconProvider, QHBoxLayout, QInputDialog, QLabel, QLineEdit, QMainWindow, QMenu, QMessageBox, QProgressBar, QPushButton, QSizePolicy, QSlider, QSpacerItem, QSystemTrayIcon, QTreeWidgetItem, QWidget
+from PySide6.QtWidgets import QApplication, QCheckBox, QFileDialog, QFileIconProvider, QHBoxLayout, QInputDialog, QLabel, QMainWindow, QMenu, QMessageBox, QProgressBar, QPushButton, QSizePolicy, QSlider, QSpacerItem, QSystemTrayIcon, QTreeWidgetItem, QWidget
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
 from app.new_remote import NewRemoteWindow
@@ -390,13 +390,14 @@ class MainWindow(QMainWindow):
             observer_thread.start()
 
     def check_free_drives(self):
-        all_drives = set(chr(ord('A') + i) + ':' for i in range(26))
-        occupied_drives = win32api.GetLogicalDriveStrings()
-        occupied_drives = set(occupied_drives.replace(
-            '\x00', '').split('\\')[:-1])
-        free_drives = sorted(all_drives - occupied_drives, reverse=True)
-        self.ui.comboBox_mount_point.clear()
-        self.ui.comboBox_mount_point.addItems(free_drives)
+        if os.name == 'nt':
+            all_drives = set(chr(ord('A') + i) + ':' for i in range(26))
+            occupied_drives = win32api.GetLogicalDriveStrings()
+            occupied_drives = set(occupied_drives.replace(
+                '\x00', '').split('\\')[:-1])
+            free_drives = sorted(all_drives - occupied_drives, reverse=True)
+            self.ui.comboBox_mount_point.clear()
+            self.ui.comboBox_mount_point.addItems(free_drives)
 
     async def search(self):
         remote_name = self.ui.comboBox_search.currentText()
@@ -675,10 +676,10 @@ class MainWindow(QMainWindow):
             subprocess.Popen('start rclone config', shell=True)
         else:
             try:
-                subprocess.Popen('gnome-terminal rclone config', shell=True)
+                subprocess.Popen('gnome-terminal -- rclone config', shell=True)
             except FileNotFoundError:
                 try:
-                    subprocess.Popen('xterm rclone config', shell=True)
+                    subprocess.Popen('xterm -e rclone config', shell=True)
                 except FileNotFoundError:
                     print("Unsupported platform")
                     sys.exit(1)
