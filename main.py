@@ -45,13 +45,13 @@ if __name__ == '__main__':
     app.setQuitOnLastWindowClosed(False)
     settings = QSettings('Cloud Explorer', 'Cloud Explorer')
     app.setStyle(settings.value('style', ''))
-    pallete = settings.value('palette', 'System')
-    if pallete not in palettes.keys():
+    palette = settings.value('palette', 'System')
+    if palette not in palettes.keys():
         if app.styleHints().colorScheme() == Qt.ColorScheme.Light:
-            pallete += ' Light'
+            palette += ' Light'
         else:
-            pallete += ' Dark'
-    app.setPalette(palettes.get(pallete, palettes['System']))
+            palette += ' Dark'
+    app.setPalette(palettes.get(palette, palettes['System']))
 
     qt_translator = QTranslator()
     translator = QTranslator()

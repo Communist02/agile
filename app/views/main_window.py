@@ -55,6 +55,8 @@ class Ui_MainWindow(object):
         self.action_settings.setIcon(icon4)
         self.action_show_tasks = QAction(MainWindow)
         self.action_show_tasks.setObjectName(u"action_show_tasks")
+        self.action_config_rclone = QAction(MainWindow)
+        self.action_config_rclone.setObjectName(u"action_config_rclone")
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.verticalLayout = QVBoxLayout(self.centralwidget)
@@ -164,6 +166,7 @@ class Ui_MainWindow(object):
         sizePolicy3.setVerticalStretch(0)
         sizePolicy3.setHeightForWidth(self.lineEdit_input_path.sizePolicy().hasHeightForWidth())
         self.lineEdit_input_path.setSizePolicy(sizePolicy3)
+        self.lineEdit_input_path.setClearButtonEnabled(True)
 
         self.horizontalLayout.addWidget(self.lineEdit_input_path)
 
@@ -363,6 +366,7 @@ class Ui_MainWindow(object):
         self.menuClient.addAction(self.action_new_remote)
         self.menuClient.addAction(self.action_new_serve)
         self.menuClient.addSeparator()
+        self.menuClient.addAction(self.action_config_rclone)
         self.menuClient.addAction(self.action_settings)
         self.menuClient.addSeparator()
         self.menuClient.addAction(self.action_exit)
@@ -383,6 +387,7 @@ class Ui_MainWindow(object):
         self.action_new_serve.setText(QCoreApplication.translate("MainWindow", u"New serve", None))
         self.action_settings.setText(QCoreApplication.translate("MainWindow", u"Settings", None))
         self.action_show_tasks.setText(QCoreApplication.translate("MainWindow", u"Show tasks", None))
+        self.action_config_rclone.setText(QCoreApplication.translate("MainWindow", u"Config Rclone", None))
         self.button_prev_history.setText("")
         self.button_next_history.setText("")
         self.button_exit_dir.setText("")

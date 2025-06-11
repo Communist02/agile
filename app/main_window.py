@@ -196,6 +196,7 @@ class MainWindow(QMainWindow):
         self.ui.action_about.triggered.connect(
             lambda: QMessageBox.aboutQt(self))
         self.ui.action_show_tasks.triggered.connect(self.ui.dock_tasks.show)
+        self.ui.action_config_rclone.triggered.connect(self.open_terminal)
 
         self.ui.treeWidget_remotes.itemClicked.connect(self.open_remote)
         self.ui.treeWidget_files.itemDoubleClicked.connect(
@@ -610,10 +611,11 @@ class MainWindow(QMainWindow):
         drag.exec(Qt.DropAction.CopyAction)
 
     def start_input_path(self):
-        self.ui.lineEdit_input_path.setText(self.current_remote + self.remotes_paths[self.current_remote])
-        self.ui.path_list_frame.hide()
-        self.ui.lineEdit_input_path.show()
-        self.ui.lineEdit_input_path.setFocus()
+        if self.current_remote != '':
+            self.ui.lineEdit_input_path.setText(self.current_remote + self.remotes_paths[self.current_remote])
+            self.ui.path_list_frame.hide()
+            self.ui.lineEdit_input_path.show()
+            self.ui.lineEdit_input_path.setFocus()
 
     def enter_input_path(self):
         is_focused = self.ui.lineEdit_input_path.hasFocus()
@@ -667,6 +669,19 @@ class MainWindow(QMainWindow):
             self.ui.button_next_history.setEnabled(True)
         else:
             self.ui.button_next_history.setEnabled(False)
+
+    def open_terminal(self):
+        if os.name == 'nt':
+            subprocess.Popen('start rclone config', shell=True)
+        else:
+            try:
+                subprocess.Popen('gnome-terminal rclone config', shell=True)
+            except FileNotFoundError:
+                try:
+                    subprocess.Popen('xterm rclone config', shell=True)
+                except FileNotFoundError:
+                    print("Unsupported platform")
+                    sys.exit(1)
 
     def update_remotes(self):
         remotes = rc.listremotes(True)

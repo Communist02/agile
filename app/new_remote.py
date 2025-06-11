@@ -1,6 +1,6 @@
 import os
 
-from PySide6.QtCore import QRegularExpression
+from PySide6.QtCore import QModelIndex, QRegularExpression
 from PySide6.QtGui import QIcon, QRegularExpressionValidator
 from PySide6.QtWidgets import QDialog, QMessageBox, QWidget
 from rclone_python import rclone, remote_types
@@ -18,10 +18,14 @@ class NewRemoteWindow(QDialog):
 
         self.setWindowIcon(
             QIcon(os.path.dirname(__file__) + '/resources/' + 'favicon.ico'))
+        
+        self.ui.tabWidget.tabBar().hide()
 
         self.ui.buttonBox.accepted.connect(
             lambda: self.new_remote(edit_mode, remote_name))
         self.ui.checkBox_ftp_tls.clicked.connect(self.set_view_ftp_tls_option)
+
+        self.ui.listWidget_remotes.currentRowChanged.connect(self.ui.tabWidget.setCurrentIndex)
 
         reg_exp = QRegularExpression('[a-zA-ZА-Яа-яЁё0-9_\\.\\-\\+@\\* ]*$')
         validator = QRegularExpressionValidator(reg_exp)
@@ -120,7 +124,7 @@ class NewRemoteWindow(QDialog):
                     self.ui.tabWidget.setCurrentIndex(self.ui.tabWidget.indexOf(
                         self.ui.tabWidget.findChild(QWidget, 'tab_union')))
             self.ui.lineEdit_name.setText(remote_name[:-1])
-            self.ui.tabWidget.tabBar().hide()
+            self.ui.listWidget_remotes.hide()
 
     def set_view_ftp_tls_option(self, value):
         self.ui.radioButton_ftp_false.setEnabled(value)
@@ -185,8 +189,9 @@ class NewRemoteWindow(QDialog):
                 case 'tab_onedrive':
                     region = [
                         'global', 'us', 'cn'][self.ui.comboBox_onedrive_region.currentIndex()]
+                    config_type = ['onedrive', 'sharepoint', 'url', 'search', 'driveid', 'siteid', 'path'][self.ui.comboBox_onedrive_type.currentIndex()]
                     rclone.create_remote(
-                        name, remote_type=remote_types.RemoteTypes.onedrive, region=region)
+                        name, remote_type=remote_types.RemoteTypes.onedrive, region=region, config_type=config_type)
                     self.close()
                 case 'tab_mailru':
                     rclone.create_remote(name, remote_type=remote_types.RemoteTypes.mailru,

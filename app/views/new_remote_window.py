@@ -17,15 +17,16 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QAbstractButton, QApplication, QCheckBox, QComboBox,
     QDialog, QDialogButtonBox, QFrame, QGroupBox,
-    QHBoxLayout, QLabel, QLineEdit, QPushButton,
-    QRadioButton, QScrollArea, QSizePolicy, QSpacerItem,
-    QTabWidget, QToolBox, QVBoxLayout, QWidget)
+    QHBoxLayout, QLabel, QLineEdit, QListWidget,
+    QListWidgetItem, QPushButton, QRadioButton, QScrollArea,
+    QSizePolicy, QSpacerItem, QTabWidget, QToolBox,
+    QVBoxLayout, QWidget)
 
 class Ui_NewRemoteWindow(object):
     def setupUi(self, NewRemoteWindow):
         if not NewRemoteWindow.objectName():
             NewRemoteWindow.setObjectName(u"NewRemoteWindow")
-        NewRemoteWindow.resize(640, 480)
+        NewRemoteWindow.resize(1080, 720)
         NewRemoteWindow.setModal(True)
         self.verticalLayout = QVBoxLayout(NewRemoteWindow)
         self.verticalLayout.setObjectName(u"verticalLayout")
@@ -33,6 +34,30 @@ class Ui_NewRemoteWindow(object):
         self.lineEdit_name.setObjectName(u"lineEdit_name")
 
         self.verticalLayout.addWidget(self.lineEdit_name)
+
+        self.horizontalLayout_5 = QHBoxLayout()
+        self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
+        self.listWidget_remotes = QListWidget(NewRemoteWindow)
+        QListWidgetItem(self.listWidget_remotes)
+        QListWidgetItem(self.listWidget_remotes)
+        QListWidgetItem(self.listWidget_remotes)
+        QListWidgetItem(self.listWidget_remotes)
+        QListWidgetItem(self.listWidget_remotes)
+        QListWidgetItem(self.listWidget_remotes)
+        QListWidgetItem(self.listWidget_remotes)
+        QListWidgetItem(self.listWidget_remotes)
+        QListWidgetItem(self.listWidget_remotes)
+        QListWidgetItem(self.listWidget_remotes)
+        QListWidgetItem(self.listWidget_remotes)
+        self.listWidget_remotes.setObjectName(u"listWidget_remotes")
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.listWidget_remotes.sizePolicy().hasHeightForWidth())
+        self.listWidget_remotes.setSizePolicy(sizePolicy)
+        self.listWidget_remotes.setMinimumSize(QSize(150, 0))
+
+        self.horizontalLayout_5.addWidget(self.listWidget_remotes)
 
         self.tabWidget = QTabWidget(NewRemoteWindow)
         self.tabWidget.setObjectName(u"tabWidget")
@@ -359,6 +384,23 @@ class Ui_NewRemoteWindow(object):
 
         self.verticalLayout_12.addWidget(self.comboBox_onedrive_region)
 
+        self.label_29 = QLabel(self.tab_onedrive)
+        self.label_29.setObjectName(u"label_29")
+
+        self.verticalLayout_12.addWidget(self.label_29)
+
+        self.comboBox_onedrive_type = QComboBox(self.tab_onedrive)
+        self.comboBox_onedrive_type.addItem("")
+        self.comboBox_onedrive_type.addItem("")
+        self.comboBox_onedrive_type.addItem("")
+        self.comboBox_onedrive_type.addItem("")
+        self.comboBox_onedrive_type.addItem("")
+        self.comboBox_onedrive_type.addItem("")
+        self.comboBox_onedrive_type.addItem("")
+        self.comboBox_onedrive_type.setObjectName(u"comboBox_onedrive_type")
+
+        self.verticalLayout_12.addWidget(self.comboBox_onedrive_type)
+
         self.verticalSpacer_6 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.verticalLayout_12.addItem(self.verticalSpacer_6)
@@ -495,21 +537,21 @@ class Ui_NewRemoteWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 584, 338))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 203, 338))
         self.verticalLayout_21 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_21.setObjectName(u"verticalLayout_21")
         self.verticalLayout_21.setContentsMargins(0, 0, 0, 0)
         self.toolBox = QToolBox(self.scrollAreaWidgetContents)
         self.toolBox.setObjectName(u"toolBox")
-        sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.toolBox.sizePolicy().hasHeightForWidth())
-        self.toolBox.setSizePolicy(sizePolicy)
+        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
+        sizePolicy1.setHorizontalStretch(0)
+        sizePolicy1.setVerticalStretch(0)
+        sizePolicy1.setHeightForWidth(self.toolBox.sizePolicy().hasHeightForWidth())
+        self.toolBox.setSizePolicy(sizePolicy1)
         self.toolBox.setFrameShape(QFrame.Shape.Box)
         self.page = QWidget()
         self.page.setObjectName(u"page")
-        self.page.setGeometry(QRect(0, 0, 582, 144))
+        self.page.setGeometry(QRect(0, 0, 350, 144))
         self.verticalLayout_22 = QVBoxLayout(self.page)
         self.verticalLayout_22.setObjectName(u"verticalLayout_22")
         self.pushButton = QPushButton(self.page)
@@ -519,8 +561,8 @@ class Ui_NewRemoteWindow(object):
 
         self.label_19 = QLabel(self.page)
         self.label_19.setObjectName(u"label_19")
-        sizePolicy.setHeightForWidth(self.label_19.sizePolicy().hasHeightForWidth())
-        self.label_19.setSizePolicy(sizePolicy)
+        sizePolicy1.setHeightForWidth(self.label_19.sizePolicy().hasHeightForWidth())
+        self.label_19.setSizePolicy(sizePolicy1)
 
         self.verticalLayout_22.addWidget(self.label_19)
 
@@ -635,7 +677,10 @@ class Ui_NewRemoteWindow(object):
 
         self.tabWidget.addTab(self.tab_union, "")
 
-        self.verticalLayout.addWidget(self.tabWidget)
+        self.horizontalLayout_5.addWidget(self.tabWidget)
+
+
+        self.verticalLayout.addLayout(self.horizontalLayout_5)
 
         self.buttonBox = QDialogButtonBox(NewRemoteWindow)
         self.buttonBox.setObjectName(u"buttonBox")
@@ -647,6 +692,7 @@ class Ui_NewRemoteWindow(object):
         self.retranslateUi(NewRemoteWindow)
         self.buttonBox.rejected.connect(NewRemoteWindow.reject)
 
+        self.listWidget_remotes.setCurrentRow(0)
         self.tabWidget.setCurrentIndex(0)
         self.toolBox.setCurrentIndex(0)
 
@@ -658,6 +704,33 @@ class Ui_NewRemoteWindow(object):
         NewRemoteWindow.setWindowTitle(QCoreApplication.translate("NewRemoteWindow", u"New remote", None))
         self.lineEdit_name.setText("")
         self.lineEdit_name.setPlaceholderText(QCoreApplication.translate("NewRemoteWindow", u"Enter name for new remote", None))
+
+        __sortingEnabled = self.listWidget_remotes.isSortingEnabled()
+        self.listWidget_remotes.setSortingEnabled(False)
+        ___qlistwidgetitem = self.listWidget_remotes.item(0)
+        ___qlistwidgetitem.setText(QCoreApplication.translate("NewRemoteWindow", u"FTP", None));
+        ___qlistwidgetitem1 = self.listWidget_remotes.item(1)
+        ___qlistwidgetitem1.setText(QCoreApplication.translate("NewRemoteWindow", u"SFTP", None));
+        ___qlistwidgetitem2 = self.listWidget_remotes.item(2)
+        ___qlistwidgetitem2.setText(QCoreApplication.translate("NewRemoteWindow", u"WebDAV", None));
+        ___qlistwidgetitem3 = self.listWidget_remotes.item(3)
+        ___qlistwidgetitem3.setText(QCoreApplication.translate("NewRemoteWindow", u"Google Drive", None));
+        ___qlistwidgetitem4 = self.listWidget_remotes.item(4)
+        ___qlistwidgetitem4.setText(QCoreApplication.translate("NewRemoteWindow", u"Yandex Disk", None));
+        ___qlistwidgetitem5 = self.listWidget_remotes.item(5)
+        ___qlistwidgetitem5.setText(QCoreApplication.translate("NewRemoteWindow", u"Microsoft OneDrive", None));
+        ___qlistwidgetitem6 = self.listWidget_remotes.item(6)
+        ___qlistwidgetitem6.setText(QCoreApplication.translate("NewRemoteWindow", u"Mail.ru Cloud", None));
+        ___qlistwidgetitem7 = self.listWidget_remotes.item(7)
+        ___qlistwidgetitem7.setText(QCoreApplication.translate("NewRemoteWindow", u"HTTP", None));
+        ___qlistwidgetitem8 = self.listWidget_remotes.item(8)
+        ___qlistwidgetitem8.setText(QCoreApplication.translate("NewRemoteWindow", u"Local", None));
+        ___qlistwidgetitem9 = self.listWidget_remotes.item(9)
+        ___qlistwidgetitem9.setText(QCoreApplication.translate("NewRemoteWindow", u"Alias", None));
+        ___qlistwidgetitem10 = self.listWidget_remotes.item(10)
+        ___qlistwidgetitem10.setText(QCoreApplication.translate("NewRemoteWindow", u"Union", None));
+        self.listWidget_remotes.setSortingEnabled(__sortingEnabled)
+
         self.label_2.setText(QCoreApplication.translate("NewRemoteWindow", u"Host", None))
         self.label_16.setText(QCoreApplication.translate("NewRemoteWindow", u"Port", None))
         self.label_4.setText(QCoreApplication.translate("NewRemoteWindow", u"Login", None))
@@ -686,6 +759,15 @@ class Ui_NewRemoteWindow(object):
         self.comboBox_onedrive_region.setItemText(0, QCoreApplication.translate("NewRemoteWindow", u"Microsoft Cloud Global", None))
         self.comboBox_onedrive_region.setItemText(1, QCoreApplication.translate("NewRemoteWindow", u"Microsoft Cloud for US Government", None))
         self.comboBox_onedrive_region.setItemText(2, QCoreApplication.translate("NewRemoteWindow", u"Azure and Office 365 operated by Vnet Group in China", None))
+
+        self.label_29.setText(QCoreApplication.translate("NewRemoteWindow", u"Type of connection", None))
+        self.comboBox_onedrive_type.setItemText(0, QCoreApplication.translate("NewRemoteWindow", u"OneDrive Personal or Business", None))
+        self.comboBox_onedrive_type.setItemText(1, QCoreApplication.translate("NewRemoteWindow", u"Root Sharepoint site", None))
+        self.comboBox_onedrive_type.setItemText(2, QCoreApplication.translate("NewRemoteWindow", u"Sharepoint site name or URL", None))
+        self.comboBox_onedrive_type.setItemText(3, QCoreApplication.translate("NewRemoteWindow", u"Search for a Sharepoint site", None))
+        self.comboBox_onedrive_type.setItemText(4, QCoreApplication.translate("NewRemoteWindow", u"Type in driveID (advanced)", None))
+        self.comboBox_onedrive_type.setItemText(5, QCoreApplication.translate("NewRemoteWindow", u"Type in SiteID (advanced)", None))
+        self.comboBox_onedrive_type.setItemText(6, QCoreApplication.translate("NewRemoteWindow", u"Sharepoint server-relative path (advanced)", None))
 
         self.label_24.setText(QCoreApplication.translate("NewRemoteWindow", u"Login", None))
         self.label_25.setText(QCoreApplication.translate("NewRemoteWindow", u"Password", None))

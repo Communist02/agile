@@ -239,6 +239,9 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="clearButtonEnabled">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
          </layout>
@@ -609,6 +612,7 @@
     <addaction name="action_new_remote"/>
     <addaction name="action_new_serve"/>
     <addaction name="separator"/>
+    <addaction name="action_config_rclone"/>
     <addaction name="action_settings"/>
     <addaction name="separator"/>
     <addaction name="action_exit"/>
@@ -763,6 +767,11 @@
   <action name="action_show_tasks">
    <property name="text">
     <string>Show tasks</string>
+   </property>
+  </action>
+  <action name="action_config_rclone">
+   <property name="text">
+    <string>Config Rclone</string>
    </property>
   </action>
  </widget>
