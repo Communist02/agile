@@ -1,9 +1,10 @@
 import os
 
 from PySide6.QtCore import QModelIndex, QRegularExpression
-from PySide6.QtGui import QIcon, QRegularExpressionValidator
-from PySide6.QtWidgets import QDialog, QMessageBox, QWidget
+from PySide6.QtGui import QIcon, QIntValidator, QRegularExpressionValidator
+from PySide6.QtWidgets import QCheckBox, QDialog, QLineEdit, QMessageBox, QWidget
 from rclone_python import rclone, remote_types
+from app.main_window import QLabel
 from app.rclone import Rclone
 from app.views import new_remote_window
 
@@ -18,18 +19,24 @@ class NewRemoteWindow(QDialog):
 
         self.setWindowIcon(
             QIcon(os.path.dirname(__file__) + '/resources/' + 'favicon.ico'))
-        
         self.ui.tabWidget.tabBar().hide()
 
         self.ui.buttonBox.accepted.connect(
             lambda: self.new_remote(edit_mode, remote_name))
         self.ui.checkBox_ftp_tls.clicked.connect(self.set_view_ftp_tls_option)
 
-        self.ui.listWidget_remotes.currentRowChanged.connect(self.ui.tabWidget.setCurrentIndex)
+        self.ui.listWidget_remotes.currentRowChanged.connect(
+            self.ui.tabWidget.setCurrentIndex)
+        self.ui.listWidget_advance.currentRowChanged.connect(self.advance_row_change)
 
         reg_exp = QRegularExpression('[a-zA-ZА-Яа-яЁё0-9_\\.\\-\\+@\\* ]*$')
         validator = QRegularExpressionValidator(reg_exp)
         self.ui.lineEdit_name.setValidator(validator)
+
+        self.providers = rc.providers()
+
+        for provider in self.providers:
+            self.ui.listWidget_advance.addItem(provider['Description'])
 
         if edit_mode:
             self.setWindowTitle(f'Edit {remote_name}')
@@ -130,6 +137,38 @@ class NewRemoteWindow(QDialog):
         self.ui.radioButton_ftp_false.setEnabled(value)
         self.ui.radioButton_ftp_true.setEnabled(value)
 
+    def advance_row_change(self, index: int):
+        provider: dict[str, dict] = self.providers[index]
+        print(provider)
+
+        for i in range(self.ui.scrollAreaWidgetContents_advance.layout().count()):
+            self.ui.scrollAreaWidgetContents_advance.layout().itemAt(i).widget().deleteLater()
+
+        for option in provider['Options']:
+            label_help = QLabel(option['Help'])
+            label_help.setEnabled(False)
+
+            if option['Type'] != 'bool':
+                self.ui.scrollAreaWidgetContents_advance.layout().addWidget(QLabel(option['Name']))
+                self.ui.scrollAreaWidgetContents_advance.layout().addWidget(label_help)
+
+            match option['Type']:
+                case 'string':
+                    line_edit = QLineEdit(option['Default'])
+                    if option['IsPassword']:
+                        line_edit.setEchoMode(QLineEdit.EchoMode.Password)
+                    self.ui.scrollAreaWidgetContents_advance.layout().addWidget(line_edit)
+                case 'int':
+                    line_edit = QLineEdit(str(option['Default']))
+                    line_edit.setValidator(QIntValidator())
+                    self.ui.scrollAreaWidgetContents_advance.layout().addWidget(line_edit)
+                case 'bool':
+                    checkbox = QCheckBox()
+                    checkbox.setText(option['Name'])
+                    checkbox.setChecked(option['Default'])
+                    self.ui.scrollAreaWidgetContents_advance.layout().addWidget(checkbox)
+                    self.ui.scrollAreaWidgetContents_advance.layout().addWidget(label_help)
+
     def new_remote(self, edit_mode: bool = False, remote_name: str = None):
         name = self.ui.lineEdit_name.text().strip()
         rc = Rclone()
@@ -189,7 +228,8 @@ class NewRemoteWindow(QDialog):
                 case 'tab_onedrive':
                     region = [
                         'global', 'us', 'cn'][self.ui.comboBox_onedrive_region.currentIndex()]
-                    config_type = ['onedrive', 'sharepoint', 'url', 'search', 'driveid', 'siteid', 'path'][self.ui.comboBox_onedrive_type.currentIndex()]
+                    config_type = ['onedrive', 'sharepoint', 'url', 'search', 'driveid',
+                                   'siteid', 'path'][self.ui.comboBox_onedrive_type.currentIndex()]
                     rclone.create_remote(
                         name, remote_type=remote_types.RemoteTypes.onedrive, region=region, config_type=config_type)
                     self.close()

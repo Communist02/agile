@@ -179,7 +179,7 @@ class Rclone(CheckRclone):
                 total_size = int(OUT.split('Total size: ')[1].split(
                     ' (')[1].split(')')[0].split(' Byte')[0])
                 return {'total_objects': total_objects, 'total_size': total_size}
-            elif subcommand == 'lsjson' or subcommand == 'config' and arg1 == 'dump' or subcommand == 'about':
+            elif subcommand == 'lsjson' or subcommand == 'config' and arg1 == 'dump' or subcommand == 'about' or subcommand == 'config providers':
                 return json.loads(OUT)
             elif subcommand == 'lsf':
                 return OUT.rstrip().split('\n')
@@ -223,6 +223,9 @@ class Rclone(CheckRclone):
 
     def mount(self, remote: str, mount_point: str = '', arg: str = ''):
         return self.sync_process('mount', f'"{remote}"', f'"{mount_point}"', arg, communicate=False)
+    
+    def providers(self):
+        return self.sync_process('config providers')
 
     def serve(self, serve_type: str, path: str, username: str = '', password: str = '', address: str = '', read_only: bool = False, args: str = ''):
         if read_only:

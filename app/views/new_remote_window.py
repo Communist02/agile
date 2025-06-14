@@ -35,9 +35,15 @@ class Ui_NewRemoteWindow(object):
 
         self.verticalLayout.addWidget(self.lineEdit_name)
 
-        self.horizontalLayout_5 = QHBoxLayout()
-        self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
-        self.listWidget_remotes = QListWidget(NewRemoteWindow)
+        self.tabWidget_mode = QTabWidget(NewRemoteWindow)
+        self.tabWidget_mode.setObjectName(u"tabWidget_mode")
+        self.tabWidget_mode.setDocumentMode(True)
+        self.tab_simple = QWidget()
+        self.tab_simple.setObjectName(u"tab_simple")
+        self.horizontalLayout_10 = QHBoxLayout(self.tab_simple)
+        self.horizontalLayout_10.setObjectName(u"horizontalLayout_10")
+        self.horizontalLayout_10.setContentsMargins(0, 0, 0, 0)
+        self.listWidget_remotes = QListWidget(self.tab_simple)
         QListWidgetItem(self.listWidget_remotes)
         QListWidgetItem(self.listWidget_remotes)
         QListWidgetItem(self.listWidget_remotes)
@@ -50,21 +56,23 @@ class Ui_NewRemoteWindow(object):
         QListWidgetItem(self.listWidget_remotes)
         QListWidgetItem(self.listWidget_remotes)
         self.listWidget_remotes.setObjectName(u"listWidget_remotes")
-        sizePolicy = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding)
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.listWidget_remotes.sizePolicy().hasHeightForWidth())
         self.listWidget_remotes.setSizePolicy(sizePolicy)
         self.listWidget_remotes.setMinimumSize(QSize(150, 0))
 
-        self.horizontalLayout_5.addWidget(self.listWidget_remotes)
+        self.horizontalLayout_10.addWidget(self.listWidget_remotes)
 
-        self.tabWidget = QTabWidget(NewRemoteWindow)
+        self.tabWidget = QTabWidget(self.tab_simple)
         self.tabWidget.setObjectName(u"tabWidget")
+        self.tabWidget.setDocumentMode(True)
         self.tab_ftp = QWidget()
         self.tab_ftp.setObjectName(u"tab_ftp")
         self.verticalLayout_3 = QVBoxLayout(self.tab_ftp)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
+        self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_2 = QHBoxLayout()
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
         self.verticalLayout_4 = QVBoxLayout()
@@ -177,6 +185,7 @@ class Ui_NewRemoteWindow(object):
         self.tab_sftp.setObjectName(u"tab_sftp")
         self.verticalLayout_18 = QVBoxLayout(self.tab_sftp)
         self.verticalLayout_18.setObjectName(u"verticalLayout_18")
+        self.verticalLayout_18.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_9 = QHBoxLayout()
         self.horizontalLayout_9.setObjectName(u"horizontalLayout_9")
         self.verticalLayout_16 = QVBoxLayout()
@@ -258,6 +267,7 @@ class Ui_NewRemoteWindow(object):
         self.tab_webdav.setObjectName(u"tab_webdav")
         self.verticalLayout_10 = QVBoxLayout(self.tab_webdav)
         self.verticalLayout_10.setObjectName(u"verticalLayout_10")
+        self.verticalLayout_10.setContentsMargins(0, 0, 0, 0)
         self.label_7 = QLabel(self.tab_webdav)
         self.label_7.setObjectName(u"label_7")
 
@@ -331,6 +341,7 @@ class Ui_NewRemoteWindow(object):
         self.tab_google_drive.setObjectName(u"tab_google_drive")
         self.verticalLayout_9 = QVBoxLayout(self.tab_google_drive)
         self.verticalLayout_9.setObjectName(u"verticalLayout_9")
+        self.verticalLayout_9.setContentsMargins(0, 0, 0, 0)
         self.label_3 = QLabel(self.tab_google_drive)
         self.label_3.setObjectName(u"label_3")
 
@@ -345,6 +356,7 @@ class Ui_NewRemoteWindow(object):
         self.tab_yandex_disk.setObjectName(u"tab_yandex_disk")
         self.verticalLayout_8 = QVBoxLayout(self.tab_yandex_disk)
         self.verticalLayout_8.setObjectName(u"verticalLayout_8")
+        self.verticalLayout_8.setContentsMargins(0, 0, 0, 0)
         self.label_6 = QLabel(self.tab_yandex_disk)
         self.label_6.setObjectName(u"label_6")
 
@@ -359,6 +371,7 @@ class Ui_NewRemoteWindow(object):
         self.tab_onedrive.setObjectName(u"tab_onedrive")
         self.verticalLayout_12 = QVBoxLayout(self.tab_onedrive)
         self.verticalLayout_12.setObjectName(u"verticalLayout_12")
+        self.verticalLayout_12.setContentsMargins(0, 0, 0, 0)
         self.label_11 = QLabel(self.tab_onedrive)
         self.label_11.setObjectName(u"label_11")
 
@@ -411,6 +424,7 @@ class Ui_NewRemoteWindow(object):
         self.tab_mailru.setObjectName(u"tab_mailru")
         self.verticalLayout_25 = QVBoxLayout(self.tab_mailru)
         self.verticalLayout_25.setObjectName(u"verticalLayout_25")
+        self.verticalLayout_25.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_3 = QHBoxLayout()
         self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
         self.verticalLayout_23 = QVBoxLayout()
@@ -472,6 +486,7 @@ class Ui_NewRemoteWindow(object):
         self.tab_http.setObjectName(u"tab_http")
         self.verticalLayout_2 = QVBoxLayout(self.tab_http)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
+        self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.label = QLabel(self.tab_http)
         self.label.setObjectName(u"label")
 
@@ -496,6 +511,7 @@ class Ui_NewRemoteWindow(object):
         self.tab_alias.setObjectName(u"tab_alias")
         self.verticalLayout_19 = QVBoxLayout(self.tab_alias)
         self.verticalLayout_19.setObjectName(u"verticalLayout_19")
+        self.verticalLayout_19.setContentsMargins(0, 0, 0, 0)
         self.label_17 = QLabel(self.tab_alias)
         self.label_17.setObjectName(u"label_17")
 
@@ -527,6 +543,7 @@ class Ui_NewRemoteWindow(object):
         self.tab_union.setObjectName(u"tab_union")
         self.verticalLayout_20 = QVBoxLayout(self.tab_union)
         self.verticalLayout_20.setObjectName(u"verticalLayout_20")
+        self.verticalLayout_20.setContentsMargins(0, 0, 0, 0)
         self.pushButton_union_add = QPushButton(self.tab_union)
         self.pushButton_union_add.setObjectName(u"pushButton_union_add")
 
@@ -534,10 +551,11 @@ class Ui_NewRemoteWindow(object):
 
         self.scrollArea = QScrollArea(self.tab_union)
         self.scrollArea.setObjectName(u"scrollArea")
+        self.scrollArea.setFrameShape(QFrame.Shape.NoFrame)
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 203, 338))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 800, 566))
         self.verticalLayout_21 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_21.setObjectName(u"verticalLayout_21")
         self.verticalLayout_21.setContentsMargins(0, 0, 0, 0)
@@ -551,7 +569,7 @@ class Ui_NewRemoteWindow(object):
         self.toolBox.setFrameShape(QFrame.Shape.Box)
         self.page = QWidget()
         self.page.setObjectName(u"page")
-        self.page.setGeometry(QRect(0, 0, 350, 144))
+        self.page.setGeometry(QRect(0, 0, 798, 144))
         self.verticalLayout_22 = QVBoxLayout(self.page)
         self.verticalLayout_22.setObjectName(u"verticalLayout_22")
         self.pushButton = QPushButton(self.page)
@@ -677,10 +695,41 @@ class Ui_NewRemoteWindow(object):
 
         self.tabWidget.addTab(self.tab_union, "")
 
-        self.horizontalLayout_5.addWidget(self.tabWidget)
+        self.horizontalLayout_10.addWidget(self.tabWidget)
 
+        self.tabWidget_mode.addTab(self.tab_simple, "")
+        self.tab_advance = QWidget()
+        self.tab_advance.setObjectName(u"tab_advance")
+        self.horizontalLayout_8 = QHBoxLayout(self.tab_advance)
+        self.horizontalLayout_8.setObjectName(u"horizontalLayout_8")
+        self.horizontalLayout_8.setContentsMargins(0, 0, 0, 0)
+        self.listWidget_advance = QListWidget(self.tab_advance)
+        self.listWidget_advance.setObjectName(u"listWidget_advance")
+        sizePolicy.setHeightForWidth(self.listWidget_advance.sizePolicy().hasHeightForWidth())
+        self.listWidget_advance.setSizePolicy(sizePolicy)
+        self.listWidget_advance.setMinimumSize(QSize(150, 0))
 
-        self.verticalLayout.addLayout(self.horizontalLayout_5)
+        self.horizontalLayout_8.addWidget(self.listWidget_advance)
+
+        self.scrollArea_advance = QScrollArea(self.tab_advance)
+        self.scrollArea_advance.setObjectName(u"scrollArea_advance")
+        self.scrollArea_advance.setFrameShape(QFrame.Shape.NoFrame)
+        self.scrollArea_advance.setWidgetResizable(True)
+        self.scrollAreaWidgetContents_advance = QWidget()
+        self.scrollAreaWidgetContents_advance.setObjectName(u"scrollAreaWidgetContents_advance")
+        self.scrollAreaWidgetContents_advance.setGeometry(QRect(0, 0, 98, 16))
+        sizePolicy1.setHeightForWidth(self.scrollAreaWidgetContents_advance.sizePolicy().hasHeightForWidth())
+        self.scrollAreaWidgetContents_advance.setSizePolicy(sizePolicy1)
+        self.verticalLayout_27 = QVBoxLayout(self.scrollAreaWidgetContents_advance)
+        self.verticalLayout_27.setObjectName(u"verticalLayout_27")
+        self.verticalLayout_27.setContentsMargins(0, 0, 0, 0)
+        self.scrollArea_advance.setWidget(self.scrollAreaWidgetContents_advance)
+
+        self.horizontalLayout_8.addWidget(self.scrollArea_advance)
+
+        self.tabWidget_mode.addTab(self.tab_advance, "")
+
+        self.verticalLayout.addWidget(self.tabWidget_mode)
 
         self.buttonBox = QDialogButtonBox(NewRemoteWindow)
         self.buttonBox.setObjectName(u"buttonBox")
@@ -692,6 +741,7 @@ class Ui_NewRemoteWindow(object):
         self.retranslateUi(NewRemoteWindow)
         self.buttonBox.rejected.connect(NewRemoteWindow.reject)
 
+        self.tabWidget_mode.setCurrentIndex(0)
         self.listWidget_remotes.setCurrentRow(0)
         self.tabWidget.setCurrentIndex(0)
         self.toolBox.setCurrentIndex(0)
@@ -847,5 +897,7 @@ class Ui_NewRemoteWindow(object):
         self.comboBox_4.setItemText(14, QCoreApplication.translate("NewRemoteWindow", u"rand (random)", None))
 
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_union), QCoreApplication.translate("NewRemoteWindow", u"Union", None))
+        self.tabWidget_mode.setTabText(self.tabWidget_mode.indexOf(self.tab_simple), QCoreApplication.translate("NewRemoteWindow", u"Simple", None))
+        self.tabWidget_mode.setTabText(self.tabWidget_mode.indexOf(self.tab_advance), QCoreApplication.translate("NewRemoteWindow", u"Advance", None))
     # retranslateUi
 
