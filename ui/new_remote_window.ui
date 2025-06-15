@@ -951,8 +951,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>800</width>
-                <height>566</height>
+                <width>202</width>
+                <height>338</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_21">
@@ -987,7 +987,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>798</width>
+                    <width>350</width>
                     <height>144</height>
                    </rect>
                   </property>
@@ -1350,9 +1350,9 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_advance">
+     <widget class="QWidget" name="tab_advanced">
       <attribute name="title">
-       <string>Advance</string>
+       <string>Advanced</string>
       </attribute>
       <layout class="QHBoxLayout" name="horizontalLayout_8">
        <property name="leftMargin">
@@ -1396,8 +1396,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>98</width>
-            <height>16</height>
+            <width>800</width>
+            <height>120</height>
            </rect>
           </property>
           <property name="sizePolicy">
@@ -1419,6 +1419,39 @@
            <property name="bottomMargin">
             <number>0</number>
            </property>
+           <item>
+            <widget class="QGroupBox" name="groupBox_required">
+             <property name="title">
+              <string>Required</string>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_26"/>
+            </widget>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="groupBox_not_required">
+             <property name="title">
+              <string>Not required</string>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_29"/>
+            </widget>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="groupBox_advanced">
+             <property name="title">
+              <string>Advanced</string>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_28"/>
+            </widget>
+           </item>
           </layout>
          </widget>
         </widget>

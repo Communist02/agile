@@ -163,10 +163,10 @@
     <message>
         <location filename="../ui/main_window.ui" line="774"/>
         <source>Config Rclone</source>
-        <translation type="unfinished"></translation>
+        <translation>Конфигурация Rclone</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="1640"/>
+        <location filename="../app/main_window.py" line="1641"/>
         <location filename="../ui/main_window.ui" line="729"/>
         <source>Exit</source>
         <translation>Выход</translation>
@@ -193,10 +193,10 @@
         <translation>Настройки</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="1333"/>
-        <location filename="../app/main_window.py" line="1442"/>
-        <location filename="../app/main_window.py" line="1495"/>
-        <location filename="../app/main_window.py" line="1627"/>
+        <location filename="../app/main_window.py" line="1334"/>
+        <location filename="../app/main_window.py" line="1443"/>
+        <location filename="../app/main_window.py" line="1496"/>
+        <location filename="../app/main_window.py" line="1628"/>
         <source>Open</source>
         <translation>Открыть</translation>
     </message>
@@ -206,42 +206,42 @@
         <translation>Масштаб</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="497"/>
+        <location filename="../app/main_window.py" line="498"/>
         <source>Total</source>
         <translation>Всего</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="487"/>
+        <location filename="../app/main_window.py" line="488"/>
         <source>Free</source>
         <translation>Свободно</translation>
     </message>
     <message>
         <location filename="../app/main_window.py" line="327"/>
-        <location filename="../app/main_window.py" line="1585"/>
-        <location filename="../app/main_window.py" line="1600"/>
+        <location filename="../app/main_window.py" line="1586"/>
+        <location filename="../app/main_window.py" line="1601"/>
         <source>Download</source>
         <comment>noun</comment>
         <translation>Загрузка</translation>
     </message>
     <message>
         <location filename="../app/main_window.py" line="329"/>
-        <location filename="../app/main_window.py" line="1585"/>
-        <location filename="../app/main_window.py" line="1600"/>
+        <location filename="../app/main_window.py" line="1586"/>
+        <location filename="../app/main_window.py" line="1601"/>
         <source>Upload</source>
         <translation>Закачка</translation>
     </message>
     <message>
         <location filename="../app/main_window.py" line="331"/>
-        <location filename="../app/main_window.py" line="869"/>
-        <location filename="../app/main_window.py" line="1586"/>
-        <location filename="../app/main_window.py" line="1600"/>
+        <location filename="../app/main_window.py" line="870"/>
+        <location filename="../app/main_window.py" line="1587"/>
+        <location filename="../app/main_window.py" line="1601"/>
         <source>Opening</source>
         <translation>Открытие</translation>
     </message>
     <message>
         <location filename="../app/main_window.py" line="340"/>
-        <location filename="../app/main_window.py" line="1593"/>
-        <location filename="../app/main_window.py" line="1601"/>
+        <location filename="../app/main_window.py" line="1594"/>
+        <location filename="../app/main_window.py" line="1602"/>
         <source>Done</source>
         <translation>Готово</translation>
     </message>
@@ -251,102 +251,102 @@
         <translation>Выполняется</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="408"/>
+        <location filename="../app/main_window.py" line="409"/>
         <source>Search in</source>
         <translation>Поиск в</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="866"/>
-        <location filename="../app/main_window.py" line="875"/>
+        <location filename="../app/main_window.py" line="867"/>
+        <location filename="../app/main_window.py" line="876"/>
         <source>Updating</source>
         <translation>Обновление</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="1091"/>
-        <location filename="../app/main_window.py" line="1094"/>
+        <location filename="../app/main_window.py" line="1092"/>
+        <location filename="../app/main_window.py" line="1095"/>
         <source>Are you sure you want to delete</source>
         <translation>Вы действительно хотите удалить</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="1094"/>
+        <location filename="../app/main_window.py" line="1095"/>
         <source>files</source>
         <translation type="unfinished">файлов</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="1161"/>
-        <location filename="../app/main_window.py" line="1163"/>
-        <location filename="../app/main_window.py" line="1319"/>
-        <location filename="../app/main_window.py" line="1392"/>
+        <location filename="../app/main_window.py" line="1162"/>
+        <location filename="../app/main_window.py" line="1164"/>
+        <location filename="../app/main_window.py" line="1320"/>
+        <location filename="../app/main_window.py" line="1393"/>
         <source>New Folder</source>
         <translation>Новая папка</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="1162"/>
+        <location filename="../app/main_window.py" line="1163"/>
         <source>Enter folder name:</source>
         <translation>Введите имя папки:</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="1184"/>
-        <location filename="../app/main_window.py" line="1374"/>
+        <location filename="../app/main_window.py" line="1185"/>
+        <location filename="../app/main_window.py" line="1375"/>
         <source>Rename</source>
         <translation>Переименовать</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="1185"/>
+        <location filename="../app/main_window.py" line="1186"/>
         <source>Enter new name:</source>
         <translation>Введите новое имя:</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="1312"/>
-        <location filename="../app/main_window.py" line="1365"/>
+        <location filename="../app/main_window.py" line="1313"/>
+        <location filename="../app/main_window.py" line="1366"/>
         <source>Paste</source>
         <translation>Вставить</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="1341"/>
-        <location filename="../app/main_window.py" line="1450"/>
+        <location filename="../app/main_window.py" line="1342"/>
+        <location filename="../app/main_window.py" line="1451"/>
         <source>Open With...</source>
         <translation>Открыть как...</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="1348"/>
-        <location filename="../app/main_window.py" line="1459"/>
+        <location filename="../app/main_window.py" line="1349"/>
+        <location filename="../app/main_window.py" line="1460"/>
         <source>Download</source>
         <translation>Загрузить</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="1357"/>
-        <location filename="../app/main_window.py" line="1468"/>
+        <location filename="../app/main_window.py" line="1358"/>
+        <location filename="../app/main_window.py" line="1469"/>
         <source>Copy</source>
         <translation>Копировать</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="1507"/>
+        <location filename="../app/main_window.py" line="1508"/>
         <location filename="../ui/main_window.ui" line="557"/>
         <source>Mount</source>
         <comment>verb</comment>
         <translation>Монтировать</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="1602"/>
+        <location filename="../app/main_window.py" line="1603"/>
         <source>Сancel</source>
         <translation>Отмена</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="1098"/>
-        <location filename="../app/main_window.py" line="1382"/>
-        <location filename="../app/main_window.py" line="1475"/>
-        <location filename="../app/main_window.py" line="1514"/>
+        <location filename="../app/main_window.py" line="1099"/>
+        <location filename="../app/main_window.py" line="1383"/>
+        <location filename="../app/main_window.py" line="1476"/>
+        <location filename="../app/main_window.py" line="1515"/>
         <source>Delete</source>
         <translation>Удалить</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="1433"/>
+        <location filename="../app/main_window.py" line="1434"/>
         <source>Open file location</source>
         <translation>Расположение файла</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="1501"/>
+        <location filename="../app/main_window.py" line="1502"/>
         <source>Edit</source>
         <translation>Редактировать</translation>
     </message>
@@ -357,24 +357,24 @@
         <translation>Монтирование</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="1578"/>
-        <location filename="../app/main_window.py" line="1608"/>
+        <location filename="../app/main_window.py" line="1579"/>
+        <location filename="../app/main_window.py" line="1609"/>
         <source>Clear Completed</source>
         <translation>Очистить завершенные</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="1587"/>
+        <location filename="../app/main_window.py" line="1588"/>
         <source>Open Folder</source>
         <translation>Открыть папку</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="1594"/>
+        <location filename="../app/main_window.py" line="1595"/>
         <source>Clear Task</source>
         <translation>Очистить</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="1532"/>
-        <location filename="../app/main_window.py" line="1551"/>
+        <location filename="../app/main_window.py" line="1533"/>
+        <location filename="../app/main_window.py" line="1552"/>
         <source>Stop</source>
         <translation>Остановить</translation>
     </message>
@@ -387,453 +387,474 @@
         <translation>Новое подключение</translation>
     </message>
     <message>
-        <location filename="../app/new_remote.py" line="221"/>
+        <location filename="../app/new_remote.py" line="318"/>
         <source>Enter name</source>
         <translation>Введите имя</translation>
     </message>
     <message>
-        <location filename="../app/new_remote.py" line="222"/>
+        <location filename="../app/new_remote.py" line="319"/>
         <location filename="../ui/new_remote_window.ui" line="26"/>
         <source>Enter name for new remote</source>
         <translation>Введите новое имя для подключения</translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="123"/>
-        <location filename="../ui/new_remote_window.ui" line="263"/>
+        <location filename="../ui/new_remote_window.ui" line="161"/>
+        <location filename="../ui/new_remote_window.ui" line="313"/>
         <source>Host</source>
         <translation>Хост</translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="137"/>
-        <location filename="../ui/new_remote_window.ui" line="277"/>
+        <location filename="../ui/new_remote_window.ui" line="175"/>
+        <location filename="../ui/new_remote_window.ui" line="327"/>
         <source>Port</source>
         <translation>Порт</translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="155"/>
-        <location filename="../ui/new_remote_window.ui" line="295"/>
-        <location filename="../ui/new_remote_window.ui" line="361"/>
-        <location filename="../ui/new_remote_window.ui" line="623"/>
+        <location filename="../ui/new_remote_window.ui" line="193"/>
+        <location filename="../ui/new_remote_window.ui" line="345"/>
+        <location filename="../ui/new_remote_window.ui" line="423"/>
+        <location filename="../ui/new_remote_window.ui" line="733"/>
         <source>Login</source>
         <translation>Логин</translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="169"/>
-        <location filename="../ui/new_remote_window.ui" line="309"/>
-        <location filename="../ui/new_remote_window.ui" line="375"/>
-        <location filename="../ui/new_remote_window.ui" line="637"/>
+        <location filename="../ui/new_remote_window.ui" line="207"/>
+        <location filename="../ui/new_remote_window.ui" line="359"/>
+        <location filename="../ui/new_remote_window.ui" line="437"/>
+        <location filename="../ui/new_remote_window.ui" line="747"/>
         <source>Password</source>
         <translation>Пароль</translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="216"/>
+        <location filename="../ui/new_remote_window.ui" line="254"/>
         <source>Implict</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="229"/>
+        <location filename="../ui/new_remote_window.ui" line="267"/>
         <source>Explict</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="347"/>
-        <location filename="../ui/new_remote_window.ui" line="701"/>
+        <location filename="../ui/new_remote_window.ui" line="409"/>
+        <location filename="../ui/new_remote_window.ui" line="823"/>
         <source>URL</source>
         <translation>Ссылка</translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="393"/>
+        <location filename="../ui/new_remote_window.ui" line="455"/>
         <source>Option vendor</source>
         <translation>Поставщик</translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="401"/>
+        <location filename="../ui/new_remote_window.ui" line="463"/>
         <source>Other site/service or software</source>
         <extracomment>other</extracomment>
         <translation>Другие сайты/сервисы или программы</translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="421"/>
+        <location filename="../ui/new_remote_window.ui" line="483"/>
         <source>Sharepoint Online, authenticated by Microsoft account</source>
         <extracomment>sharepoint</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="426"/>
+        <location filename="../ui/new_remote_window.ui" line="488"/>
         <source>Sharepoint with NTLM authentication, usually self-hosted or on-premises</source>
         <extracomment>sharepoint-ntlm</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="431"/>
+        <location filename="../ui/new_remote_window.ui" line="493"/>
         <source>rclone WebDAV server to serve a remote over HTTP via the WebDAV protocol</source>
         <extracomment>rclone</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="66"/>
-        <location filename="../ui/new_remote_window.ui" line="453"/>
+        <location filename="../ui/new_remote_window.ui" line="89"/>
+        <location filename="../ui/new_remote_window.ui" line="515"/>
         <source>Google Drive</source>
         <translation>Google Диск</translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="459"/>
+        <location filename="../ui/new_remote_window.ui" line="533"/>
         <source>By pressing the OK button your browser will open and you will be needed to authenticate in Google Drive</source>
         <translation>После нажатия кнопки OK откроется ваш браузер и вам будет необходимо авторизоваться для подключения к Google Drive</translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="71"/>
-        <location filename="../ui/new_remote_window.ui" line="480"/>
+        <location filename="../ui/new_remote_window.ui" line="94"/>
+        <location filename="../ui/new_remote_window.ui" line="554"/>
         <source>Yandex Disk</source>
         <translation>Яндекс Диск</translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="486"/>
+        <location filename="../ui/new_remote_window.ui" line="572"/>
         <source>By pressing the OK button your browser will open and you will be needed to authenticate in Yandex Disk</source>
         <translation>После нажатия кнопки OK откроется ваш браузер и вам будет необходимо авторизоваться для подключения к Яндекс Диску</translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="513"/>
+        <location filename="../ui/new_remote_window.ui" line="611"/>
         <source>By pressing the OK button your browser will open and you will be needed to authenticate in Microsoft OneDrive</source>
         <translation>После нажатия кнопки OK откроется ваш браузер и вам будет необходимо авторизоваться для подключения к Microsoft OneDrive</translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="527"/>
+        <location filename="../ui/new_remote_window.ui" line="625"/>
         <source>Region</source>
         <translation>Регион</translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="535"/>
+        <location filename="../ui/new_remote_window.ui" line="633"/>
         <source>Microsoft Cloud Global</source>
         <extracomment>global</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="540"/>
+        <location filename="../ui/new_remote_window.ui" line="638"/>
         <source>Microsoft Cloud for US Government</source>
         <extracomment>us</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="545"/>
+        <location filename="../ui/new_remote_window.ui" line="643"/>
         <source>Azure and Office 365 operated by Vnet Group in China</source>
         <extracomment>cn</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="655"/>
+        <location filename="../ui/new_remote_window.ui" line="765"/>
         <source>To add Mail.ru you will need to generate a password for external applications in the Mail.ru web control panel. Select &quot;Full access to Mail. Cloud, Calendar (All Protocols)&quot;. You can generate the password in this url</source>
         <translation>Чтобы подключится к Mail.ru, вам необходимо сгенерировать пароль для внешних приложений в панели управления Mail.ru. Выберите «Полный доступ к почте. облаку, календарю (все протоколы)». Вы можете сгенерировать пароль, перейдя по ссылке</translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="91"/>
-        <location filename="../ui/new_remote_window.ui" line="729"/>
+        <location filename="../ui/new_remote_window.ui" line="114"/>
+        <location filename="../ui/new_remote_window.ui" line="851"/>
         <source>Local</source>
         <translation>Локально (Local)</translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="96"/>
-        <location filename="../ui/new_remote_window.ui" line="734"/>
+        <location filename="../ui/new_remote_window.ui" line="119"/>
+        <location filename="../ui/new_remote_window.ui" line="856"/>
         <source>Alias</source>
         <translation>Псевдоним (Alias)</translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="740"/>
+        <location filename="../ui/new_remote_window.ui" line="874"/>
         <source>Set a new name for a remote or path</source>
         <translation>Создайте псевдоним для подключения или пути</translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="754"/>
+        <location filename="../ui/new_remote_window.ui" line="888"/>
         <source>Remote or path to alias</source>
         <translation>Подключение или путь</translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="761"/>
-        <location filename="../ui/new_remote_window.ui" line="764"/>
-        <location filename="../ui/new_remote_window.ui" line="872"/>
-        <location filename="../ui/new_remote_window.ui" line="875"/>
+        <location filename="../ui/new_remote_window.ui" line="895"/>
+        <location filename="../ui/new_remote_window.ui" line="898"/>
+        <location filename="../ui/new_remote_window.ui" line="1021"/>
+        <location filename="../ui/new_remote_window.ui" line="1024"/>
         <source>Can be &quot;myremote:path/to/dir&quot;, &quot;myremote:bucket&quot;, &quot;myremote:&quot; or &quot;/local/path&quot;</source>
         <translation>Например: &quot;myremote:path/to/dir&quot;, &quot;myremote:bucket&quot;, &quot;myremote:&quot; или &quot;/local/path&quot;</translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="101"/>
-        <location filename="../ui/new_remote_window.ui" line="785"/>
+        <location filename="../ui/new_remote_window.ui" line="124"/>
+        <location filename="../ui/new_remote_window.ui" line="919"/>
         <source>Union</source>
         <translation>Объединение (Union)</translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="51"/>
+        <location filename="../ui/new_remote_window.ui" line="40"/>
+        <source>Simple</source>
+        <translation>Простой</translation>
+    </message>
+    <message>
+        <location filename="../ui/new_remote_window.ui" line="74"/>
         <source>FTP</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="56"/>
+        <location filename="../ui/new_remote_window.ui" line="79"/>
         <source>SFTP</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="61"/>
+        <location filename="../ui/new_remote_window.ui" line="84"/>
         <source>WebDAV</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="76"/>
+        <location filename="../ui/new_remote_window.ui" line="99"/>
         <source>Microsoft OneDrive</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="81"/>
+        <location filename="../ui/new_remote_window.ui" line="104"/>
         <source>Mail.ru Cloud</source>
-        <translation type="unfinished"></translation>
+        <translation>Облако Mail.ru</translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="86"/>
+        <location filename="../ui/new_remote_window.ui" line="109"/>
         <source>HTTP</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="553"/>
+        <location filename="../ui/new_remote_window.ui" line="651"/>
         <source>Type of connection</source>
-        <translation type="unfinished"></translation>
+        <translation>Тип подключения</translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="561"/>
+        <location filename="../ui/new_remote_window.ui" line="659"/>
         <source>OneDrive Personal or Business</source>
         <extracomment>onedrive</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="566"/>
+        <location filename="../ui/new_remote_window.ui" line="664"/>
         <source>Root Sharepoint site</source>
         <extracomment>sharepoint</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="571"/>
+        <location filename="../ui/new_remote_window.ui" line="669"/>
         <source>Sharepoint site name or URL</source>
         <extracomment>url</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="576"/>
+        <location filename="../ui/new_remote_window.ui" line="674"/>
         <source>Search for a Sharepoint site</source>
         <extracomment>search</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="581"/>
+        <location filename="../ui/new_remote_window.ui" line="679"/>
         <source>Type in driveID (advanced)</source>
         <extracomment>driveid</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="586"/>
+        <location filename="../ui/new_remote_window.ui" line="684"/>
         <source>Type in SiteID (advanced)</source>
         <extracomment>siteid</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="591"/>
+        <location filename="../ui/new_remote_window.ui" line="689"/>
         <source>Sharepoint server-relative path (advanced)</source>
         <extracomment>path</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="791"/>
+        <location filename="../ui/new_remote_window.ui" line="937"/>
         <source>Add upstream</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="846"/>
+        <location filename="../ui/new_remote_window.ui" line="995"/>
         <source>Page 1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="852"/>
+        <location filename="../ui/new_remote_window.ui" line="1001"/>
         <source>Delete</source>
         <translation>Удалить</translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="865"/>
+        <location filename="../ui/new_remote_window.ui" line="1014"/>
         <source>Path</source>
         <translation>Путь</translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="882"/>
+        <location filename="../ui/new_remote_window.ui" line="1031"/>
         <source>Attributes</source>
         <translation>Атрибуты</translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="890"/>
+        <location filename="../ui/new_remote_window.ui" line="1039"/>
         <source>None</source>
         <translation>Нет</translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="895"/>
+        <location filename="../ui/new_remote_window.ui" line="1044"/>
         <source>Files will only be read from here and never written</source>
         <extracomment>:ro</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="900"/>
+        <location filename="../ui/new_remote_window.ui" line="1049"/>
         <source>New files or directories won&apos;t be created here</source>
         <extracomment>:nc</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="905"/>
+        <location filename="../ui/new_remote_window.ui" line="1054"/>
         <source>Files found in different remotes will be written back here</source>
         <extracomment>:writeback</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="917"/>
+        <location filename="../ui/new_remote_window.ui" line="1066"/>
         <source>Action policy (writing existing file)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="928"/>
+        <location filename="../ui/new_remote_window.ui" line="1077"/>
         <source>epall (existing path, all): apply to all found</source>
         <extracomment>epall</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="933"/>
-        <location filename="../ui/new_remote_window.ui" line="1111"/>
+        <location filename="../ui/new_remote_window.ui" line="1082"/>
+        <location filename="../ui/new_remote_window.ui" line="1260"/>
         <source>all (same as epall)</source>
         <extracomment>all</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="938"/>
-        <location filename="../ui/new_remote_window.ui" line="1027"/>
-        <location filename="../ui/new_remote_window.ui" line="1116"/>
+        <location filename="../ui/new_remote_window.ui" line="1087"/>
+        <location filename="../ui/new_remote_window.ui" line="1176"/>
+        <location filename="../ui/new_remote_window.ui" line="1265"/>
         <source>epff (existing path, first found): act on the first one found, by the time upstreams reply, where the relative path exists</source>
         <extracomment>epff</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="943"/>
-        <location filename="../ui/new_remote_window.ui" line="1037"/>
-        <location filename="../ui/new_remote_window.ui" line="1126"/>
+        <location filename="../ui/new_remote_window.ui" line="1092"/>
+        <location filename="../ui/new_remote_window.ui" line="1186"/>
+        <location filename="../ui/new_remote_window.ui" line="1275"/>
         <source>eplfs (existing path, least free space)</source>
         <extracomment>eplfs</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="948"/>
-        <location filename="../ui/new_remote_window.ui" line="1042"/>
-        <location filename="../ui/new_remote_window.ui" line="1131"/>
+        <location filename="../ui/new_remote_window.ui" line="1097"/>
+        <location filename="../ui/new_remote_window.ui" line="1191"/>
+        <location filename="../ui/new_remote_window.ui" line="1280"/>
         <source>eplus (existing path, least used space)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="953"/>
-        <location filename="../ui/new_remote_window.ui" line="1047"/>
-        <location filename="../ui/new_remote_window.ui" line="1136"/>
+        <location filename="../ui/new_remote_window.ui" line="1102"/>
+        <location filename="../ui/new_remote_window.ui" line="1196"/>
+        <location filename="../ui/new_remote_window.ui" line="1285"/>
         <source>eplno (existing path, least number of objects)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="958"/>
-        <location filename="../ui/new_remote_window.ui" line="1141"/>
+        <location filename="../ui/new_remote_window.ui" line="1107"/>
+        <location filename="../ui/new_remote_window.ui" line="1290"/>
         <source>epmfs (existing path, most free space)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="963"/>
-        <location filename="../ui/new_remote_window.ui" line="1052"/>
-        <location filename="../ui/new_remote_window.ui" line="1146"/>
+        <location filename="../ui/new_remote_window.ui" line="1112"/>
+        <location filename="../ui/new_remote_window.ui" line="1201"/>
+        <location filename="../ui/new_remote_window.ui" line="1295"/>
         <source>eprand (existing path, random)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="968"/>
-        <location filename="../ui/new_remote_window.ui" line="1106"/>
+        <location filename="../ui/new_remote_window.ui" line="1117"/>
+        <location filename="../ui/new_remote_window.ui" line="1255"/>
         <source>ff (first found): same as epff</source>
         <extracomment>ff</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="973"/>
-        <location filename="../ui/new_remote_window.ui" line="1062"/>
-        <location filename="../ui/new_remote_window.ui" line="1151"/>
+        <location filename="../ui/new_remote_window.ui" line="1122"/>
+        <location filename="../ui/new_remote_window.ui" line="1211"/>
+        <location filename="../ui/new_remote_window.ui" line="1300"/>
         <source>lfs (least free space)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="978"/>
-        <location filename="../ui/new_remote_window.ui" line="1067"/>
-        <location filename="../ui/new_remote_window.ui" line="1156"/>
+        <location filename="../ui/new_remote_window.ui" line="1127"/>
+        <location filename="../ui/new_remote_window.ui" line="1216"/>
+        <location filename="../ui/new_remote_window.ui" line="1305"/>
         <source>lus (least used space)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="983"/>
-        <location filename="../ui/new_remote_window.ui" line="1072"/>
-        <location filename="../ui/new_remote_window.ui" line="1161"/>
+        <location filename="../ui/new_remote_window.ui" line="1132"/>
+        <location filename="../ui/new_remote_window.ui" line="1221"/>
+        <location filename="../ui/new_remote_window.ui" line="1310"/>
         <source>lno (least number of objects)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="988"/>
-        <location filename="../ui/new_remote_window.ui" line="1077"/>
-        <location filename="../ui/new_remote_window.ui" line="1166"/>
+        <location filename="../ui/new_remote_window.ui" line="1137"/>
+        <location filename="../ui/new_remote_window.ui" line="1226"/>
+        <location filename="../ui/new_remote_window.ui" line="1315"/>
         <source>mfs (most free space)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="993"/>
-        <location filename="../ui/new_remote_window.ui" line="1082"/>
-        <location filename="../ui/new_remote_window.ui" line="1171"/>
+        <location filename="../ui/new_remote_window.ui" line="1142"/>
+        <location filename="../ui/new_remote_window.ui" line="1231"/>
+        <location filename="../ui/new_remote_window.ui" line="1320"/>
         <source>newest</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="998"/>
-        <location filename="../ui/new_remote_window.ui" line="1087"/>
-        <location filename="../ui/new_remote_window.ui" line="1176"/>
+        <location filename="../ui/new_remote_window.ui" line="1147"/>
+        <location filename="../ui/new_remote_window.ui" line="1236"/>
+        <location filename="../ui/new_remote_window.ui" line="1325"/>
         <source>rand (random)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="1006"/>
+        <location filename="../ui/new_remote_window.ui" line="1155"/>
         <source>Create policy (Create non-existing file)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="1017"/>
+        <location filename="../ui/new_remote_window.ui" line="1166"/>
         <source>epmfs (existing path, most free space): of all the upstreams on which the relative path exists choose the one with the most free space</source>
         <extracomment>epmfs</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="1022"/>
+        <location filename="../ui/new_remote_window.ui" line="1171"/>
         <source>all (act on all upstreams)</source>
         <extracomment>all</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="1032"/>
+        <location filename="../ui/new_remote_window.ui" line="1181"/>
         <source>epall (existing path, all): act on all upstreams where the relative path exists</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="1057"/>
+        <location filename="../ui/new_remote_window.ui" line="1206"/>
         <source>ff (first found): act on the first one found by the time upstreams reply</source>
         <extracomment>ff</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="1095"/>
+        <location filename="../ui/new_remote_window.ui" line="1244"/>
         <source>Search policy (Reading and listing file)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/new_remote_window.ui" line="1121"/>
+        <location filename="../ui/new_remote_window.ui" line="1270"/>
         <source>epall (existing path, all): given this order configured, act on the first one found where the relative path exists</source>
         <extracomment>epall</extracomment>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/new_remote_window.ui" line="1425"/>
+        <source>Required</source>
+        <translation>Обязательно</translation>
+    </message>
+    <message>
+        <location filename="../ui/new_remote_window.ui" line="1433"/>
+        <source>Not required</source>
+        <translation>Необязательно</translation>
+    </message>
+    <message>
+        <location filename="../ui/new_remote_window.ui" line="1355"/>
+        <location filename="../ui/new_remote_window.ui" line="1441"/>
+        <source>Advanced</source>
+        <translation>Дополнительно</translation>
     </message>
 </context>
 <context>

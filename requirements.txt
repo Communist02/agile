@@ -1,4 +1,3 @@
 PySide6
-rclone-python
 watchdog
 pywin32

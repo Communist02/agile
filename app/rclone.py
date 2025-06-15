@@ -226,6 +226,17 @@ class Rclone(CheckRclone):
     
     def providers(self):
         return self.sync_process('config providers')
+    
+    def create_remote(self, remote_name, remote_type, args='', **kwargs):
+        for key, value in kwargs.items():
+            match value:
+                case str():
+                    args += f' {key}="{value}"'
+                case int():
+                    args += f' {key}={value}'
+                case bool():
+                    args += f' {key}={str(value).lower()}'
+        return self.sync_process(f'config create "{remote_name}" {remote_type} {args}')
 
     def serve(self, serve_type: str, path: str, username: str = '', password: str = '', address: str = '', read_only: bool = False, args: str = ''):
         if read_only:

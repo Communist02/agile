@@ -555,7 +555,7 @@ class Ui_NewRemoteWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 800, 566))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 202, 338))
         self.verticalLayout_21 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_21.setObjectName(u"verticalLayout_21")
         self.verticalLayout_21.setContentsMargins(0, 0, 0, 0)
@@ -569,7 +569,7 @@ class Ui_NewRemoteWindow(object):
         self.toolBox.setFrameShape(QFrame.Shape.Box)
         self.page = QWidget()
         self.page.setObjectName(u"page")
-        self.page.setGeometry(QRect(0, 0, 798, 144))
+        self.page.setGeometry(QRect(0, 0, 350, 144))
         self.verticalLayout_22 = QVBoxLayout(self.page)
         self.verticalLayout_22.setObjectName(u"verticalLayout_22")
         self.pushButton = QPushButton(self.page)
@@ -698,12 +698,12 @@ class Ui_NewRemoteWindow(object):
         self.horizontalLayout_10.addWidget(self.tabWidget)
 
         self.tabWidget_mode.addTab(self.tab_simple, "")
-        self.tab_advance = QWidget()
-        self.tab_advance.setObjectName(u"tab_advance")
-        self.horizontalLayout_8 = QHBoxLayout(self.tab_advance)
+        self.tab_advanced = QWidget()
+        self.tab_advanced.setObjectName(u"tab_advanced")
+        self.horizontalLayout_8 = QHBoxLayout(self.tab_advanced)
         self.horizontalLayout_8.setObjectName(u"horizontalLayout_8")
         self.horizontalLayout_8.setContentsMargins(0, 0, 0, 0)
-        self.listWidget_advance = QListWidget(self.tab_advance)
+        self.listWidget_advance = QListWidget(self.tab_advanced)
         self.listWidget_advance.setObjectName(u"listWidget_advance")
         sizePolicy.setHeightForWidth(self.listWidget_advance.sizePolicy().hasHeightForWidth())
         self.listWidget_advance.setSizePolicy(sizePolicy)
@@ -711,23 +711,47 @@ class Ui_NewRemoteWindow(object):
 
         self.horizontalLayout_8.addWidget(self.listWidget_advance)
 
-        self.scrollArea_advance = QScrollArea(self.tab_advance)
+        self.scrollArea_advance = QScrollArea(self.tab_advanced)
         self.scrollArea_advance.setObjectName(u"scrollArea_advance")
         self.scrollArea_advance.setFrameShape(QFrame.Shape.NoFrame)
         self.scrollArea_advance.setWidgetResizable(True)
         self.scrollAreaWidgetContents_advance = QWidget()
         self.scrollAreaWidgetContents_advance.setObjectName(u"scrollAreaWidgetContents_advance")
-        self.scrollAreaWidgetContents_advance.setGeometry(QRect(0, 0, 98, 16))
+        self.scrollAreaWidgetContents_advance.setGeometry(QRect(0, 0, 800, 120))
         sizePolicy1.setHeightForWidth(self.scrollAreaWidgetContents_advance.sizePolicy().hasHeightForWidth())
         self.scrollAreaWidgetContents_advance.setSizePolicy(sizePolicy1)
         self.verticalLayout_27 = QVBoxLayout(self.scrollAreaWidgetContents_advance)
         self.verticalLayout_27.setObjectName(u"verticalLayout_27")
         self.verticalLayout_27.setContentsMargins(0, 0, 0, 0)
+        self.groupBox_required = QGroupBox(self.scrollAreaWidgetContents_advance)
+        self.groupBox_required.setObjectName(u"groupBox_required")
+        self.verticalLayout_26 = QVBoxLayout(self.groupBox_required)
+        self.verticalLayout_26.setObjectName(u"verticalLayout_26")
+
+        self.verticalLayout_27.addWidget(self.groupBox_required)
+
+        self.groupBox_not_required = QGroupBox(self.scrollAreaWidgetContents_advance)
+        self.groupBox_not_required.setObjectName(u"groupBox_not_required")
+        self.verticalLayout_29 = QVBoxLayout(self.groupBox_not_required)
+        self.verticalLayout_29.setObjectName(u"verticalLayout_29")
+
+        self.verticalLayout_27.addWidget(self.groupBox_not_required)
+
+        self.groupBox_advanced = QGroupBox(self.scrollAreaWidgetContents_advance)
+        self.groupBox_advanced.setObjectName(u"groupBox_advanced")
+        self.groupBox_advanced.setFlat(True)
+        self.groupBox_advanced.setCheckable(True)
+        self.groupBox_advanced.setChecked(False)
+        self.verticalLayout_28 = QVBoxLayout(self.groupBox_advanced)
+        self.verticalLayout_28.setObjectName(u"verticalLayout_28")
+
+        self.verticalLayout_27.addWidget(self.groupBox_advanced)
+
         self.scrollArea_advance.setWidget(self.scrollAreaWidgetContents_advance)
 
         self.horizontalLayout_8.addWidget(self.scrollArea_advance)
 
-        self.tabWidget_mode.addTab(self.tab_advance, "")
+        self.tabWidget_mode.addTab(self.tab_advanced, "")
 
         self.verticalLayout.addWidget(self.tabWidget_mode)
 
@@ -898,6 +922,9 @@ class Ui_NewRemoteWindow(object):
 
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_union), QCoreApplication.translate("NewRemoteWindow", u"Union", None))
         self.tabWidget_mode.setTabText(self.tabWidget_mode.indexOf(self.tab_simple), QCoreApplication.translate("NewRemoteWindow", u"Simple", None))
-        self.tabWidget_mode.setTabText(self.tabWidget_mode.indexOf(self.tab_advance), QCoreApplication.translate("NewRemoteWindow", u"Advance", None))
+        self.groupBox_required.setTitle(QCoreApplication.translate("NewRemoteWindow", u"Required", None))
+        self.groupBox_not_required.setTitle(QCoreApplication.translate("NewRemoteWindow", u"Not required", None))
+        self.groupBox_advanced.setTitle(QCoreApplication.translate("NewRemoteWindow", u"Advanced", None))
+        self.tabWidget_mode.setTabText(self.tabWidget_mode.indexOf(self.tab_advanced), QCoreApplication.translate("NewRemoteWindow", u"Advanced", None))
     # retranslateUi
 
