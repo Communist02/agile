@@ -21,11 +21,21 @@ class NewServeWindow(QDialog):
 
         self.ui.buttonBox.accepted.connect(self.new_serve)
         self.ui.button_select_dir.clicked.connect(self.select_dir)
+        self.ui.checkBox_use_ram.toggled.connect(self.use_ram)
 
     def select_dir(self):
         path = QFileDialog.getExistingDirectory()
         if path is not None and path != '':
             self.ui.lineEdit_path.setText(path)
+
+    def use_ram(self, value):
+        if value:
+            self.ui.lineEdit_path.setText(':memory:')
+            self.ui.lineEdit_path.setEnabled(False)
+            self.ui.button_select_dir.setEnabled(False)
+        else:
+            self.ui.lineEdit_path.setEnabled(True)
+            self.ui.button_select_dir.setEnabled(True)
 
     def new_serve(self):
         path = self.ui.lineEdit_path.text()

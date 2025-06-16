@@ -91,6 +91,11 @@ class Ui_NewServeWindow(object):
 
         self.verticalLayout.addLayout(self.horizontalLayout_3)
 
+        self.checkBox_use_ram = QCheckBox(NewServeWindow)
+        self.checkBox_use_ram.setObjectName(u"checkBox_use_ram")
+
+        self.verticalLayout.addWidget(self.checkBox_use_ram)
+
         self.groupBox = QGroupBox(NewServeWindow)
         self.groupBox.setObjectName(u"groupBox")
         self.verticalLayout_4 = QVBoxLayout(self.groupBox)
@@ -175,6 +180,7 @@ class Ui_NewServeWindow(object):
         self.lineEdit_path.setToolTip(QCoreApplication.translate("NewServeWindow", u"Can be \"myremote:path/to/dir\", \"myremote:bucket\", \"myremote:\" or \"/local/path\"", None))
 #endif // QT_CONFIG(tooltip)
         self.lineEdit_path.setPlaceholderText(QCoreApplication.translate("NewServeWindow", u"Can be \"myremote:path/to/dir\", \"myremote:bucket\", \"myremote:\" or \"/local/path\"", None))
+        self.checkBox_use_ram.setText(QCoreApplication.translate("NewServeWindow", u"Use RAM as a drive", None))
         self.groupBox.setTitle(QCoreApplication.translate("NewServeWindow", u"Optional", None))
         self.label_4.setText(QCoreApplication.translate("NewServeWindow", u"Address", None))
 #if QT_CONFIG(tooltip)

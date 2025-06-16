@@ -82,14 +82,18 @@ class Task():
         sizes = ['B', 'KB', 'MB', 'GB', 'TB']
         index = 0
         full_size = self.full_size
-
+        
         for _ in range(4):
-            if full_size >= 1024:
+            if full_size >= 1024 or full_size == 0 and size >= 1024:
                 full_size = round(float(full_size) / 1024, 2)
                 size = round(float(size) / 1024, 2)
                 index += 1
 
-        self.size = f'{size} / {full_size} {sizes[index]}'
+        if full_size > 0:
+            self.size = f'{size} / {full_size} {sizes[index]}'
+        else:
+            self.size = f'{size} {sizes[index]}'
+
         if full_size != 0:
             self.progress = round((size / full_size) * 100)
         else:
@@ -1034,7 +1038,7 @@ class MainWindow(QMainWindow):
         if os.name == 'nt':
             if mount_point.strip() == '':
                 mount_point = '*'
-            if type in ['local', 'alias', 'union', '']:
+            if type == 'local':
                 process = rc.mount(remote, mount_point)
             else:
                 process = rc.mount(remote, mount_point, '--network-mode')

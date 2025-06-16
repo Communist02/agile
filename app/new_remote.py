@@ -30,7 +30,7 @@ class NewRemoteWindow(QDialog):
         self.ui.listWidget_remotes.currentRowChanged.connect(
             self.ui.tabWidget.setCurrentIndex)
         self.ui.listWidget_advance.currentRowChanged.connect(
-            self.advance_row_change)
+            self.remote_view)
 
         reg_exp = QRegularExpression('[a-zA-ZА-Яа-яЁё0-9_\\.\\-\\+@\\* ]*$')
         validator = QRegularExpressionValidator(reg_exp)
@@ -62,7 +62,7 @@ class NewRemoteWindow(QDialog):
         self.ui.radioButton_ftp_false.setEnabled(value)
         self.ui.radioButton_ftp_true.setEnabled(value)
 
-    def advance_row_change(self, index: int):
+    def remote_view(self, index: int):
         provider: dict[str, dict] = self.providers[index]
 
         if not self.edit_mode:
@@ -115,7 +115,7 @@ class NewRemoteWindow(QDialog):
                             widget .setEchoMode(QLineEdit.EchoMode.Password)
                         widget.textChanged.connect(
                             lambda text, name=option['Name']: self.remote.__setitem__(name, text))
-                        if self.edit_mode and self.remote.get(option['Name'], False):
+                        if self.edit_mode and option['Name'] in self.remote:
                             widget.setText(self.remote[option['Name']])
                     else:
                         widget = QComboBox(editable=True)
@@ -125,7 +125,7 @@ class NewRemoteWindow(QDialog):
                                 widget.count() - 1, example['Help'], Qt.ItemDataRole.ToolTipRole)
                         widget.editTextChanged.connect(
                             lambda text, name=option['Name']: self.remote.__setitem__(name, text))
-                        if self.edit_mode and self.remote.get(option['Name'], False):
+                        if self.edit_mode and option['Name'] in self.remote:
                             widget.setCurrentText(self.remote[option['Name']])
                         else:
                             widget.setCurrentText(option['Default'])
@@ -136,7 +136,7 @@ class NewRemoteWindow(QDialog):
                     layout.addWidget(line_edit)
                     line_edit.textChanged.connect(
                         lambda text, name=option['Name']: self.remote.__setitem__(name, text))
-                    if self.edit_mode and self.remote.get(option['Name'], False):
+                    if self.edit_mode and option['Name'] in self.remote:
                         line_edit.setText(str(self.remote[option['Name']]))
                 case 'bool':
                     checkbox = QCheckBox()
@@ -145,7 +145,7 @@ class NewRemoteWindow(QDialog):
                     layout.addWidget(label_help)
                     checkbox.toggled.connect(
                         lambda value, name=option['Name']: self.remote.__setitem__(name, value))
-                    if self.edit_mode and self.remote.get(option['Name'], False):
+                    if self.edit_mode and option['Name'] in self.remote:
                         checkbox.setChecked(bool(self.remote[option['Name']]))
                     else:
                         checkbox.setChecked(option['Default'])
