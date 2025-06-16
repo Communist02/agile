@@ -29,9 +29,6 @@
    </item>
    <item>
     <widget class="QTabWidget" name="tabWidget_mode">
-     <property name="currentIndex">
-      <number>0</number>
-     </property>
      <property name="documentMode">
       <bool>true</bool>
      </property>
@@ -177,7 +174,11 @@
                 </widget>
                </item>
                <item>
-                <widget class="QLineEdit" name="lineEdit_ftp_port"/>
+                <widget class="QLineEdit" name="lineEdit_ftp_port">
+                 <property name="text">
+                  <string>21</string>
+                 </property>
+                </widget>
                </item>
               </layout>
              </item>
@@ -329,7 +330,11 @@
                 </widget>
                </item>
                <item>
-                <widget class="QLineEdit" name="lineEdit_sftp_port"/>
+                <widget class="QLineEdit" name="lineEdit_sftp_port">
+                 <property name="text">
+                  <string>22</string>
+                 </property>
+                </widget>
                </item>
               </layout>
              </item>
@@ -951,8 +956,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>202</width>
-                <height>338</height>
+                <width>800</width>
+                <height>566</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_21">
@@ -987,7 +992,7 @@
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>350</width>
+                    <width>798</width>
                     <height>144</height>
                    </rect>
                   </property>
@@ -1396,8 +1401,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>800</width>
-            <height>120</height>
+            <width>788</width>
+            <height>118</height>
            </rect>
           </property>
           <property name="sizePolicy">

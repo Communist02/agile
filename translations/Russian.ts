@@ -387,12 +387,17 @@
         <translation>Новое подключение</translation>
     </message>
     <message>
-        <location filename="../app/new_remote.py" line="318"/>
+        <location filename="../app/new_remote.py" line="40"/>
+        <source>Edit</source>
+        <translation>Редактирование</translation>
+    </message>
+    <message>
+        <location filename="../app/new_remote.py" line="260"/>
         <source>Enter name</source>
         <translation>Введите имя</translation>
     </message>
     <message>
-        <location filename="../app/new_remote.py" line="319"/>
+        <location filename="../app/new_remote.py" line="261"/>
         <location filename="../ui/new_remote_window.ui" line="26"/>
         <source>Enter name for new remote</source>
         <translation>Введите новое имя для подключения</translation>
@@ -564,7 +569,7 @@
     <message>
         <location filename="../ui/new_remote_window.ui" line="40"/>
         <source>Simple</source>
-        <translation>Простой</translation>
+        <translation>Просто</translation>
     </message>
     <message>
         <location filename="../ui/new_remote_window.ui" line="74"/>
@@ -854,7 +859,7 @@
         <location filename="../ui/new_remote_window.ui" line="1355"/>
         <location filename="../ui/new_remote_window.ui" line="1441"/>
         <source>Advanced</source>
-        <translation>Дополнительно</translation>
+        <translation>Продвинуто</translation>
     </message>
 </context>
 <context>

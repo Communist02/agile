@@ -17,13 +17,14 @@ class NewRemoteWindow(QDialog):
         rc = Rclone()
         self.providers = rc.providers()
         self.remote = {}
+        self.edit_mode = edit_mode
 
         self.setWindowIcon(
             QIcon(os.path.dirname(__file__) + '/resources/' + 'favicon.ico'))
         self.ui.tabWidget.tabBar().hide()
 
         self.ui.buttonBox.accepted.connect(
-            lambda: self.new_remote(edit_mode, remote_name))
+            lambda: self.new_remote(remote_name))
         self.ui.checkBox_ftp_tls.clicked.connect(self.set_view_ftp_tls_option)
 
         self.ui.listWidget_remotes.currentRowChanged.connect(
@@ -35,107 +36,27 @@ class NewRemoteWindow(QDialog):
         validator = QRegularExpressionValidator(reg_exp)
         self.ui.lineEdit_name.setValidator(validator)
 
+        if edit_mode:
+            self.setWindowTitle(self.tr('Edit') + ' ' + remote_name[:-1])
+            config = rc.config('dump')
+            remote_type = config[remote_name[:-1]]['type']
+            self.ui.lineEdit_name.setText(remote_name[:-1])
+            self.ui.tabWidget_mode.tabBar().hide()
+            self.ui.tabWidget_mode.setCurrentIndex(1)
+            self.ui.listWidget_advance.hide()
+
         for provider in self.providers:
             item = QListWidgetItem(f'{provider['Description']}')
             item.setToolTip(provider['Name'])
             self.ui.listWidget_advance.addItem(item)
+            if edit_mode and remote_type == provider['Name']:
+                self.remote = config[remote_name[:-1]]
+                self.ui.listWidget_advance.setCurrentRow(
+                    self.ui.listWidget_advance.count() - 1)
+                break
 
-        self.ui.listWidget_advance.setCurrentRow(0)
-
-        if edit_mode:
-            self.setWindowTitle(f'Edit {remote_name}')
-            config = rc.config('dump')
-            type = config[remote_name[:-1]]['type']
-            match type:
-                case 'drive':
-                    self.ui.tabWidget.setCurrentIndex(self.ui.tabWidget.indexOf(
-                        self.ui.tabWidget.findChild(QWidget, 'tab_google_drive')))
-                case 'yandex':
-                    self.ui.tabWidget.setCurrentIndex(self.ui.tabWidget.indexOf(
-                        self.ui.tabWidget.findChild(QWidget, 'tab_yandex_disk')))
-                case 'ftp':
-                    self.ui.tabWidget.setCurrentIndex(self.ui.tabWidget.indexOf(
-                        self.ui.tabWidget.findChild(QWidget, 'tab_ftp')))
-                    host = config[remote_name[:-1]]['host']
-                    port = config[remote_name[:-1]]['port']
-                    user = config[remote_name[:-1]]['user']
-                    tls = config[remote_name[:-1]]['tls'] == 'true'
-                    explicit_tls = config[remote_name[:-1]
-                                          ]['explicit_tls'] == 'true'
-                    if tls:
-                        self.ui.radioButton_ftp_false.setEnabled(True)
-                        self.ui.radioButton_ftp_true.setEnabled(True)
-                    self.ui.lineEdit_ftp_host.setText(host)
-                    self.ui.lineEdit_ftp_port.setText(port)
-                    self.ui.lineEdit_ftp_login.setText(user)
-                    self.ui.checkBox_ftp_tls.setChecked(tls)
-                    self.ui.radioButton_ftp_true.setChecked(explicit_tls)
-                case 'webdav':
-                    self.ui.tabWidget.setCurrentIndex(self.ui.tabWidget.indexOf(
-                        self.ui.tabWidget.findChild(QWidget, 'tab_webdav')))
-                    url = config[remote_name[:-1]]['url']
-                    user = config[remote_name[:-1]]['user']
-                    self.ui.lineEdit_webdav_url.setText(url)
-                    self.ui.lineEdit_webdav_login.setText(user)
-                    match config[remote_name[:-1]].setdefault('vendor', 'other'):
-                        case 'fastmail':
-                            vendor = 1
-                        case 'nextcloud':
-                            vendor = 2
-                        case 'owncloud':
-                            vendor = 3
-                        case 'sharepoint':
-                            vendor = 4
-                        case 'sharepoint-ntlm':
-                            vendor = 5
-                        case 'rclone':
-                            vendor = 6
-                        case _:
-                            vendor = 0
-                    self.ui.comboBox_webdav_vendor.setCurrentIndex(vendor)
-                case 'http':
-                    self.ui.tabWidget.setCurrentIndex(self.ui.tabWidget.indexOf(
-                        self.ui.tabWidget.findChild(QWidget, 'tab_http')))
-                    url = config[remote_name[:-1]]['url']
-                    self.ui.lineEdit_url.setText(url)
-                case 'local':
-                    self.ui.tabWidget.setCurrentIndex(self.ui.tabWidget.indexOf(
-                        self.ui.tabWidget.findChild(QWidget, 'tab_local')))
-                case 'onedrive':
-                    self.ui.tabWidget.setCurrentIndex(self.ui.tabWidget.indexOf(
-                        self.ui.tabWidget.findChild(QWidget, 'tab_onedrive')))
-                    match config[remote_name[:-1]].setdefault('region', 'global'):
-                        case 'us':
-                            region = 1
-                        case 'cn':
-                            region = 2
-                        case _:
-                            region = 0
-                    self.ui.comboBox_onedrive_region.setCurrentIndex(region)
-                case 'mailru':
-                    self.ui.tabWidget.setCurrentIndex(self.ui.tabWidget.indexOf(
-                        self.ui.tabWidget.findChild(QWidget, 'tab_mailru')))
-                    user = config[remote_name[:-1]]['user']
-                    self.ui.lineEdit_mailru_login.setText(user)
-                case 'sftp':
-                    self.ui.tabWidget.setCurrentIndex(self.ui.tabWidget.indexOf(
-                        self.ui.tabWidget.findChild(QWidget, 'tab_sftp')))
-                    host = config[remote_name[:-1]]['host']
-                    port = config[remote_name[:-1]]['port']
-                    user = config[remote_name[:-1]]['user']
-                    self.ui.lineEdit_sftp_host.setText(host)
-                    self.ui.lineEdit_sftp_port.setText(port)
-                    self.ui.lineEdit_sftp_login.setText(user)
-                case 'alias':
-                    self.ui.tabWidget.setCurrentIndex(self.ui.tabWidget.indexOf(
-                        self.ui.tabWidget.findChild(QWidget, 'tab_alias')))
-                    remote = config[remote_name[:-1]]['remote']
-                    self.ui.lineEdit_alias_path.setText(remote)
-                case 'union':
-                    self.ui.tabWidget.setCurrentIndex(self.ui.tabWidget.indexOf(
-                        self.ui.tabWidget.findChild(QWidget, 'tab_union')))
-            self.ui.lineEdit_name.setText(remote_name[:-1])
-            self.ui.listWidget_remotes.hide()
+        if not edit_mode:
+            self.ui.listWidget_advance.setCurrentRow(0)
 
     def set_view_ftp_tls_option(self, value):
         self.ui.radioButton_ftp_false.setEnabled(value)
@@ -143,7 +64,9 @@ class NewRemoteWindow(QDialog):
 
     def advance_row_change(self, index: int):
         provider: dict[str, dict] = self.providers[index]
-        self.remote = {'remote_type': provider['Name']}
+
+        if not self.edit_mode:
+            self.remote = {'type': provider['Name']}
 
         is_required_show = False
         is_not_required_show = False
@@ -157,9 +80,10 @@ class NewRemoteWindow(QDialog):
             self.ui.groupBox_not_required.layout().itemAt(i).widget().deleteLater()
 
         def toggle_content(value):
-            # Переключаем видимость всех дочерних виджетов внутри GroupBox
             for child in self.ui.groupBox_advanced.findChildren(QWidget):
                 child.setVisible(value)
+                if value:
+                    self.ui.groupBox_advanced.setFocus()
 
         self.ui.groupBox_advanced.toggled.connect(toggle_content)
 
@@ -173,7 +97,8 @@ class NewRemoteWindow(QDialog):
             elif option['Required']:
                 is_required_show = True
                 layout = self.ui.groupBox_required.layout()
-                self.remote[option['Name']] = ''
+                if not self.edit_mode:
+                    self.remote[option['Name']] = option['Default']
             else:
                 is_not_required_show = True
                 layout = self.ui.groupBox_not_required.layout()
@@ -190,30 +115,40 @@ class NewRemoteWindow(QDialog):
                             widget .setEchoMode(QLineEdit.EchoMode.Password)
                         widget.textChanged.connect(
                             lambda text, name=option['Name']: self.remote.__setitem__(name, text))
+                        if self.edit_mode and self.remote.get(option['Name'], False):
+                            widget.setText(self.remote[option['Name']])
                     else:
-                        widget = QComboBox(
-                            currentText=option['Default'], editable=True)
+                        widget = QComboBox(editable=True)
                         for example in option['Examples']:
                             widget.addItem(example['Value'])
                             widget.setItemData(
                                 widget.count() - 1, example['Help'], Qt.ItemDataRole.ToolTipRole)
                         widget.editTextChanged.connect(
                             lambda text, name=option['Name']: self.remote.__setitem__(name, text))
+                        if self.edit_mode and self.remote.get(option['Name'], False):
+                            widget.setCurrentText(self.remote[option['Name']])
+                        else:
+                            widget.setCurrentText(option['Default'])
                     layout.addWidget(widget)
                 case 'int':
                     line_edit = QLineEdit(str(option['Default']))
                     line_edit.setValidator(QIntValidator())
                     layout.addWidget(line_edit)
                     line_edit.textChanged.connect(
-                            lambda text, name=option['Name']: self.remote.__setitem__(name, text))
+                        lambda text, name=option['Name']: self.remote.__setitem__(name, text))
+                    if self.edit_mode and self.remote.get(option['Name'], False):
+                        line_edit.setText(str(self.remote[option['Name']]))
                 case 'bool':
                     checkbox = QCheckBox()
                     checkbox.setText(option['Name'])
-                    checkbox.setChecked(option['Default'])
                     layout.addWidget(checkbox)
                     layout.addWidget(label_help)
                     checkbox.toggled.connect(
-                            lambda value, name=option['Name']: self.remote.__setitem__(name, value))
+                        lambda value, name=option['Name']: self.remote.__setitem__(name, value))
+                    if self.edit_mode and self.remote.get(option['Name'], False):
+                        checkbox.setChecked(bool(self.remote[option['Name']]))
+                    else:
+                        checkbox.setChecked(option['Default'])
 
         self.ui.groupBox_required.setVisible(is_required_show)
         self.ui.groupBox_not_required.setVisible(is_not_required_show)
@@ -221,13 +156,13 @@ class NewRemoteWindow(QDialog):
         if not self.ui.groupBox_advanced.isChecked():
             toggle_content(False)
 
-    def new_remote(self, edit_mode: bool = False, remote_name: str = None):
+    def new_remote(self, remote_name_delete: str = None):
         name = self.ui.lineEdit_name.text().strip()
         rc = Rclone()
 
         if name != '':
-            if edit_mode:
-                rc.config('delete', f'"{remote_name[:-1]}"')
+            if remote_name_delete:
+                rc.config('delete', f'"{remote_name_delete[:-1]}"')
             if self.ui.tabWidget_mode.currentIndex() == 0:
                 match self.ui.tabWidget.currentWidget().objectName():
                     case 'tab_google_drive':
@@ -245,14 +180,14 @@ class NewRemoteWindow(QDialog):
                         else:
                             explicit_tls = 'false'
                         rc.create_remote(name,
-                                             remote_type='ftp',
-                                             host=self.ui.lineEdit_ftp_host.text().strip(),
-                                             port=self.ui.lineEdit_ftp_port.text().strip(),
-                                             user=self.ui.lineEdit_ftp_login.text().strip(),
-                                             tls=str(
-                                                 self.ui.checkBox_ftp_tls.isChecked()).lower(),
-                                             explicit_tls=explicit_tls
-                                             )
+                                         remote_type='ftp',
+                                         host=self.ui.lineEdit_ftp_host.text().strip(),
+                                         port=self.ui.lineEdit_ftp_port.text().strip(),
+                                         user=self.ui.lineEdit_ftp_login.text().strip(),
+                                         tls=str(
+                                             self.ui.checkBox_ftp_tls.isChecked()).lower(),
+                                         explicit_tls=explicit_tls
+                                         )
                         if self.ui.lineEdit_ftp_password.text().strip() != '':
                             rc.config('password', name, 'pass',
                                       self.ui.lineEdit_ftp_password.text().strip())
@@ -261,11 +196,11 @@ class NewRemoteWindow(QDialog):
                         vendor = ['other', 'fastmail', 'nextcloud', 'owncloud', 'sharepoint',
                                   'sharepoint-ntlm', 'rclone'][self.ui.comboBox_webdav_vendor.currentIndex()]
                         rc.create_remote(name,
-                                             remote_type='webdav',
-                                             url=self.ui.lineEdit_webdav_url.text().strip(),
-                                             user=self.ui.lineEdit_webdav_login.text().strip(),
-                                             vendor=vendor
-                                             )
+                                         remote_type='webdav',
+                                         url=self.ui.lineEdit_webdav_url.text().strip(),
+                                         user=self.ui.lineEdit_webdav_login.text().strip(),
+                                         vendor=vendor
+                                         )
                         if self.ui.lineEdit_webdav_password.text().strip() != '':
                             rc.config('password', name, 'pass',
                                       self.ui.lineEdit_webdav_password.text().strip())
@@ -288,18 +223,18 @@ class NewRemoteWindow(QDialog):
                         self.close()
                     case 'tab_mailru':
                         rc.create_remote(name, remote_type='mailru',
-                                             user=self.ui.lineEdit_mailru_login.text().strip())
+                                         user=self.ui.lineEdit_mailru_login.text().strip())
                         if self.ui.lineEdit_mailru_password.text().strip() != '':
                             rc.config('password', name, 'pass',
                                       self.ui.lineEdit_mailru_password.text().strip())
                         self.close()
                     case 'tab_sftp':
                         rc.create_remote(name,
-                                             remote_type='sftp',
-                                             host=self.ui.lineEdit_sftp_host.text().strip(),
-                                             port=self.ui.lineEdit_sftp_port.text().strip(),
-                                             user=self.ui.lineEdit_sftp_login.text().strip()
-                                             )
+                                         remote_type='sftp',
+                                         host=self.ui.lineEdit_sftp_host.text().strip(),
+                                         port=self.ui.lineEdit_sftp_port.text().strip(),
+                                         user=self.ui.lineEdit_sftp_login.text().strip()
+                                         )
                         if self.ui.lineEdit_sftp_password.text().strip() != '':
                             rc.config('password', name, 'pass',
                                       self.ui.lineEdit_sftp_password.text().strip())
@@ -313,7 +248,7 @@ class NewRemoteWindow(QDialog):
             else:
                 arg = ''
                 for key, value in self.remote.items():
-                    if key != 'remote_type':
+                    if key != 'type':
                         match value:
                             case str():
                                 arg += f'{key}="{value}" '
@@ -321,7 +256,7 @@ class NewRemoteWindow(QDialog):
                                 arg += f'{key}={value} '
                             case bool():
                                 arg += f'{key}={str(value).lower()} '
-                rc.create_remote(name, self.remote['remote_type'], arg)
+                rc.create_remote(name, self.remote['type'], arg)
                 self.close()
         else:
             QMessageBox.warning(self, self.tr('Enter name'),
