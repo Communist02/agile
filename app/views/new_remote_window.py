@@ -44,14 +44,18 @@ class Ui_NewRemoteWindow(object):
         self.horizontalLayout_10.setObjectName(u"horizontalLayout_10")
         self.horizontalLayout_10.setContentsMargins(0, 0, 0, 0)
         self.listWidget_remotes = QListWidget(self.tab_simple)
+        __qlistwidgetitem = QListWidgetItem(self.listWidget_remotes)
+        __qlistwidgetitem.setText(u"FTP");
+        __qlistwidgetitem1 = QListWidgetItem(self.listWidget_remotes)
+        __qlistwidgetitem1.setText(u"SFTP");
+        __qlistwidgetitem2 = QListWidgetItem(self.listWidget_remotes)
+        __qlistwidgetitem2.setText(u"WebDAV");
         QListWidgetItem(self.listWidget_remotes)
         QListWidgetItem(self.listWidget_remotes)
         QListWidgetItem(self.listWidget_remotes)
         QListWidgetItem(self.listWidget_remotes)
-        QListWidgetItem(self.listWidget_remotes)
-        QListWidgetItem(self.listWidget_remotes)
-        QListWidgetItem(self.listWidget_remotes)
-        QListWidgetItem(self.listWidget_remotes)
+        __qlistwidgetitem3 = QListWidgetItem(self.listWidget_remotes)
+        __qlistwidgetitem3.setText(u"HTTP");
         QListWidgetItem(self.listWidget_remotes)
         QListWidgetItem(self.listWidget_remotes)
         QListWidgetItem(self.listWidget_remotes)
@@ -99,6 +103,7 @@ class Ui_NewRemoteWindow(object):
 
         self.lineEdit_ftp_port = QLineEdit(self.tab_ftp)
         self.lineEdit_ftp_port.setObjectName(u"lineEdit_ftp_port")
+        self.lineEdit_ftp_port.setText(u"21")
 
         self.verticalLayout_5.addWidget(self.lineEdit_ftp_port)
 
@@ -212,6 +217,7 @@ class Ui_NewRemoteWindow(object):
 
         self.lineEdit_sftp_port = QLineEdit(self.tab_sftp)
         self.lineEdit_sftp_port.setObjectName(u"lineEdit_sftp_port")
+        self.lineEdit_sftp_port.setText(u"22")
 
         self.verticalLayout_17.addWidget(self.lineEdit_sftp_port)
 
@@ -717,7 +723,7 @@ class Ui_NewRemoteWindow(object):
         self.scrollArea_advance.setWidgetResizable(True)
         self.scrollAreaWidgetContents_advance = QWidget()
         self.scrollAreaWidgetContents_advance.setObjectName(u"scrollAreaWidgetContents_advance")
-        self.scrollAreaWidgetContents_advance.setGeometry(QRect(0, 0, 788, 118))
+        self.scrollAreaWidgetContents_advance.setGeometry(QRect(0, 0, 98, 118))
         sizePolicy1.setHeightForWidth(self.scrollAreaWidgetContents_advance.sizePolicy().hasHeightForWidth())
         self.scrollAreaWidgetContents_advance.setSizePolicy(sizePolicy1)
         self.verticalLayout_27 = QVBoxLayout(self.scrollAreaWidgetContents_advance)
@@ -765,8 +771,7 @@ class Ui_NewRemoteWindow(object):
         self.retranslateUi(NewRemoteWindow)
         self.buttonBox.rejected.connect(NewRemoteWindow.reject)
 
-        self.listWidget_remotes.setCurrentRow(0)
-        self.tabWidget.setCurrentIndex(0)
+        self.listWidget_remotes.setCurrentRow(-1)
         self.toolBox.setCurrentIndex(0)
 
 
@@ -780,40 +785,30 @@ class Ui_NewRemoteWindow(object):
 
         __sortingEnabled = self.listWidget_remotes.isSortingEnabled()
         self.listWidget_remotes.setSortingEnabled(False)
-        ___qlistwidgetitem = self.listWidget_remotes.item(0)
-        ___qlistwidgetitem.setText(QCoreApplication.translate("NewRemoteWindow", u"FTP", None));
-        ___qlistwidgetitem1 = self.listWidget_remotes.item(1)
-        ___qlistwidgetitem1.setText(QCoreApplication.translate("NewRemoteWindow", u"SFTP", None));
-        ___qlistwidgetitem2 = self.listWidget_remotes.item(2)
-        ___qlistwidgetitem2.setText(QCoreApplication.translate("NewRemoteWindow", u"WebDAV", None));
-        ___qlistwidgetitem3 = self.listWidget_remotes.item(3)
-        ___qlistwidgetitem3.setText(QCoreApplication.translate("NewRemoteWindow", u"Google Drive", None));
-        ___qlistwidgetitem4 = self.listWidget_remotes.item(4)
-        ___qlistwidgetitem4.setText(QCoreApplication.translate("NewRemoteWindow", u"Yandex Disk", None));
-        ___qlistwidgetitem5 = self.listWidget_remotes.item(5)
-        ___qlistwidgetitem5.setText(QCoreApplication.translate("NewRemoteWindow", u"Microsoft OneDrive", None));
-        ___qlistwidgetitem6 = self.listWidget_remotes.item(6)
-        ___qlistwidgetitem6.setText(QCoreApplication.translate("NewRemoteWindow", u"Mail.ru Cloud", None));
-        ___qlistwidgetitem7 = self.listWidget_remotes.item(7)
-        ___qlistwidgetitem7.setText(QCoreApplication.translate("NewRemoteWindow", u"HTTP", None));
-        ___qlistwidgetitem8 = self.listWidget_remotes.item(8)
-        ___qlistwidgetitem8.setText(QCoreApplication.translate("NewRemoteWindow", u"Local", None));
-        ___qlistwidgetitem9 = self.listWidget_remotes.item(9)
-        ___qlistwidgetitem9.setText(QCoreApplication.translate("NewRemoteWindow", u"Alias", None));
-        ___qlistwidgetitem10 = self.listWidget_remotes.item(10)
-        ___qlistwidgetitem10.setText(QCoreApplication.translate("NewRemoteWindow", u"Union", None));
+        ___qlistwidgetitem = self.listWidget_remotes.item(3)
+        ___qlistwidgetitem.setText(QCoreApplication.translate("NewRemoteWindow", u"Google Drive", None));
+        ___qlistwidgetitem1 = self.listWidget_remotes.item(4)
+        ___qlistwidgetitem1.setText(QCoreApplication.translate("NewRemoteWindow", u"Yandex Disk", None));
+        ___qlistwidgetitem2 = self.listWidget_remotes.item(5)
+        ___qlistwidgetitem2.setText(QCoreApplication.translate("NewRemoteWindow", u"Microsoft OneDrive", None));
+        ___qlistwidgetitem3 = self.listWidget_remotes.item(6)
+        ___qlistwidgetitem3.setText(QCoreApplication.translate("NewRemoteWindow", u"Mail.ru Cloud", None));
+        ___qlistwidgetitem4 = self.listWidget_remotes.item(8)
+        ___qlistwidgetitem4.setText(QCoreApplication.translate("NewRemoteWindow", u"Local", None));
+        ___qlistwidgetitem5 = self.listWidget_remotes.item(9)
+        ___qlistwidgetitem5.setText(QCoreApplication.translate("NewRemoteWindow", u"Alias", None));
+        ___qlistwidgetitem6 = self.listWidget_remotes.item(10)
+        ___qlistwidgetitem6.setText(QCoreApplication.translate("NewRemoteWindow", u"Union", None));
         self.listWidget_remotes.setSortingEnabled(__sortingEnabled)
 
         self.label_2.setText(QCoreApplication.translate("NewRemoteWindow", u"Host", None))
         self.label_16.setText(QCoreApplication.translate("NewRemoteWindow", u"Port", None))
-        self.lineEdit_ftp_port.setText(QCoreApplication.translate("NewRemoteWindow", u"21", None))
         self.label_4.setText(QCoreApplication.translate("NewRemoteWindow", u"Login", None))
         self.label_5.setText(QCoreApplication.translate("NewRemoteWindow", u"Password", None))
         self.radioButton_ftp_false.setText(QCoreApplication.translate("NewRemoteWindow", u"Implict", None))
         self.radioButton_ftp_true.setText(QCoreApplication.translate("NewRemoteWindow", u"Explict", None))
         self.label_14.setText(QCoreApplication.translate("NewRemoteWindow", u"Host", None))
         self.label_15.setText(QCoreApplication.translate("NewRemoteWindow", u"Port", None))
-        self.lineEdit_sftp_port.setText(QCoreApplication.translate("NewRemoteWindow", u"22", None))
         self.label_12.setText(QCoreApplication.translate("NewRemoteWindow", u"Login", None))
         self.label_13.setText(QCoreApplication.translate("NewRemoteWindow", u"Password", None))
         self.label_7.setText(QCoreApplication.translate("NewRemoteWindow", u"URL", None))

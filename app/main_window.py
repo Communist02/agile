@@ -22,7 +22,6 @@ from app.views import main_window
 
 if os.name == 'nt':
     import winreg
-    import win32api
 
 rc = Rclone()
 
@@ -184,7 +183,6 @@ class MainWindow(QMainWindow):
         self.ui.lineEdit_input_path.hide()
 
         if QApplication.style().name().lower() == 'windows11':
-            # arrow_label.setStyleSheet('QLabel {font-weight: bold;}')
             self.ui.path_list_frame.setStyleSheet('QPushButton {background-color: rgba(255, 255, 255, 0);font-weight: bold;}QLabel {font-weight: bold;}')
 
         def close():
@@ -272,6 +270,11 @@ class MainWindow(QMainWindow):
         self.timer.timeout.connect(self.timer_update)
         self.timer.start()
 
+        if os.name == 'nt':
+            self.timer_drive_check = QTimer(interval=5000)
+            self.timer_drive_check.timeout.connect(self.check_free_drives)
+            self.timer_drive_check.start()
+
         self.tray_icon = QSystemTrayIcon(self)
         self.tray_icon.setIcon(self.windowIcon())
         self.tray_icon.setContextMenu(self.context_menu_tray_icon())
@@ -283,7 +286,8 @@ class MainWindow(QMainWindow):
         self.recovery_mount()
         if os.name == 'nt':
             self.check_free_drives()
-        self.start_file_monitor()
+        else:
+            self.start_file_monitor()
 
     def tray_icon_activated(self, reason: QSystemTrayIcon.ActivationReason):
         match reason:
@@ -374,16 +378,14 @@ class MainWindow(QMainWindow):
         handler = FileMonitorHandler(self, '.cloud_explorer_file_temp')
 
         if os.name == 'nt':
-            observers = []
-            drives = win32api.GetLogicalDriveStrings()
-            drives = drives.replace('\x00', '').split('\\')[:-1]
+            self.observers = []
 
-            for disk in drives:
+            for drive in self.drives:
                 observer = Observer()
-                observer.schedule(handler, disk + '\\', recursive=True)
+                observer.schedule(handler, drive + '\\', recursive=True)
                 try:
                     observer.start()
-                    observers.append(observer)
+                    self.observers.append(observer)
                 except PermissionError:
                     pass
         else:
@@ -395,13 +397,23 @@ class MainWindow(QMainWindow):
 
     def check_free_drives(self):
         if os.name == 'nt':
-            all_drives = set(chr(ord('A') + i) + ':' for i in range(26))
-            occupied_drives = win32api.GetLogicalDriveStrings()
-            occupied_drives = set(occupied_drives.replace(
-                '\x00', '').split('\\')[:-1])
-            free_drives = sorted(all_drives - occupied_drives, reverse=True)
-            self.ui.comboBox_mount_point.clear()
-            self.ui.comboBox_mount_point.addItems(free_drives)
+            all_drives = set(d + ':' for d in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')
+            occupied_drives = [d + ':' for d in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' if os.path.exists(d + ':')]
+            try:
+                self.drives
+            except AttributeError:
+                self.drives = []
+            if occupied_drives != self.drives:
+                try:
+                    for observer in self.observers:
+                        observer.stop()
+                except AttributeError:
+                    pass
+                self.drives = occupied_drives
+                self.start_file_monitor()
+                free_drives = sorted(all_drives - set(occupied_drives), reverse=True)
+                self.ui.comboBox_mount_point.clear()
+                self.ui.comboBox_mount_point.addItems(free_drives)
 
     async def search(self):
         remote_name = self.ui.comboBox_search.currentText()

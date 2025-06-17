@@ -64,21 +64,21 @@
           </size>
          </property>
          <property name="currentRow">
-          <number>0</number>
+          <number>-1</number>
          </property>
          <item>
           <property name="text">
-           <string>FTP</string>
+           <string notr="true">FTP</string>
           </property>
          </item>
          <item>
           <property name="text">
-           <string>SFTP</string>
+           <string notr="true">SFTP</string>
           </property>
          </item>
          <item>
           <property name="text">
-           <string>WebDAV</string>
+           <string notr="true">WebDAV</string>
           </property>
          </item>
          <item>
@@ -103,7 +103,7 @@
          </item>
          <item>
           <property name="text">
-           <string>HTTP</string>
+           <string notr="true">HTTP</string>
           </property>
          </item>
          <item>
@@ -125,9 +125,6 @@
        </item>
        <item>
         <widget class="QTabWidget" name="tabWidget">
-         <property name="currentIndex">
-          <number>0</number>
-         </property>
          <property name="documentMode">
           <bool>true</bool>
          </property>
@@ -176,7 +173,7 @@
                <item>
                 <widget class="QLineEdit" name="lineEdit_ftp_port">
                  <property name="text">
-                  <string>21</string>
+                  <string notr="true">21</string>
                  </property>
                 </widget>
                </item>
@@ -332,7 +329,7 @@
                <item>
                 <widget class="QLineEdit" name="lineEdit_sftp_port">
                  <property name="text">
-                  <string>22</string>
+                  <string notr="true">22</string>
                  </property>
                 </widget>
                </item>
@@ -1401,7 +1398,7 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>788</width>
+            <width>98</width>
             <height>118</height>
            </rect>
           </property>
