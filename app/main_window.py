@@ -46,7 +46,7 @@ class FileMonitorHandler(FileSystemEventHandler):
                     break
 
 
-class Task():
+class Task(QMainWindow):
     last_index = 0
 
     def __init__(self, operation: str, source: str = '', destination: str = '', process: subprocess.Popen = None):
@@ -78,10 +78,11 @@ class Task():
         self.full_size = size
 
     def set_size(self, size: float):
-        sizes = ['B', 'KB', 'MB', 'GB', 'TB']
+        sizes = [self.tr('B'), self.tr('KB'), self.tr(
+            'MB'), self.tr('GB'), self.tr('TB')]
         index = 0
         full_size = self.full_size
-        
+
         for _ in range(4):
             if full_size >= 1024 or full_size == 0 and size >= 1024:
                 full_size = round(float(full_size) / 1024, 2)
@@ -99,7 +100,8 @@ class Task():
             self.progress = 0
 
     def set_speed(self, speed: float):
-        sizes = ['B/s', 'KB/s', 'MB/s', 'GB/s', 'TB/s']
+        sizes = [self.tr('B/s'), self.tr('KB/s'), self.tr('MB/s'),
+                 self.tr('GB/s'), self.tr('TB/s')]
         index = 0
 
         for _ in range(4):
@@ -183,7 +185,8 @@ class MainWindow(QMainWindow):
         self.ui.lineEdit_input_path.hide()
 
         if QApplication.style().name().lower() == 'windows11':
-            self.ui.path_list_frame.setStyleSheet('QPushButton {background-color: rgba(255, 255, 255, 0);font-weight: bold;}QLabel {font-weight: bold;}')
+            self.ui.path_list_frame.setStyleSheet(
+                'QPushButton {background-color: rgba(255, 255, 255, 0);font-weight: bold;}QLabel {font-weight: bold;}')
 
         def close():
             self.hide()
@@ -220,7 +223,8 @@ class MainWindow(QMainWindow):
         self.ui.button_mount.clicked.connect(lambda: self.mount_remote(
             self.ui.comboBox_remote.currentText(), type=self.ui.comboBox_remote.currentData(Qt.ItemDataRole.UserRole), mount_point=self.ui.comboBox_mount_point.currentText()))
         self.ui.pushButton_input_path.clicked.connect(self.start_input_path)
-        self.ui.lineEdit_input_path.editingFinished.connect(self.enter_input_path)
+        self.ui.lineEdit_input_path.editingFinished.connect(
+            self.enter_input_path)
 
         if os.name == "nt":
             self.ui.toolButton_mount_point.hide()
@@ -398,7 +402,8 @@ class MainWindow(QMainWindow):
     def check_free_drives(self):
         if os.name == 'nt':
             all_drives = set(d + ':' for d in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')
-            occupied_drives = [d + ':' for d in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' if os.path.exists(d + ':')]
+            occupied_drives = [
+                d + ':' for d in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' if os.path.exists(d + ':')]
             try:
                 self.drives
             except AttributeError:
@@ -411,7 +416,8 @@ class MainWindow(QMainWindow):
                     pass
                 self.drives = occupied_drives
                 self.start_file_monitor()
-                free_drives = sorted(all_drives - set(occupied_drives), reverse=True)
+                free_drives = sorted(
+                    all_drives - set(occupied_drives), reverse=True)
                 self.ui.comboBox_mount_point.clear()
                 self.ui.comboBox_mount_point.addItems(free_drives)
 
@@ -439,7 +445,8 @@ class MainWindow(QMainWindow):
 
             if len(line) > 10:
                 line = json.loads(line.replace(',\n', ''))
-                sizes = ['B', 'KB', 'MB', 'GB', 'TB']
+                sizes = [self.tr('B'), self.tr('KB'), self.tr(
+                    'MB'), self.tr('GB'), self.tr('TB')]
                 index = 0
                 size = line['Size']
                 name = line['Name']
@@ -493,7 +500,8 @@ class MainWindow(QMainWindow):
         free = size.get('free', None)
         total = size.get('total', None)
 
-        sizes = ['B', 'KB', 'MB', 'GB', 'TB']
+        sizes = [self.tr('B'), self.tr('KB'), self.tr(
+            'MB'), self.tr('GB'), self.tr('TB')]
 
         index_free = 0
         if free is not None:
@@ -629,7 +637,8 @@ class MainWindow(QMainWindow):
 
     def start_input_path(self):
         if self.current_remote != '':
-            self.ui.lineEdit_input_path.setText(self.current_remote + self.remotes_paths[self.current_remote])
+            self.ui.lineEdit_input_path.setText(
+                self.current_remote + self.remotes_paths[self.current_remote])
             self.ui.path_list_frame.hide()
             self.ui.lineEdit_input_path.show()
             self.ui.lineEdit_input_path.setFocus()
@@ -747,6 +756,8 @@ class MainWindow(QMainWindow):
 
         await self.copy(task)
         await self.update_dir(destination_remote, destination_path)
+        if destination_remote == self.current_remote:
+            await self.update_free_size(destination_remote)
 
     async def copy(self, task: Task):
         loop = asyncio.get_running_loop()
@@ -898,7 +909,8 @@ class MainWindow(QMainWindow):
                 self.ui.statusbar.showMessage('')
 
                 for i in range(len(tree)):
-                    sizes = ['B', 'KB', 'MB', 'GB', 'TB']
+                    sizes = [self.tr('B'), self.tr('KB'), self.tr(
+                        'MB'), self.tr('GB'), self.tr('TB')]
                     index = 0
                     size = tree[i]['Size']
                     name = tree[i]['Name']
@@ -1040,10 +1052,12 @@ class MainWindow(QMainWindow):
             if self.mount[i].remote == remote or self.mount[i].mount_point == mount_point and mount_point not in ['', '*']:
                 self.mount[i].stop()
                 del self.mount[i]
-                items = self.ui.treeWidget_mount.findItems(remote, Qt.MatchFlag.MatchCaseSensitive) + self.ui.treeWidget_mount.findItems(mount_point, Qt.MatchFlag.MatchCaseSensitive, 2)
+                items = self.ui.treeWidget_mount.findItems(
+                    remote, Qt.MatchFlag.MatchCaseSensitive) + self.ui.treeWidget_mount.findItems(mount_point, Qt.MatchFlag.MatchCaseSensitive, 2)
                 for item in items:
                     self.remember_mount(Qt.CheckState.Unchecked, item.text(0))
-                    self.ui.treeWidget_mount.takeTopLevelItem(self.ui.treeWidget_mount.indexOfTopLevelItem(item))
+                    self.ui.treeWidget_mount.takeTopLevelItem(
+                        self.ui.treeWidget_mount.indexOfTopLevelItem(item))
             else:
                 i += 1
 
@@ -1103,6 +1117,8 @@ class MainWindow(QMainWindow):
         clipboard.setMimeData(mime_data)
 
     async def delete_files(self, files: list[dict]):
+        current_remote = self.current_remote
+
         if len(files) == 1:
             question = self.tr(
                 'Are you sure you want to delete') + ' ' + files[0]['name'] + ' ?'
@@ -1138,6 +1154,8 @@ class MainWindow(QMainWindow):
                         file['name'], Qt.MatchFlag.MatchCaseSensitive)
                     if len(items) > 0 and items[0].data(0, Qt.ItemDataRole.UserRole)['remote'] == file['remote'] and items[0].data(0, Qt.ItemDataRole.UserRole)['path'] == file['path']:
                         items[0].setHidden(True)
+                if current_remote == self.current_remote:
+                    await self.update_free_size(current_remote)
 
         msg_box.buttonClicked.connect(
             lambda button: asyncio.ensure_future(delete(button)))

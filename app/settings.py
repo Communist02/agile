@@ -1,8 +1,8 @@
 import os
 
-from PySide6.QtCore import QSettings
+from PySide6.QtCore import QSettings, Qt
 from PySide6.QtGui import QIcon
-from PySide6.QtWidgets import QDialog, QStyleFactory
+from PySide6.QtWidgets import QApplication, QDialog, QStyleFactory
 from app.palettes import palettes
 from app.views import settings_window
 
@@ -41,8 +41,13 @@ class SettingsWindow(QDialog):
         self.ui.buttonBox.accepted.connect(self.ok)
 
     def ok(self):
-        # app.setStyle(self.ui.comboBox_style.currentText())
-        # app.setPalette(palettes[self.ui.comboBox_palette.currentText()])
+        QApplication.setStyle(self.ui.comboBox_style.currentText())
+        palette = self.ui.comboBox_palette.currentText()
+        if QApplication.styleHints().colorScheme() == Qt.ColorScheme.Light:
+            palette += ' Light'
+        else:
+            palette += ' Dark'
+        QApplication.setPalette(palettes.get(palette, palettes['System']))
 
         self.settings.setValue('style', self.ui.comboBox_style.currentText())
         self.settings.setValue(
