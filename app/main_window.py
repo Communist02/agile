@@ -18,7 +18,9 @@ from app.new_remote import NewRemoteWindow
 from app.new_serve import NewServeWindow
 from app.rclone import Rclone
 from app.settings import SettingsWindow
+from app.about import AboutWindow
 from app.views import main_window
+
 
 if os.name == 'nt':
     import winreg
@@ -198,8 +200,9 @@ class MainWindow(QMainWindow):
         self.ui.action_new_serve.triggered.connect(self.open_new_serve_window)
         self.ui.action_list_remotes.triggered.connect(self.open_list_remotes)
         self.ui.action_settings.triggered.connect(self.open_settings_window)
-        self.ui.action_about.triggered.connect(
+        self.ui.action_about_qt.triggered.connect(
             lambda: QMessageBox.aboutQt(self))
+        self.ui.action_about.triggered.connect(lambda: AboutWindow().exec())
         self.ui.action_show_tasks.triggered.connect(self.ui.dock_tasks.show)
         self.ui.action_config_rclone.triggered.connect(self.open_terminal)
 
@@ -256,7 +259,6 @@ class MainWindow(QMainWindow):
         self.slider_scale.setMinimum(0)
         self.slider_scale.setMaximum(16)
         self.slider_scale.setValue(2)
-        self.set_scale(2)
         self.slider_scale.setOrientation(Qt.Orientation.Horizontal)
         self.slider_scale.valueChanged.connect(self.set_scale)
 
@@ -287,7 +289,9 @@ class MainWindow(QMainWindow):
 
         self.shortcuts()
 
+        self.recovery_ui()
         self.recovery_mount()
+
         if os.name == 'nt':
             self.check_free_drives()
         else:
@@ -376,10 +380,10 @@ class MainWindow(QMainWindow):
 
     def start_file_monitor(self):
         if self.temp_dir == '':
-            self.temp_dir = tempfile.mkdtemp(prefix='cloud_explorer_')
-        open(self.temp_dir + os.sep + '.cloud_explorer_file_temp', 'a').close()
+            self.temp_dir = tempfile.mkdtemp(prefix='rclone_explorer_')
+        open(self.temp_dir + os.sep + '.rclone_explorer_file_temp', 'a').close()
 
-        handler = FileMonitorHandler(self, '.cloud_explorer_file_temp')
+        handler = FileMonitorHandler(self, '.rclone_explorer_file_temp')
 
         if os.name == 'nt':
             self.observers = []
@@ -554,8 +558,17 @@ class MainWindow(QMainWindow):
             item = self.ui.treeWidget_search.topLevelItem(i)
             item.setSizeHint(0, QSize(0, self.scale))
 
+        settings = QSettings('Rclone Explorer', 'Rclone Explorer')
+        settings.setValue('scale', index)
+
+    def recovery_ui(self):
+        settings = QSettings('Rclone Explorer', 'Rclone Explorer')
+        index = settings.value('scale', 2)
+        self.set_scale(index)
+        self.slider_scale.setValue(index)
+
     def dragEnterEvent(self, event: QDragEnterEvent):
-        if event.mimeData().hasUrls() and event.mimeData().text() != '.cloud_explorer_file_temp':
+        if event.mimeData().hasUrls() and event.mimeData().text() != '.rclone_explorer_file_temp':
             event.accept()
 
     def dropEvent(self, event):
@@ -572,8 +585,12 @@ class MainWindow(QMainWindow):
         match self.ui.tabWidget.currentIndex():
             case 0:
                 items = self.ui.treeWidget_files.selectedItems()
+                if self.ui.treeWidget_files.currentColumn() != 0:
+                    return
             case 1:
                 items = self.ui.treeWidget_search.selectedItems()
+                if self.ui.treeWidget_search.currentColumn() != 0:
+                    return
 
         if items is None or len(items) == 0:
             return
@@ -581,13 +598,13 @@ class MainWindow(QMainWindow):
         self.download_path = ''
 
         if self.temp_dir == '':
-            self.temp_dir = tempfile.mkdtemp(prefix='cloud_explorer_')
-        open(self.temp_dir + os.sep + '.cloud_explorer_file_temp', 'a').close()
+            self.temp_dir = tempfile.mkdtemp(prefix='rclone_explorer_')
+        open(self.temp_dir + os.sep + '.rclone_explorer_file_temp', 'a').close()
 
         mime_data = QMimeData()
-        mime_data.setText('.cloud_explorer_file_temp')
+        mime_data.setText('.rclone_explorer_file_temp')
         url = QUrl.fromLocalFile(
-            self.temp_dir + os.sep + '.cloud_explorer_file_temp')
+            self.temp_dir + os.sep + '.rclone_explorer_file_temp')
         mime_data.setUrls([url])
 
         drag: QDrag = QDrag(self)
@@ -715,7 +732,7 @@ class MainWindow(QMainWindow):
         self.ui.treeWidget_remotes.clear()
         self.ui.comboBox_search.clear()
         self.ui.comboBox_remote.clear()
-        settings = QSettings('Cloud Explorer', 'Cloud Explorer')
+        settings = QSettings('Rclone Explorer', 'Rclone Explorer')
         for remote in remotes:
             item = QTreeWidgetItem([remote['name'] + ':', remote['type']])
             item.setSizeHint(0, QSize(0, 32))
@@ -987,7 +1004,7 @@ class MainWindow(QMainWindow):
 
     async def open_file(self, remote: str, file_path: str, file_name: str, is_with: bool = False):
         if self.temp_dir == '':
-            self.temp_dir = tempfile.mkdtemp(prefix='cloud_explorer_')
+            self.temp_dir = tempfile.mkdtemp(prefix='rclone_explorer_')
         process = rc.copy(remote + file_path, self.temp_dir)
         task = Task(operation='Opening', source=remote + file_path,
                     destination=self.temp_dir, process=process)
@@ -1088,7 +1105,7 @@ class MainWindow(QMainWindow):
         self.ui.treeWidget_mount.setItemWidget(item, 3, checkbox)
 
     def remember_mount(self, check_state: Qt.CheckState, remote: str, type: str = '', mount_point: str = ''):
-        settings = QSettings('Cloud Explorer', 'Cloud Explorer')
+        settings = QSettings('Rclone Explorer', 'Rclone Explorer')
         mount: dict = settings.value('mount', {})
         if check_state == Qt.CheckState.Checked:
             mount[remote] = {'remote': remote,
@@ -1098,7 +1115,7 @@ class MainWindow(QMainWindow):
         settings.setValue('mount', mount)
 
     def recovery_mount(self):
-        settings = QSettings('Cloud Explorer', 'Cloud Explorer')
+        settings = QSettings('Rclone Explorer', 'Rclone Explorer')
         mount: dict = settings.value('mount', {})
         for key, value in mount.items():
             self.mount_remote(key, value['type'], value['mount_point'], True)
@@ -1110,9 +1127,9 @@ class MainWindow(QMainWindow):
 
         clipboard = QApplication.clipboard()
         mime_data = QMimeData()
-        mime_data.setText('.cloud_explorer_file_temp')
+        mime_data.setText('.rclone_explorer_file_temp')
         url = QUrl.fromLocalFile(
-            self.temp_dir + os.sep + '.cloud_explorer_file_temp')
+            self.temp_dir + os.sep + '.rclone_explorer_file_temp')
         mime_data.setUrls([url])
         clipboard.setMimeData(mime_data)
 
@@ -1174,7 +1191,7 @@ class MainWindow(QMainWindow):
         destination_remote = self.current_remote
         destination_path = self.remotes_paths[self.current_remote]
 
-        if clipboard.mimeData().text() == '.cloud_explorer_file_temp':
+        if clipboard.mimeData().text() == '.rclone_explorer_file_temp':
             for file in self.copy_files:
                 asyncio.ensure_future(self.upload_file(
                     file['remote'] + file['path'], destination_remote, destination_path))

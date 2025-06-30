@@ -13,7 +13,7 @@ class SettingsWindow(QDialog):
         self.ui = settings_window.Ui_SettingsWindow()
         self.ui.setupUi(self)
 
-        self.settings = QSettings('Cloud Explorer', 'Cloud Explorer')
+        self.settings = QSettings('Rclone Explorer', 'Rclone Explorer')
 
         self.setWindowIcon(
             QIcon(os.path.dirname(__file__) + '/resources/' + 'favicon.ico'))

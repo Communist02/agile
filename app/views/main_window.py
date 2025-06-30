@@ -28,7 +28,7 @@ class Ui_MainWindow(object):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
         MainWindow.resize(1280, 800)
-        MainWindow.setWindowTitle(u"Cloud Explorer")
+        MainWindow.setWindowTitle(u"Rclone Explorer")
         self.action_new_remote = QAction(MainWindow)
         self.action_new_remote.setObjectName(u"action_new_remote")
         icon = QIcon(QIcon.fromTheme(u"system-file-manager"))
@@ -57,6 +57,8 @@ class Ui_MainWindow(object):
         self.action_show_tasks.setObjectName(u"action_show_tasks")
         self.action_config_rclone = QAction(MainWindow)
         self.action_config_rclone.setObjectName(u"action_config_rclone")
+        self.action_about_qt = QAction(MainWindow)
+        self.action_about_qt.setObjectName(u"action_about_qt")
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.verticalLayout = QVBoxLayout(self.centralwidget)
@@ -370,11 +372,15 @@ class Ui_MainWindow(object):
         self.menuClient.addAction(self.action_settings)
         self.menuClient.addSeparator()
         self.menuClient.addAction(self.action_exit)
+        self.menuOther.addAction(self.action_about_qt)
         self.menuOther.addAction(self.action_about)
         self.menuView.addAction(self.action_show_tasks)
         self.menuView.addAction(self.action_list_remotes)
 
         self.retranslateUi(MainWindow)
+
+        self.tabWidget.setCurrentIndex(0)
+
 
         QMetaObject.connectSlotsByName(MainWindow)
     # setupUi
@@ -388,6 +394,7 @@ class Ui_MainWindow(object):
         self.action_settings.setText(QCoreApplication.translate("MainWindow", u"Settings", None))
         self.action_show_tasks.setText(QCoreApplication.translate("MainWindow", u"Show tasks", None))
         self.action_config_rclone.setText(QCoreApplication.translate("MainWindow", u"Config Rclone", None))
+        self.action_about_qt.setText(QCoreApplication.translate("MainWindow", u"About Qt", None))
         self.button_prev_history.setText("")
         self.button_next_history.setText("")
         self.button_exit_dir.setText("")

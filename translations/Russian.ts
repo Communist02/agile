@@ -2,414 +2,437 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="ru_RU" sourcelanguage="en_US">
 <context>
-    <name>MainWindow</name>
+    <name>Dialog</name>
     <message>
-        <location filename="../ui/main_window.ui" line="34"/>
-        <source>Explorer</source>
-        <translation>Проводник</translation>
-    </message>
-    <message>
-        <location filename="../ui/main_window.ui" line="270"/>
-        <location filename="../ui/main_window.ui" line="305"/>
-        <location filename="../ui/main_window.ui" line="383"/>
-        <source>Name</source>
-        <translation>Имя</translation>
-    </message>
-    <message>
-        <location filename="../ui/main_window.ui" line="275"/>
-        <location filename="../ui/main_window.ui" line="320"/>
-        <location filename="../ui/main_window.ui" line="398"/>
-        <location filename="../ui/main_window.ui" line="578"/>
-        <source>Type</source>
-        <translation>Тип</translation>
-    </message>
-    <message>
-        <location filename="../ui/main_window.ui" line="310"/>
-        <location filename="../ui/main_window.ui" line="388"/>
-        <location filename="../ui/main_window.ui" line="693"/>
-        <source>Size</source>
-        <translation>Размер</translation>
-    </message>
-    <message>
-        <location filename="../ui/main_window.ui" line="315"/>
-        <location filename="../ui/main_window.ui" line="393"/>
-        <source>Modified</source>
-        <translation>Дата изменения</translation>
-    </message>
-    <message>
-        <location filename="../ui/main_window.ui" line="334"/>
-        <location filename="../ui/main_window.ui" line="348"/>
-        <location filename="../ui/main_window.ui" line="358"/>
-        <source>Search</source>
-        <translation>Поиск</translation>
-    </message>
-    <message>
-        <location filename="../ui/main_window.ui" line="403"/>
-        <location filename="../ui/main_window.ui" line="446"/>
-        <source>Path</source>
-        <translation>Путь</translation>
-    </message>
-    <message>
-        <location filename="../ui/main_window.ui" line="415"/>
-        <source>Serve</source>
-        <translation>Сервер</translation>
-    </message>
-    <message>
-        <location filename="../ui/main_window.ui" line="441"/>
-        <source>Protocol</source>
-        <translation>Протокол</translation>
-    </message>
-    <message>
-        <location filename="../ui/main_window.ui" line="451"/>
-        <source>Address</source>
-        <translation>Адрес</translation>
-    </message>
-    <message>
-        <location filename="../ui/main_window.ui" line="456"/>
-        <source>Username</source>
-        <translation>Имя пользователя</translation>
-    </message>
-    <message>
-        <location filename="../ui/main_window.ui" line="461"/>
-        <source>Password</source>
-        <translation>Пароль</translation>
-    </message>
-    <message>
-        <location filename="../ui/main_window.ui" line="466"/>
-        <source>Read-only</source>
-        <translation>Только для чтения</translation>
-    </message>
-    <message>
-        <location filename="../ui/main_window.ui" line="498"/>
-        <source>Remote path</source>
-        <translation>Путь подключения</translation>
-    </message>
-    <message>
-        <location filename="../ui/main_window.ui" line="524"/>
-        <location filename="../ui/main_window.ui" line="583"/>
-        <source>Mount point</source>
-        <translation>Точка монтирования</translation>
-    </message>
-    <message>
-        <location filename="../ui/main_window.ui" line="573"/>
-        <source>Remote</source>
-        <translation>Подключение</translation>
-    </message>
-    <message>
-        <location filename="../ui/main_window.ui" line="588"/>
-        <source>Remember</source>
-        <translation>Запомнить</translation>
-    </message>
-    <message>
-        <location filename="../ui/main_window.ui" line="610"/>
-        <source>Client</source>
-        <translation>Клиент</translation>
-    </message>
-    <message>
-        <location filename="../ui/main_window.ui" line="622"/>
-        <source>Other</source>
-        <translation>Другое</translation>
-    </message>
-    <message>
-        <location filename="../ui/main_window.ui" line="628"/>
-        <source>View</source>
-        <translation>Вид</translation>
-    </message>
-    <message>
-        <location filename="../ui/main_window.ui" line="673"/>
-        <source>Operation</source>
-        <translation>Операция</translation>
-    </message>
-    <message>
-        <location filename="../ui/main_window.ui" line="678"/>
-        <source>Source</source>
-        <translation>Источник</translation>
-    </message>
-    <message>
-        <location filename="../ui/main_window.ui" line="683"/>
-        <source>Destination</source>
-        <translation>Назначение</translation>
-    </message>
-    <message>
-        <location filename="../ui/main_window.ui" line="688"/>
-        <source>Status</source>
-        <translation>Статус</translation>
-    </message>
-    <message>
-        <location filename="../ui/main_window.ui" line="698"/>
-        <source>Progress</source>
-        <translation>Прогресс</translation>
-    </message>
-    <message>
-        <location filename="../ui/main_window.ui" line="703"/>
-        <source>Speed</source>
-        <translation>Скорость</translation>
-    </message>
-    <message>
-        <location filename="../ui/main_window.ui" line="708"/>
-        <source>Estimated</source>
-        <translation>Осталось</translation>
-    </message>
-    <message>
-        <location filename="../ui/main_window.ui" line="721"/>
-        <source>New remote</source>
-        <translation>Новое подключение</translation>
-    </message>
-    <message>
-        <location filename="../ui/main_window.ui" line="769"/>
-        <source>Show tasks</source>
-        <translation>Показать задачи</translation>
-    </message>
-    <message>
-        <location filename="../ui/main_window.ui" line="774"/>
-        <source>Config Rclone</source>
-        <translation>Конфигурация Rclone</translation>
-    </message>
-    <message>
-        <location filename="../app/main_window.py" line="1675"/>
-        <location filename="../ui/main_window.ui" line="729"/>
-        <source>Exit</source>
-        <translation>Выход</translation>
-    </message>
-    <message>
-        <location filename="../ui/main_window.ui" line="737"/>
+        <location filename="../ui/about_window.ui" line="14"/>
         <source>About</source>
         <translation>О программе</translation>
     </message>
     <message>
-        <location filename="../ui/main_window.ui" line="748"/>
+        <location filename="../ui/about_window.ui" line="33"/>
+        <source>Rclone Explorer is a program to manage files on cloud storage</source>
+        <translation>Rclone Explorer - это программа для управления файлами в облачных хранилищах</translation>
+    </message>
+    <message>
+        <location filename="../ui/about_window.ui" line="55"/>
+        <source>Copyright © 2025 Denis Mazur</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>MainWindow</name>
+    <message>
+        <location filename="../ui/main_window.ui" line="37"/>
+        <source>Explorer</source>
+        <translation>Проводник</translation>
+    </message>
+    <message>
+        <location filename="../ui/main_window.ui" line="273"/>
+        <location filename="../ui/main_window.ui" line="308"/>
+        <location filename="../ui/main_window.ui" line="386"/>
+        <source>Name</source>
+        <translation>Имя</translation>
+    </message>
+    <message>
+        <location filename="../ui/main_window.ui" line="278"/>
+        <location filename="../ui/main_window.ui" line="323"/>
+        <location filename="../ui/main_window.ui" line="401"/>
+        <location filename="../ui/main_window.ui" line="581"/>
+        <source>Type</source>
+        <translation>Тип</translation>
+    </message>
+    <message>
+        <location filename="../ui/main_window.ui" line="313"/>
+        <location filename="../ui/main_window.ui" line="391"/>
+        <location filename="../ui/main_window.ui" line="697"/>
+        <source>Size</source>
+        <translation>Размер</translation>
+    </message>
+    <message>
+        <location filename="../ui/main_window.ui" line="318"/>
+        <location filename="../ui/main_window.ui" line="396"/>
+        <source>Modified</source>
+        <translation>Дата изменения</translation>
+    </message>
+    <message>
+        <location filename="../ui/main_window.ui" line="337"/>
+        <location filename="../ui/main_window.ui" line="351"/>
+        <location filename="../ui/main_window.ui" line="361"/>
+        <source>Search</source>
+        <translation>Поиск</translation>
+    </message>
+    <message>
+        <location filename="../ui/main_window.ui" line="406"/>
+        <location filename="../ui/main_window.ui" line="449"/>
+        <source>Path</source>
+        <translation>Путь</translation>
+    </message>
+    <message>
+        <location filename="../ui/main_window.ui" line="418"/>
+        <source>Serve</source>
+        <translation>Сервер</translation>
+    </message>
+    <message>
+        <location filename="../ui/main_window.ui" line="444"/>
+        <source>Protocol</source>
+        <translation>Протокол</translation>
+    </message>
+    <message>
+        <location filename="../ui/main_window.ui" line="454"/>
+        <source>Address</source>
+        <translation>Адрес</translation>
+    </message>
+    <message>
+        <location filename="../ui/main_window.ui" line="459"/>
+        <source>Username</source>
+        <translation>Имя пользователя</translation>
+    </message>
+    <message>
+        <location filename="../ui/main_window.ui" line="464"/>
+        <source>Password</source>
+        <translation>Пароль</translation>
+    </message>
+    <message>
+        <location filename="../ui/main_window.ui" line="469"/>
+        <source>Read-only</source>
+        <translation>Только для чтения</translation>
+    </message>
+    <message>
+        <location filename="../ui/main_window.ui" line="501"/>
+        <source>Remote path</source>
+        <translation>Путь подключения</translation>
+    </message>
+    <message>
+        <location filename="../ui/main_window.ui" line="527"/>
+        <location filename="../ui/main_window.ui" line="586"/>
+        <source>Mount point</source>
+        <translation>Точка монтирования</translation>
+    </message>
+    <message>
+        <location filename="../ui/main_window.ui" line="576"/>
+        <source>Remote</source>
+        <translation>Подключение</translation>
+    </message>
+    <message>
+        <location filename="../ui/main_window.ui" line="591"/>
+        <source>Remember</source>
+        <translation>Запомнить</translation>
+    </message>
+    <message>
+        <location filename="../ui/main_window.ui" line="613"/>
+        <source>Client</source>
+        <translation>Клиент</translation>
+    </message>
+    <message>
+        <location filename="../ui/main_window.ui" line="625"/>
+        <source>Other</source>
+        <translation>Другое</translation>
+    </message>
+    <message>
+        <location filename="../ui/main_window.ui" line="632"/>
+        <source>View</source>
+        <translation>Вид</translation>
+    </message>
+    <message>
+        <location filename="../ui/main_window.ui" line="677"/>
+        <source>Operation</source>
+        <translation>Операция</translation>
+    </message>
+    <message>
+        <location filename="../ui/main_window.ui" line="682"/>
+        <source>Source</source>
+        <translation>Источник</translation>
+    </message>
+    <message>
+        <location filename="../ui/main_window.ui" line="687"/>
+        <source>Destination</source>
+        <translation>Назначение</translation>
+    </message>
+    <message>
+        <location filename="../ui/main_window.ui" line="692"/>
+        <source>Status</source>
+        <translation>Статус</translation>
+    </message>
+    <message>
+        <location filename="../ui/main_window.ui" line="702"/>
+        <source>Progress</source>
+        <translation>Прогресс</translation>
+    </message>
+    <message>
+        <location filename="../ui/main_window.ui" line="707"/>
+        <source>Speed</source>
+        <translation>Скорость</translation>
+    </message>
+    <message>
+        <location filename="../ui/main_window.ui" line="712"/>
+        <source>Estimated</source>
+        <translation>Осталось</translation>
+    </message>
+    <message>
+        <location filename="../ui/main_window.ui" line="725"/>
+        <source>New remote</source>
+        <translation>Новое подключение</translation>
+    </message>
+    <message>
+        <location filename="../ui/main_window.ui" line="773"/>
+        <source>Show tasks</source>
+        <translation>Показать задачи</translation>
+    </message>
+    <message>
+        <location filename="../ui/main_window.ui" line="778"/>
+        <source>Config Rclone</source>
+        <translation>Конфигурация Rclone</translation>
+    </message>
+    <message>
+        <location filename="../ui/main_window.ui" line="783"/>
+        <source>About Qt</source>
+        <translation>О Qt</translation>
+    </message>
+    <message>
+        <location filename="../app/main_window.py" line="1692"/>
+        <location filename="../ui/main_window.ui" line="733"/>
+        <source>Exit</source>
+        <translation>Выход</translation>
+    </message>
+    <message>
+        <location filename="../ui/main_window.ui" line="741"/>
+        <source>About</source>
+        <translation>О программе</translation>
+    </message>
+    <message>
+        <location filename="../ui/main_window.ui" line="752"/>
         <source>List remotes</source>
         <translation>Список подключений</translation>
     </message>
     <message>
-        <location filename="../ui/main_window.ui" line="427"/>
-        <location filename="../ui/main_window.ui" line="756"/>
+        <location filename="../ui/main_window.ui" line="430"/>
+        <location filename="../ui/main_window.ui" line="760"/>
         <source>New serve</source>
         <translation>Создать сервер</translation>
     </message>
     <message>
-        <location filename="../ui/main_window.ui" line="764"/>
+        <location filename="../ui/main_window.ui" line="768"/>
         <source>Settings</source>
         <translation>Настройки</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="1368"/>
-        <location filename="../app/main_window.py" line="1477"/>
-        <location filename="../app/main_window.py" line="1530"/>
-        <location filename="../app/main_window.py" line="1662"/>
+        <location filename="../app/main_window.py" line="1385"/>
+        <location filename="../app/main_window.py" line="1494"/>
+        <location filename="../app/main_window.py" line="1547"/>
+        <location filename="../app/main_window.py" line="1679"/>
         <source>Open</source>
         <translation>Открыть</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="267"/>
+        <location filename="../app/main_window.py" line="269"/>
         <source>Scale</source>
         <translation>Масштаб</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="522"/>
+        <location filename="../app/main_window.py" line="526"/>
         <source>Total</source>
         <translation>Всего</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="512"/>
+        <location filename="../app/main_window.py" line="516"/>
         <source>Free</source>
         <translation>Свободно</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="339"/>
-        <location filename="../app/main_window.py" line="1620"/>
-        <location filename="../app/main_window.py" line="1635"/>
+        <location filename="../app/main_window.py" line="343"/>
+        <location filename="../app/main_window.py" line="1637"/>
+        <location filename="../app/main_window.py" line="1652"/>
         <source>Download</source>
         <comment>noun</comment>
         <translation>Загрузка</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="341"/>
-        <location filename="../app/main_window.py" line="1620"/>
-        <location filename="../app/main_window.py" line="1635"/>
+        <location filename="../app/main_window.py" line="345"/>
+        <location filename="../app/main_window.py" line="1637"/>
+        <location filename="../app/main_window.py" line="1652"/>
         <source>Upload</source>
         <translation>Закачка</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="343"/>
-        <location filename="../app/main_window.py" line="897"/>
-        <location filename="../app/main_window.py" line="1621"/>
-        <location filename="../app/main_window.py" line="1635"/>
+        <location filename="../app/main_window.py" line="347"/>
+        <location filename="../app/main_window.py" line="914"/>
+        <location filename="../app/main_window.py" line="1638"/>
+        <location filename="../app/main_window.py" line="1652"/>
         <source>Opening</source>
         <translation>Открытие</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="352"/>
-        <location filename="../app/main_window.py" line="1628"/>
-        <location filename="../app/main_window.py" line="1636"/>
+        <location filename="../app/main_window.py" line="356"/>
+        <location filename="../app/main_window.py" line="1645"/>
+        <location filename="../app/main_window.py" line="1653"/>
         <source>Done</source>
         <translation>Готово</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="354"/>
+        <location filename="../app/main_window.py" line="358"/>
         <source>Running</source>
         <translation>Выполняется</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="431"/>
+        <location filename="../app/main_window.py" line="435"/>
         <source>Search in</source>
         <translation>Поиск в</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="448"/>
-        <location filename="../app/main_window.py" line="503"/>
-        <location filename="../app/main_window.py" line="912"/>
+        <location filename="../app/main_window.py" line="452"/>
+        <location filename="../app/main_window.py" line="507"/>
+        <location filename="../app/main_window.py" line="929"/>
         <source>B</source>
         <translation>байт</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="448"/>
-        <location filename="../app/main_window.py" line="503"/>
-        <location filename="../app/main_window.py" line="912"/>
+        <location filename="../app/main_window.py" line="452"/>
+        <location filename="../app/main_window.py" line="507"/>
+        <location filename="../app/main_window.py" line="929"/>
         <source>KB</source>
         <translation>КБ</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="449"/>
-        <location filename="../app/main_window.py" line="504"/>
-        <location filename="../app/main_window.py" line="913"/>
+        <location filename="../app/main_window.py" line="453"/>
+        <location filename="../app/main_window.py" line="508"/>
+        <location filename="../app/main_window.py" line="930"/>
         <source>MB</source>
         <translation>МБ</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="449"/>
-        <location filename="../app/main_window.py" line="504"/>
-        <location filename="../app/main_window.py" line="913"/>
+        <location filename="../app/main_window.py" line="453"/>
+        <location filename="../app/main_window.py" line="508"/>
+        <location filename="../app/main_window.py" line="930"/>
         <source>GB</source>
         <translation>ГБ</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="450"/>
-        <location filename="../app/main_window.py" line="506"/>
-        <location filename="../app/main_window.py" line="914"/>
+        <location filename="../app/main_window.py" line="454"/>
+        <location filename="../app/main_window.py" line="510"/>
+        <location filename="../app/main_window.py" line="931"/>
         <source>TB</source>
         <translation>ТБ</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="894"/>
-        <location filename="../app/main_window.py" line="903"/>
+        <location filename="../app/main_window.py" line="911"/>
+        <location filename="../app/main_window.py" line="920"/>
         <source>Updating</source>
         <translation>Обновление</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="1124"/>
-        <location filename="../app/main_window.py" line="1127"/>
+        <location filename="../app/main_window.py" line="1141"/>
+        <location filename="../app/main_window.py" line="1144"/>
         <source>Are you sure you want to delete</source>
         <translation>Вы действительно хотите удалить</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="1127"/>
+        <location filename="../app/main_window.py" line="1144"/>
         <source>files</source>
         <translation>файлов</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="1196"/>
-        <location filename="../app/main_window.py" line="1198"/>
-        <location filename="../app/main_window.py" line="1354"/>
-        <location filename="../app/main_window.py" line="1427"/>
+        <location filename="../app/main_window.py" line="1213"/>
+        <location filename="../app/main_window.py" line="1215"/>
+        <location filename="../app/main_window.py" line="1371"/>
+        <location filename="../app/main_window.py" line="1444"/>
         <source>New Folder</source>
         <translation>Новая папка</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="1197"/>
+        <location filename="../app/main_window.py" line="1214"/>
         <source>Enter folder name:</source>
         <translation>Введите имя папки:</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="1219"/>
-        <location filename="../app/main_window.py" line="1409"/>
+        <location filename="../app/main_window.py" line="1236"/>
+        <location filename="../app/main_window.py" line="1426"/>
         <source>Rename</source>
         <translation>Переименовать</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="1220"/>
+        <location filename="../app/main_window.py" line="1237"/>
         <source>Enter new name:</source>
         <translation>Введите новое имя:</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="1347"/>
-        <location filename="../app/main_window.py" line="1400"/>
+        <location filename="../app/main_window.py" line="1364"/>
+        <location filename="../app/main_window.py" line="1417"/>
         <source>Paste</source>
         <translation>Вставить</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="1376"/>
-        <location filename="../app/main_window.py" line="1485"/>
+        <location filename="../app/main_window.py" line="1393"/>
+        <location filename="../app/main_window.py" line="1502"/>
         <source>Open With...</source>
         <translation>Открыть как...</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="1383"/>
-        <location filename="../app/main_window.py" line="1494"/>
+        <location filename="../app/main_window.py" line="1400"/>
+        <location filename="../app/main_window.py" line="1511"/>
         <source>Download</source>
         <translation>Загрузить</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="1392"/>
-        <location filename="../app/main_window.py" line="1503"/>
+        <location filename="../app/main_window.py" line="1409"/>
+        <location filename="../app/main_window.py" line="1520"/>
         <source>Copy</source>
         <translation>Копировать</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="1542"/>
-        <location filename="../ui/main_window.ui" line="557"/>
+        <location filename="../app/main_window.py" line="1559"/>
+        <location filename="../ui/main_window.ui" line="560"/>
         <source>Mount</source>
         <comment>verb</comment>
         <translation>Монтировать</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="1637"/>
+        <location filename="../app/main_window.py" line="1654"/>
         <source>Сancel</source>
         <translation>Отмена</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="1131"/>
-        <location filename="../app/main_window.py" line="1417"/>
-        <location filename="../app/main_window.py" line="1510"/>
-        <location filename="../app/main_window.py" line="1549"/>
+        <location filename="../app/main_window.py" line="1148"/>
+        <location filename="../app/main_window.py" line="1434"/>
+        <location filename="../app/main_window.py" line="1527"/>
+        <location filename="../app/main_window.py" line="1566"/>
         <source>Delete</source>
         <translation>Удалить</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="1468"/>
+        <location filename="../app/main_window.py" line="1485"/>
         <source>Open file location</source>
         <translation>Расположение файла</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="1536"/>
+        <location filename="../app/main_window.py" line="1553"/>
         <source>Edit</source>
         <translation>Редактировать</translation>
     </message>
     <message>
-        <location filename="../ui/main_window.ui" line="478"/>
+        <location filename="../ui/main_window.ui" line="481"/>
         <source>Mount</source>
         <extracomment>noun</extracomment>
         <translation>Монтирование</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="1613"/>
-        <location filename="../app/main_window.py" line="1643"/>
+        <location filename="../app/main_window.py" line="1630"/>
+        <location filename="../app/main_window.py" line="1660"/>
         <source>Clear Completed</source>
         <translation>Очистить завершенные</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="1622"/>
+        <location filename="../app/main_window.py" line="1639"/>
         <source>Open Folder</source>
         <translation>Открыть папку</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="1629"/>
+        <location filename="../app/main_window.py" line="1646"/>
         <source>Clear Task</source>
         <translation>Очистить</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="1567"/>
-        <location filename="../app/main_window.py" line="1586"/>
+        <location filename="../app/main_window.py" line="1584"/>
+        <location filename="../app/main_window.py" line="1603"/>
         <source>Stop</source>
         <translation>Остановить</translation>
     </message>
@@ -967,52 +990,52 @@
 <context>
     <name>Task</name>
     <message>
-        <location filename="../app/main_window.py" line="81"/>
+        <location filename="../app/main_window.py" line="83"/>
         <source>B</source>
         <translation>байт</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="81"/>
+        <location filename="../app/main_window.py" line="83"/>
         <source>KB</source>
         <translation>КБ</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="82"/>
+        <location filename="../app/main_window.py" line="84"/>
         <source>MB</source>
         <translation>МБ</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="82"/>
+        <location filename="../app/main_window.py" line="84"/>
         <source>GB</source>
         <translation>ГБ</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="83"/>
+        <location filename="../app/main_window.py" line="85"/>
         <source>TB</source>
         <translation>ТБ</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="103"/>
+        <location filename="../app/main_window.py" line="105"/>
         <source>B/s</source>
         <translation>байт/c</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="103"/>
+        <location filename="../app/main_window.py" line="105"/>
         <source>KB/s</source>
         <translation>КБ/c</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="103"/>
+        <location filename="../app/main_window.py" line="105"/>
         <source>MB/s</source>
         <translation>МБ/c</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="104"/>
+        <location filename="../app/main_window.py" line="106"/>
         <source>GB/s</source>
         <translation>ГБ/c</translation>
     </message>
     <message>
-        <location filename="../app/main_window.py" line="105"/>
+        <location filename="../app/main_window.py" line="107"/>
         <source>TB/s</source>
         <translation>ТБ/с</translation>
     </message>

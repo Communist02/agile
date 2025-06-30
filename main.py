@@ -43,7 +43,7 @@ def start_server(window: MainWindow, server_name: str):
 if __name__ == '__main__':
     app = QApplication()
     app.setQuitOnLastWindowClosed(False)
-    settings = QSettings('Cloud Explorer', 'Cloud Explorer')
+    settings = QSettings('Rclone Explorer', 'Rclone Explorer')
     app.setStyle(settings.value('style', ''))
     palette = settings.value('palette', 'System')
     if palette not in palettes.keys():
@@ -63,7 +63,7 @@ if __name__ == '__main__':
     if translator.load(f'{os.path.dirname(__file__) + os.sep}translations{os.sep}{QLocale.system().language().name}.qm'):
         app.installTranslator(translator)
 
-    server_name = 'Cloud Explorer'
+    server_name = 'Rclone Explorer'
     server = QLocalServer()
 
     if is_already_running(server_name):

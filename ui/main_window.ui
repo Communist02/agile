@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string notr="true">Cloud Explorer</string>
+   <string notr="true">Rclone Explorer</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -23,6 +23,9 @@
     </property>
     <item>
      <widget class="QTabWidget" name="tabWidget">
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
       <property name="documentMode">
        <bool>true</bool>
       </property>
@@ -621,6 +624,7 @@
     <property name="title">
      <string>Other</string>
     </property>
+    <addaction name="action_about_qt"/>
     <addaction name="action_about"/>
    </widget>
    <widget class="QMenu" name="menuView">
@@ -772,6 +776,11 @@
   <action name="action_config_rclone">
    <property name="text">
     <string>Config Rclone</string>
+   </property>
+  </action>
+  <action name="action_about_qt">
+   <property name="text">
+    <string>About Qt</string>
    </property>
   </action>
  </widget>
