@@ -1,2 +1,2 @@
 cd ../
-"./venv/scripts/python" -m nuitka --enable-plugin=pyside6 --output-file=cloud_explorer --windows-icon-from-ico=app/resources/favicon.ico --include-data-dir=app/resources=app/resources --include-data-dir=translations=translations --include-data-files=rclone.exe=rclone.exe --windows-console-mode=attach --product-name="Cloud Explorer" --product-version=1 --standalone main.py
+"./venv/scripts/python" -m nuitka --enable-plugin=pyside6 --output-file=rclone_explorer --windows-icon-from-ico=app/resources/favicon.ico --include-data-dir=app/resources=app/resources --include-data-dir=translations=translations --include-data-files=rclone.exe=rclone.exe --windows-console-mode=attach --product-name="Rclone Explorer" --product-version=1 --standalone main.py

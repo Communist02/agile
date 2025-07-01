@@ -563,7 +563,7 @@ class MainWindow(QMainWindow):
 
     def recovery_ui(self):
         settings = QSettings('Rclone Explorer', 'Rclone Explorer')
-        index = settings.value('scale', 2)
+        index = int(settings.value('scale', 2))
         self.set_scale(index)
         self.slider_scale.setValue(index)
 
