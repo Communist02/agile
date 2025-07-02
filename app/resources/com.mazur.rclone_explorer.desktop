@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Rclone Explorer
+Exec=rclone_explorer
+Terminal=false
+Type=Application
+Icon=com.mazur.rclone_explorer
+Categories=Network;

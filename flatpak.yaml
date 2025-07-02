@@ -8,9 +8,10 @@ finish-args:
   - --share=ipc
   - --share=network
   - --filesystem=home
+  - --filesystem=/tmp
   - --socket=x11
-  - --socket=wayland
   - --device=dri
+  - --talk-name=org.freedesktop.Flatpak
 
 build-options:
   append-ld-library-path: /app/lib

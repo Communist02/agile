@@ -6,10 +6,6 @@ import json
 from pathlib import Path
 
 
-class MissingDestination(Exception):
-    pass
-
-
 class CheckRclone:
     def __init__(self, rclone):
         self.rclone = rclone
@@ -37,96 +33,27 @@ class CheckRclone:
 
 
 class Rclone(CheckRclone):
-    tasks: list = []
-    rclone = shutil.which('rclone')
     debug = True
 
     def __init__(self, debug: bool = True):
         self.debug = debug
-
-    async def _stream_process(self, process: subprocess.Popen[bytes]):
-        index = len(self.tasks)
-        self.tasks.append(
-            {'current_size': 0, 'speed': 0, 'estimated': '-', 'full_size': 0, 'is_done': False})
-        loop = asyncio.get_running_loop()
-
-        while True:
-            line = await loop.run_in_executor(None, process.stdout.readline)
-            if not line:
-                break
-            s: str = line.decode()
-            if 'ETA' in s:
-                s = s.split('Transferred:')[1]
-                s = s.strip()
-                s = s.replace(',', '')
-                # print(s)  # 66.996 MiB / 81.884 MiB 82% 5.003 MiB/s ETA 2s
-                current_size = float(s.split(' ')[0])
-                size_unit = s.split(' ')[1]
-                full_size = float(s.split(' ')[3])
-                size_unit_full_size = s.split(' ')[4]
-                speed = float(s.split(' ')[6])
-                size_unit_speed = s.split(' ')[7]
-                estimated = s.split(' ')[9]
-
-                match size_unit:
-                    case 'KiB':
-                        current_size *= 1024
-                    case 'MiB':
-                        current_size *= 1048576
-                    case 'GiB':
-                        current_size *= 1073741824
-                    case 'TiB':
-                        current_size *= 1099511627776
-
-                match size_unit_full_size:
-                    case 'KiB':
-                        full_size *= 1024
-                    case 'MiB':
-                        full_size *= 1048576
-                    case 'GiB':
-                        full_size *= 1073741824
-                    case 'TiB':
-                        full_size *= 1099511627776
-
-                match size_unit_speed:
-                    case 'KiB/s':
-                        speed *= 1024
-                    case 'MiB/s':
-                        speed *= 1048576
-                    case 'GiB/s':
-                        speed *= 1073741824
-                    case 'TiB/s':
-                        speed *= 1099511627776
-
-                self.tasks[index]['current_size'] = current_size
-                self.tasks[index]['full_size'] = full_size
-                self.tasks[index]['speed'] = speed
-                self.tasks[index]['estimated'] = estimated
-                if full_size != 0 and current_size == full_size:
-                    break
-            elif 'error' in s:
-                print(s)
-        self.tasks[index]['is_done'] = True
+        if os.getenv('container'):
+            self.rclone = 'flatpak-spawn --host /tmp/rclone'
+            if not os.path.exists('/tmp/rclone'):
+                shutil.copyfile('/app/bin/rclone', '/tmp/rclone')
+                os.system('flatpak-spawn --host chmod +x /tmp/rclone')
+        else:
+            self.rclone = shutil.which('rclone')
 
     async def async_process(self, subcommand, arg1='', arg2='', arg3='', arg4='', *args):
-        if subcommand in ['copy', 'copyto', 'move', 'sync', 'bisync', 'copyurl']:
-            progress = True
-            P = '-P'
-        else:
-            progress = False
-            P = ''
-
         _args = ' '.join(args)
-        command = f'{self.rclone} {subcommand} {arg1} {arg2} {arg3} {arg4} {P} {_args}'
+        command = f'{self.rclone} {subcommand} {arg1} {arg2} {arg3} {arg4} {_args}'
 
         if self.debug:
             print(f'Executing: {command}')
 
         process = subprocess.Popen(command, shell=True,
                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-
-        if progress:
-            await self._stream_process(process)
 
         loop = asyncio.get_running_loop()
         OUT, _ = await loop.run_in_executor(None, process.communicate)
@@ -223,10 +150,10 @@ class Rclone(CheckRclone):
 
     def mount(self, remote: str, mount_point: str = '', arg: str = ''):
         return self.sync_process('mount', f'"{remote}"', f'"{mount_point}"', arg, communicate=False)
-    
+
     def providers(self):
         return self.sync_process('config providers')
-    
+
     def create_remote(self, remote_name, remote_type, args='', **kwargs):
         for key, value in kwargs.items():
             match value:
