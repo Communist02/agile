@@ -1,0 +1,60 @@
+id: com.mazur.rclone_explorer
+runtime: org.freedesktop.Platform
+runtime-version: '24.08'
+sdk: org.freedesktop.Sdk
+command: rclone_explorer
+
+finish-args:
+  - --share=ipc
+  - --share=network
+  - --filesystem=home
+  - --socket=x11
+  - --socket=wayland
+  - --device=dri
+
+build-options:
+  append-ld-library-path: /app/lib
+
+modules:
+  - name: xcb-libs
+    buildsystem: simple
+    build-commands:
+      - mkdir -p /app/lib
+      - cp -a /usr/lib/x86_64-linux-gnu/libxcb* /app/lib/
+      - cp -a /usr/lib/x86_64-linux-gnu/libX11* /app/lib/
+    sources: []
+
+  - name: krb5
+    buildsystem: simple
+    sources:
+      - type: archive
+        url: https://kerberos.org/dist/krb5/1.21/krb5-1.21.3.tar.gz
+        sha256: b7a4cd5ead67fb08b980b21abd150ff7217e85ea320c9ed0c6dadd304840ad35
+    build-commands:
+      - cd src && autoreconf -i
+      - cd src && ./configure --prefix=/app --disable-static --enable-shared
+      - cd src && make -j$(nproc)
+      - cd src && make install
+
+  - name: rclone
+    buildsystem: simple
+    sources:
+      - type: archive
+        url: https://github.com/rclone/rclone/releases/download/v1.70.2/rclone-v1.70.2-linux-amd64.zip
+        sha256: 7bfa813f426820d20436e48a4e0b9bf21977fcd513a48f2d28eede3136b4bacb
+    build-commands:
+      - mkdir -p /app/bin
+      - cp rclone /app/bin/
+
+  - name: main
+    buildsystem: simple
+    sources:
+      - type: dir
+        path: .
+    build-commands:
+      - mkdir -p /app/bin
+      - cp -r main.dist/* /app/bin/
+      - mkdir -p /app/share/applications
+      - cp -r app/resources/com.mazur.rclone_explorer.desktop /app/share/applications/
+      - mkdir -p /app/share/icons/hicolor/256x256/apps/
+      - cp -r app/resources/favicon.png /app/share/icons/hicolor/256x256/apps/com.mazur.rclone_explorer.png
