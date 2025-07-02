@@ -1,4 +1,4 @@
-id: com.mazur.rclone_explorer
+id: com.mazur.RcloneExplorer
 runtime: org.freedesktop.Platform
 runtime-version: '24.08'
 sdk: org.freedesktop.Sdk
@@ -56,6 +56,6 @@ modules:
       - mkdir -p /app/bin
       - cp -r main.dist/* /app/bin/
       - mkdir -p /app/share/applications
-      - cp -r app/resources/com.mazur.rclone_explorer.desktop /app/share/applications/
+      - cp app/resources/com.mazur.RcloneExplorer.desktop /app/share/applications/
       - mkdir -p /app/share/icons/hicolor/256x256/apps/
-      - cp -r app/resources/favicon.png /app/share/icons/hicolor/256x256/apps/com.mazur.rclone_explorer.png
+      - cp app/resources/favicon.png /app/share/icons/hicolor/256x256/apps/com.mazur.RcloneExplorer.png
