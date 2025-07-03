@@ -1,15 +1,15 @@
 id: com.mazur.RcloneExplorer
-runtime: org.freedesktop.Platform
-runtime-version: '24.08'
-sdk: org.freedesktop.Sdk
+runtime: org.kde.Platform
+runtime-version: '6.9'
+sdk: org.kde.Sdk
 command: rclone_explorer
 
 finish-args:
+  - --socket=x11
   - --share=ipc
   - --share=network
   - --filesystem=home
   - --filesystem=/tmp
-  - --socket=x11
   - --device=dri
   - --talk-name=org.freedesktop.Flatpak
 
@@ -21,8 +21,7 @@ modules:
     buildsystem: simple
     build-commands:
       - mkdir -p /app/lib
-      - cp -a /usr/lib/x86_64-linux-gnu/libxcb* /app/lib/
-      - cp -a /usr/lib/x86_64-linux-gnu/libX11* /app/lib/
+      - cp -a /usr/lib/x86_64-linux-gnu/libxcb-cursor.so* /app/lib/
     sources: []
 
   - name: krb5
