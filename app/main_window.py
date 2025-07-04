@@ -1125,6 +1125,10 @@ class MainWindow(QMainWindow):
         for file in files:
             self.copy_files.append(file)
 
+        if self.temp_dir == '':
+            self.temp_dir = tempfile.mkdtemp(prefix='rclone_explorer_')
+        open(self.temp_dir + os.sep + '.rclone_explorer_file_temp', 'a').close()
+
         clipboard = QApplication.clipboard()
         mime_data = QMimeData()
         mime_data.setText('.rclone_explorer_file_temp')

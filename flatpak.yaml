@@ -1,7 +1,7 @@
 id: com.mazur.RcloneExplorer
-runtime: org.kde.Platform
-runtime-version: '6.9'
-sdk: org.kde.Sdk
+runtime: org.freedesktop.Platform
+runtime-version: '24.08'
+sdk: org.freedesktop.Sdk
 command: rclone_explorer
 
 finish-args:
