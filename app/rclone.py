@@ -37,13 +37,7 @@ class Rclone(CheckRclone):
 
     def __init__(self, debug: bool = True):
         self.debug = debug
-        if os.getenv('container'):
-            self.rclone = 'flatpak-spawn --host /tmp/rclone'
-            if not os.path.exists('/tmp/rclone'):
-                shutil.copyfile('/app/bin/rclone', '/tmp/rclone')
-                os.system('flatpak-spawn --host chmod +x /tmp/rclone')
-        else:
-            self.rclone = shutil.which('rclone')
+        self.rclone = shutil.which('rclone')
 
     async def async_process(self, subcommand, arg1='', arg2='', arg3='', arg4='', *args):
         _args = ' '.join(args)
@@ -83,8 +77,16 @@ class Rclone(CheckRclone):
         else:
             P = ''
 
+        if subcommand == 'mount' and os.getenv('container'):
+            rclone = 'flatpak-spawn --host /tmp/rclone'
+            if not os.path.exists('/tmp/rclone'):
+                shutil.copyfile('/app/bin/rclone', '/tmp/rclone')
+                os.system('flatpak-spawn --host chmod +x /tmp/rclone')
+        else:
+            rclone = self.rclone
+
         _args = ' '.join(args)
-        command = f'{self.rclone} {subcommand} {arg1} {arg2} {arg3} {arg4} {P} {_args}'
+        command = f'{rclone} {subcommand} {arg1} {arg2} {arg3} {arg4} {P} {_args}'
 
         if self.debug:
             print(f'Executing: {command}')

@@ -1,1 +1,1 @@
-pyside6-lupdate ../main.py ../app/main_window.py ../app/new_remote.py ../app/new_serve.py ../app/settings.py ../ui/main_window.ui ../ui/settings_window.ui ../ui/new_remote_window.ui ../ui/new_serve_window.ui ../ui/about_window.ui -ts ../translations/Russian.ts
+pyside6-lupdate ../main.py ../app/main_window.py ../app/new_remote.py ../app/new_serve.py ../app/settings.py ../ui/main_window.ui ../ui/settings_window.ui ../ui/new_remote_window.ui ../ui/new_serve_window.ui ../ui/about_window.ui ../ui/upstream_widget.ui -ts ../translations/Russian.ts

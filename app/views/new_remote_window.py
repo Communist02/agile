@@ -19,8 +19,8 @@ from PySide6.QtWidgets import (QAbstractButton, QApplication, QCheckBox, QComboB
     QDialog, QDialogButtonBox, QFrame, QGroupBox,
     QHBoxLayout, QLabel, QLineEdit, QListWidget,
     QListWidgetItem, QPushButton, QRadioButton, QScrollArea,
-    QSizePolicy, QSpacerItem, QTabWidget, QToolBox,
-    QVBoxLayout, QWidget)
+    QSizePolicy, QSpacerItem, QTabWidget, QVBoxLayout,
+    QWidget)
 
 class Ui_NewRemoteWindow(object):
     def setupUi(self, NewRemoteWindow):
@@ -60,12 +60,11 @@ class Ui_NewRemoteWindow(object):
         QListWidgetItem(self.listWidget_remotes)
         QListWidgetItem(self.listWidget_remotes)
         self.listWidget_remotes.setObjectName(u"listWidget_remotes")
-        sizePolicy = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.listWidget_remotes.sizePolicy().hasHeightForWidth())
         self.listWidget_remotes.setSizePolicy(sizePolicy)
-        self.listWidget_remotes.setMinimumSize(QSize(150, 0))
 
         self.horizontalLayout_10.addWidget(self.listWidget_remotes)
 
@@ -350,6 +349,7 @@ class Ui_NewRemoteWindow(object):
         self.verticalLayout_9.setContentsMargins(0, 0, 0, 0)
         self.label_3 = QLabel(self.tab_google_drive)
         self.label_3.setObjectName(u"label_3")
+        self.label_3.setWordWrap(True)
 
         self.verticalLayout_9.addWidget(self.label_3)
 
@@ -365,6 +365,7 @@ class Ui_NewRemoteWindow(object):
         self.verticalLayout_8.setContentsMargins(0, 0, 0, 0)
         self.label_6 = QLabel(self.tab_yandex_disk)
         self.label_6.setObjectName(u"label_6")
+        self.label_6.setWordWrap(True)
 
         self.verticalLayout_8.addWidget(self.label_6)
 
@@ -380,6 +381,7 @@ class Ui_NewRemoteWindow(object):
         self.verticalLayout_12.setContentsMargins(0, 0, 0, 0)
         self.label_11 = QLabel(self.tab_onedrive)
         self.label_11.setObjectName(u"label_11")
+        self.label_11.setWordWrap(True)
 
         self.verticalLayout_12.addWidget(self.label_11)
 
@@ -520,6 +522,7 @@ class Ui_NewRemoteWindow(object):
         self.verticalLayout_19.setContentsMargins(0, 0, 0, 0)
         self.label_17 = QLabel(self.tab_alias)
         self.label_17.setObjectName(u"label_17")
+        self.label_17.setWordWrap(True)
 
         self.verticalLayout_19.addWidget(self.label_17)
 
@@ -561,64 +564,25 @@ class Ui_NewRemoteWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 800, 566))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 222, 200))
         self.verticalLayout_21 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_21.setObjectName(u"verticalLayout_21")
         self.verticalLayout_21.setContentsMargins(0, 0, 0, 0)
-        self.toolBox = QToolBox(self.scrollAreaWidgetContents)
-        self.toolBox.setObjectName(u"toolBox")
-        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
-        sizePolicy1.setHorizontalStretch(0)
-        sizePolicy1.setVerticalStretch(0)
-        sizePolicy1.setHeightForWidth(self.toolBox.sizePolicy().hasHeightForWidth())
-        self.toolBox.setSizePolicy(sizePolicy1)
-        self.toolBox.setFrameShape(QFrame.Shape.Box)
-        self.page = QWidget()
-        self.page.setObjectName(u"page")
-        self.page.setGeometry(QRect(0, 0, 798, 144))
-        self.verticalLayout_22 = QVBoxLayout(self.page)
+        self.verticalLayout_union_container = QVBoxLayout()
+        self.verticalLayout_union_container.setObjectName(u"verticalLayout_union_container")
+
+        self.verticalLayout_21.addLayout(self.verticalLayout_union_container)
+
+        self.groupBox_union_policies = QGroupBox(self.scrollAreaWidgetContents)
+        self.groupBox_union_policies.setObjectName(u"groupBox_union_policies")
+        self.verticalLayout_22 = QVBoxLayout(self.groupBox_union_policies)
         self.verticalLayout_22.setObjectName(u"verticalLayout_22")
-        self.pushButton = QPushButton(self.page)
-        self.pushButton.setObjectName(u"pushButton")
-
-        self.verticalLayout_22.addWidget(self.pushButton)
-
-        self.label_19 = QLabel(self.page)
-        self.label_19.setObjectName(u"label_19")
-        sizePolicy1.setHeightForWidth(self.label_19.sizePolicy().hasHeightForWidth())
-        self.label_19.setSizePolicy(sizePolicy1)
-
-        self.verticalLayout_22.addWidget(self.label_19)
-
-        self.lineEdit = QLineEdit(self.page)
-        self.lineEdit.setObjectName(u"lineEdit")
-
-        self.verticalLayout_22.addWidget(self.lineEdit)
-
-        self.label_20 = QLabel(self.page)
-        self.label_20.setObjectName(u"label_20")
-
-        self.verticalLayout_22.addWidget(self.label_20)
-
-        self.comboBox = QComboBox(self.page)
-        self.comboBox.addItem("")
-        self.comboBox.addItem("")
-        self.comboBox.addItem("")
-        self.comboBox.addItem("")
-        self.comboBox.setObjectName(u"comboBox")
-
-        self.verticalLayout_22.addWidget(self.comboBox)
-
-        self.toolBox.addItem(self.page, u"Page 1")
-
-        self.verticalLayout_21.addWidget(self.toolBox)
-
-        self.label_21 = QLabel(self.scrollAreaWidgetContents)
+        self.label_21 = QLabel(self.groupBox_union_policies)
         self.label_21.setObjectName(u"label_21")
 
-        self.verticalLayout_21.addWidget(self.label_21)
+        self.verticalLayout_22.addWidget(self.label_21)
 
-        self.comboBox_2 = QComboBox(self.scrollAreaWidgetContents)
+        self.comboBox_2 = QComboBox(self.groupBox_union_policies)
         self.comboBox_2.addItem("")
         self.comboBox_2.addItem("")
         self.comboBox_2.addItem("")
@@ -637,14 +601,14 @@ class Ui_NewRemoteWindow(object):
         self.comboBox_2.setObjectName(u"comboBox_2")
         self.comboBox_2.setSizeAdjustPolicy(QComboBox.SizeAdjustPolicy.AdjustToMinimumContentsLengthWithIcon)
 
-        self.verticalLayout_21.addWidget(self.comboBox_2)
+        self.verticalLayout_22.addWidget(self.comboBox_2)
 
-        self.label_22 = QLabel(self.scrollAreaWidgetContents)
+        self.label_22 = QLabel(self.groupBox_union_policies)
         self.label_22.setObjectName(u"label_22")
 
-        self.verticalLayout_21.addWidget(self.label_22)
+        self.verticalLayout_22.addWidget(self.label_22)
 
-        self.comboBox_3 = QComboBox(self.scrollAreaWidgetContents)
+        self.comboBox_3 = QComboBox(self.groupBox_union_policies)
         self.comboBox_3.addItem("")
         self.comboBox_3.addItem("")
         self.comboBox_3.addItem("")
@@ -663,14 +627,14 @@ class Ui_NewRemoteWindow(object):
         self.comboBox_3.setObjectName(u"comboBox_3")
         self.comboBox_3.setSizeAdjustPolicy(QComboBox.SizeAdjustPolicy.AdjustToMinimumContentsLengthWithIcon)
 
-        self.verticalLayout_21.addWidget(self.comboBox_3)
+        self.verticalLayout_22.addWidget(self.comboBox_3)
 
-        self.label_23 = QLabel(self.scrollAreaWidgetContents)
+        self.label_23 = QLabel(self.groupBox_union_policies)
         self.label_23.setObjectName(u"label_23")
 
-        self.verticalLayout_21.addWidget(self.label_23)
+        self.verticalLayout_22.addWidget(self.label_23)
 
-        self.comboBox_4 = QComboBox(self.scrollAreaWidgetContents)
+        self.comboBox_4 = QComboBox(self.groupBox_union_policies)
         self.comboBox_4.addItem("")
         self.comboBox_4.addItem("")
         self.comboBox_4.addItem("")
@@ -689,7 +653,10 @@ class Ui_NewRemoteWindow(object):
         self.comboBox_4.setObjectName(u"comboBox_4")
         self.comboBox_4.setSizeAdjustPolicy(QComboBox.SizeAdjustPolicy.AdjustToMinimumContentsLengthWithIcon)
 
-        self.verticalLayout_21.addWidget(self.comboBox_4)
+        self.verticalLayout_22.addWidget(self.comboBox_4)
+
+
+        self.verticalLayout_21.addWidget(self.groupBox_union_policies)
 
         self.verticalSpacer_9 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
@@ -709,13 +676,13 @@ class Ui_NewRemoteWindow(object):
         self.horizontalLayout_8 = QHBoxLayout(self.tab_advanced)
         self.horizontalLayout_8.setObjectName(u"horizontalLayout_8")
         self.horizontalLayout_8.setContentsMargins(0, 0, 0, 0)
-        self.listWidget_advance = QListWidget(self.tab_advanced)
-        self.listWidget_advance.setObjectName(u"listWidget_advance")
-        sizePolicy.setHeightForWidth(self.listWidget_advance.sizePolicy().hasHeightForWidth())
-        self.listWidget_advance.setSizePolicy(sizePolicy)
-        self.listWidget_advance.setMinimumSize(QSize(150, 0))
+        self.listWidget_advanced = QListWidget(self.tab_advanced)
+        self.listWidget_advanced.setObjectName(u"listWidget_advanced")
+        sizePolicy.setHeightForWidth(self.listWidget_advanced.sizePolicy().hasHeightForWidth())
+        self.listWidget_advanced.setSizePolicy(sizePolicy)
+        self.listWidget_advanced.setSortingEnabled(True)
 
-        self.horizontalLayout_8.addWidget(self.listWidget_advance)
+        self.horizontalLayout_8.addWidget(self.listWidget_advanced)
 
         self.scrollArea_advance = QScrollArea(self.tab_advanced)
         self.scrollArea_advance.setObjectName(u"scrollArea_advance")
@@ -723,7 +690,10 @@ class Ui_NewRemoteWindow(object):
         self.scrollArea_advance.setWidgetResizable(True)
         self.scrollAreaWidgetContents_advance = QWidget()
         self.scrollAreaWidgetContents_advance.setObjectName(u"scrollAreaWidgetContents_advance")
-        self.scrollAreaWidgetContents_advance.setGeometry(QRect(0, 0, 98, 118))
+        self.scrollAreaWidgetContents_advance.setGeometry(QRect(0, 0, 800, 118))
+        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
+        sizePolicy1.setHorizontalStretch(0)
+        sizePolicy1.setVerticalStretch(0)
         sizePolicy1.setHeightForWidth(self.scrollAreaWidgetContents_advance.sizePolicy().hasHeightForWidth())
         self.scrollAreaWidgetContents_advance.setSizePolicy(sizePolicy1)
         self.verticalLayout_27 = QVBoxLayout(self.scrollAreaWidgetContents_advance)
@@ -771,8 +741,9 @@ class Ui_NewRemoteWindow(object):
         self.retranslateUi(NewRemoteWindow)
         self.buttonBox.rejected.connect(NewRemoteWindow.reject)
 
-        self.listWidget_remotes.setCurrentRow(-1)
-        self.toolBox.setCurrentIndex(0)
+        self.tabWidget_mode.setCurrentIndex(0)
+        self.listWidget_remotes.setCurrentRow(0)
+        self.tabWidget.setCurrentIndex(0)
 
 
         QMetaObject.connectSlotsByName(NewRemoteWindow)
@@ -852,19 +823,7 @@ class Ui_NewRemoteWindow(object):
         self.lineEdit_alias_path.setPlaceholderText(QCoreApplication.translate("NewRemoteWindow", u"Can be \"myremote:path/to/dir\", \"myremote:bucket\", \"myremote:\" or \"/local/path\"", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_alias), QCoreApplication.translate("NewRemoteWindow", u"Alias", None))
         self.pushButton_union_add.setText(QCoreApplication.translate("NewRemoteWindow", u"Add upstream", None))
-        self.pushButton.setText(QCoreApplication.translate("NewRemoteWindow", u"Delete", None))
-        self.label_19.setText(QCoreApplication.translate("NewRemoteWindow", u"Path", None))
-#if QT_CONFIG(tooltip)
-        self.lineEdit.setToolTip(QCoreApplication.translate("NewRemoteWindow", u"Can be \"myremote:path/to/dir\", \"myremote:bucket\", \"myremote:\" or \"/local/path\"", None))
-#endif // QT_CONFIG(tooltip)
-        self.lineEdit.setPlaceholderText(QCoreApplication.translate("NewRemoteWindow", u"Can be \"myremote:path/to/dir\", \"myremote:bucket\", \"myremote:\" or \"/local/path\"", None))
-        self.label_20.setText(QCoreApplication.translate("NewRemoteWindow", u"Attributes", None))
-        self.comboBox.setItemText(0, QCoreApplication.translate("NewRemoteWindow", u"None", None))
-        self.comboBox.setItemText(1, QCoreApplication.translate("NewRemoteWindow", u"Files will only be read from here and never written", None))
-        self.comboBox.setItemText(2, QCoreApplication.translate("NewRemoteWindow", u"New files or directories won't be created here", None))
-        self.comboBox.setItemText(3, QCoreApplication.translate("NewRemoteWindow", u"Files found in different remotes will be written back here", None))
-
-        self.toolBox.setItemText(self.toolBox.indexOf(self.page), QCoreApplication.translate("NewRemoteWindow", u"Page 1", None))
+        self.groupBox_union_policies.setTitle(QCoreApplication.translate("NewRemoteWindow", u"Behavior / Policies", None))
         self.label_21.setText(QCoreApplication.translate("NewRemoteWindow", u"Action policy (writing existing file)", None))
         self.comboBox_2.setItemText(0, QCoreApplication.translate("NewRemoteWindow", u"epall (existing path, all): apply to all found", None))
         self.comboBox_2.setItemText(1, QCoreApplication.translate("NewRemoteWindow", u"all (same as epall)", None))

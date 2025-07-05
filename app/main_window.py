@@ -14,11 +14,11 @@ from PySide6.QtGui import QAction, QCloseEvent, QColorConstants, QCursor, QDeskt
 from PySide6.QtWidgets import QApplication, QCheckBox, QFileDialog, QFileIconProvider, QHBoxLayout, QInputDialog, QLabel, QMainWindow, QMenu, QMessageBox, QProgressBar, QPushButton, QSizePolicy, QSlider, QSpacerItem, QSystemTrayIcon, QTreeWidgetItem, QWidget
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
-from app.new_remote import NewRemoteWindow
-from app.new_serve import NewServeWindow
+from app.new_remote_window import NewRemoteWindow
+from app.new_serve_window import NewServeWindow
 from app.rclone import Rclone
-from app.settings import SettingsWindow
-from app.about import AboutWindow
+from app.settings_window import SettingsWindow
+from app.about_window import AboutWindow
 from app.views import main_window
 
 

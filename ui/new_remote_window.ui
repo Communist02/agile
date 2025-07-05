@@ -29,6 +29,9 @@
    </item>
    <item>
     <widget class="QTabWidget" name="tabWidget_mode">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
      <property name="documentMode">
       <bool>true</bool>
      </property>
@@ -52,19 +55,13 @@
        <item>
         <widget class="QListWidget" name="listWidget_remotes">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+          <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <property name="minimumSize">
-          <size>
-           <width>150</width>
-           <height>0</height>
-          </size>
-         </property>
          <property name="currentRow">
-          <number>-1</number>
+          <number>0</number>
          </property>
          <item>
           <property name="text">
@@ -125,6 +122,9 @@
        </item>
        <item>
         <widget class="QTabWidget" name="tabWidget">
+         <property name="currentIndex">
+          <number>0</number>
+         </property>
          <property name="documentMode">
           <bool>true</bool>
          </property>
@@ -534,6 +534,9 @@
              <property name="text">
               <string>By pressing the OK button your browser will open and you will be needed to authenticate in Google Drive</string>
              </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
             </widget>
            </item>
            <item>
@@ -573,6 +576,9 @@
              <property name="text">
               <string>By pressing the OK button your browser will open and you will be needed to authenticate in Yandex Disk</string>
              </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
             </widget>
            </item>
            <item>
@@ -611,6 +617,9 @@
             <widget class="QLabel" name="label_11">
              <property name="text">
               <string>By pressing the OK button your browser will open and you will be needed to authenticate in Microsoft OneDrive</string>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -875,6 +884,9 @@
              <property name="text">
               <string>Set a new name for a remote or path</string>
              </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
             </widget>
            </item>
            <item>
@@ -953,8 +965,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>800</width>
-                <height>566</height>
+                <width>222</width>
+                <height>200</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_21">
@@ -971,362 +983,282 @@
                 <number>0</number>
                </property>
                <item>
-                <widget class="QToolBox" name="toolBox">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
+                <layout class="QVBoxLayout" name="verticalLayout_union_container"/>
+               </item>
+               <item>
+                <widget class="QGroupBox" name="groupBox_union_policies">
+                 <property name="title">
+                  <string>Behavior / Policies</string>
                  </property>
-                 <property name="frameShape">
-                  <enum>QFrame::Shape::Box</enum>
-                 </property>
-                 <property name="currentIndex">
-                  <number>0</number>
-                 </property>
-                 <widget class="QWidget" name="page">
-                  <property name="geometry">
-                   <rect>
-                    <x>0</x>
-                    <y>0</y>
-                    <width>798</width>
-                    <height>144</height>
-                   </rect>
-                  </property>
-                  <attribute name="label">
-                   <string>Page 1</string>
-                  </attribute>
-                  <layout class="QVBoxLayout" name="verticalLayout_22">
-                   <item>
-                    <widget class="QPushButton" name="pushButton">
+                 <layout class="QVBoxLayout" name="verticalLayout_22">
+                  <item>
+                   <widget class="QLabel" name="label_21">
+                    <property name="text">
+                     <string>Action policy (writing existing file)</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QComboBox" name="comboBox_2">
+                    <property name="sizeAdjustPolicy">
+                     <enum>QComboBox::SizeAdjustPolicy::AdjustToMinimumContentsLengthWithIcon</enum>
+                    </property>
+                    <item>
                      <property name="text">
-                      <string>Delete</string>
+                      <string extracomment="epall">epall (existing path, all): apply to all found</string>
                      </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QLabel" name="label_19">
-                     <property name="sizePolicy">
-                      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                       <horstretch>0</horstretch>
-                       <verstretch>0</verstretch>
-                      </sizepolicy>
-                     </property>
+                    </item>
+                    <item>
                      <property name="text">
-                      <string>Path</string>
+                      <string extracomment="all">all (same as epall)</string>
                      </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QLineEdit" name="lineEdit">
-                     <property name="toolTip">
-                      <string>Can be &quot;myremote:path/to/dir&quot;, &quot;myremote:bucket&quot;, &quot;myremote:&quot; or &quot;/local/path&quot;</string>
-                     </property>
-                     <property name="placeholderText">
-                      <string>Can be &quot;myremote:path/to/dir&quot;, &quot;myremote:bucket&quot;, &quot;myremote:&quot; or &quot;/local/path&quot;</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QLabel" name="label_20">
+                    </item>
+                    <item>
                      <property name="text">
-                      <string>Attributes</string>
+                      <string extracomment="epff">epff (existing path, first found): act on the first one found, by the time upstreams reply, where the relative path exists</string>
                      </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QComboBox" name="comboBox">
-                     <item>
-                      <property name="text">
-                       <string>None</string>
-                      </property>
-                     </item>
-                     <item>
-                      <property name="text">
-                       <string extracomment=":ro">Files will only be read from here and never written</string>
-                      </property>
-                     </item>
-                     <item>
-                      <property name="text">
-                       <string extracomment=":nc">New files or directories won't be created here</string>
-                      </property>
-                     </item>
-                     <item>
-                      <property name="text">
-                       <string extracomment=":writeback">Files found in different remotes will be written back here</string>
-                      </property>
-                     </item>
-                    </widget>
-                   </item>
-                  </layout>
-                 </widget>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="label_21">
-                 <property name="text">
-                  <string>Action policy (writing existing file)</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QComboBox" name="comboBox_2">
-                 <property name="sizeAdjustPolicy">
-                  <enum>QComboBox::SizeAdjustPolicy::AdjustToMinimumContentsLengthWithIcon</enum>
-                 </property>
-                 <item>
-                  <property name="text">
-                   <string extracomment="epall">epall (existing path, all): apply to all found</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string extracomment="all">all (same as epall)</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string extracomment="epff">epff (existing path, first found): act on the first one found, by the time upstreams reply, where the relative path exists</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string extracomment="eplfs">eplfs (existing path, least free space)</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>eplus (existing path, least used space)</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>eplno (existing path, least number of objects)</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>epmfs (existing path, most free space)</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>eprand (existing path, random)</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string extracomment="ff">ff (first found): same as epff</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>lfs (least free space)</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>lus (least used space)</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>lno (least number of objects)</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>mfs (most free space)</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>newest</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>rand (random)</string>
-                  </property>
-                 </item>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="label_22">
-                 <property name="text">
-                  <string>Create policy (Create non-existing file)</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QComboBox" name="comboBox_3">
-                 <property name="sizeAdjustPolicy">
-                  <enum>QComboBox::SizeAdjustPolicy::AdjustToMinimumContentsLengthWithIcon</enum>
-                 </property>
-                 <item>
-                  <property name="text">
-                   <string extracomment="epmfs">epmfs (existing path, most free space): of all the upstreams on which the relative path exists choose the one with the most free space</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string extracomment="all">all (act on all upstreams)</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string extracomment="epff">epff (existing path, first found): act on the first one found, by the time upstreams reply, where the relative path exists</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>epall (existing path, all): act on all upstreams where the relative path exists</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string extracomment="eplfs">eplfs (existing path, least free space)</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>eplus (existing path, least used space)</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>eplno (existing path, least number of objects)</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>eprand (existing path, random)</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string extracomment="ff">ff (first found): act on the first one found by the time upstreams reply</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>lfs (least free space)</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>lus (least used space)</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>lno (least number of objects)</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>mfs (most free space)</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>newest</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>rand (random)</string>
-                  </property>
-                 </item>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="label_23">
-                 <property name="text">
-                  <string>Search policy (Reading and listing file)</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QComboBox" name="comboBox_4">
-                 <property name="sizeAdjustPolicy">
-                  <enum>QComboBox::SizeAdjustPolicy::AdjustToMinimumContentsLengthWithIcon</enum>
-                 </property>
-                 <item>
-                  <property name="text">
-                   <string extracomment="ff">ff (first found): same as epff</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string extracomment="all">all (same as epall)</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string extracomment="epff">epff (existing path, first found): act on the first one found, by the time upstreams reply, where the relative path exists</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string extracomment="epall">epall (existing path, all): given this order configured, act on the first one found where the relative path exists</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string extracomment="eplfs">eplfs (existing path, least free space)</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>eplus (existing path, least used space)</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>eplno (existing path, least number of objects)</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>epmfs (existing path, most free space)</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>eprand (existing path, random)</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>lfs (least free space)</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>lus (least used space)</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>lno (least number of objects)</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>mfs (most free space)</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>newest</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>rand (random)</string>
-                  </property>
-                 </item>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string extracomment="eplfs">eplfs (existing path, least free space)</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>eplus (existing path, least used space)</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>eplno (existing path, least number of objects)</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>epmfs (existing path, most free space)</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>eprand (existing path, random)</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string extracomment="ff">ff (first found): same as epff</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>lfs (least free space)</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>lus (least used space)</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>lno (least number of objects)</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>mfs (most free space)</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>newest</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>rand (random)</string>
+                     </property>
+                    </item>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="label_22">
+                    <property name="text">
+                     <string>Create policy (Create non-existing file)</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QComboBox" name="comboBox_3">
+                    <property name="sizeAdjustPolicy">
+                     <enum>QComboBox::SizeAdjustPolicy::AdjustToMinimumContentsLengthWithIcon</enum>
+                    </property>
+                    <item>
+                     <property name="text">
+                      <string extracomment="epmfs">epmfs (existing path, most free space): of all the upstreams on which the relative path exists choose the one with the most free space</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string extracomment="all">all (act on all upstreams)</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string extracomment="epff">epff (existing path, first found): act on the first one found, by the time upstreams reply, where the relative path exists</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>epall (existing path, all): act on all upstreams where the relative path exists</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string extracomment="eplfs">eplfs (existing path, least free space)</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>eplus (existing path, least used space)</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>eplno (existing path, least number of objects)</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>eprand (existing path, random)</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string extracomment="ff">ff (first found): act on the first one found by the time upstreams reply</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>lfs (least free space)</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>lus (least used space)</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>lno (least number of objects)</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>mfs (most free space)</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>newest</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>rand (random)</string>
+                     </property>
+                    </item>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="label_23">
+                    <property name="text">
+                     <string>Search policy (Reading and listing file)</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QComboBox" name="comboBox_4">
+                    <property name="sizeAdjustPolicy">
+                     <enum>QComboBox::SizeAdjustPolicy::AdjustToMinimumContentsLengthWithIcon</enum>
+                    </property>
+                    <item>
+                     <property name="text">
+                      <string extracomment="ff">ff (first found): same as epff</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string extracomment="all">all (same as epall)</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string extracomment="epff">epff (existing path, first found): act on the first one found, by the time upstreams reply, where the relative path exists</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string extracomment="epall">epall (existing path, all): given this order configured, act on the first one found where the relative path exists</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string extracomment="eplfs">eplfs (existing path, least free space)</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>eplus (existing path, least used space)</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>eplno (existing path, least number of objects)</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>epmfs (existing path, most free space)</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>eprand (existing path, random)</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>lfs (least free space)</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>lus (least used space)</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>lno (least number of objects)</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>mfs (most free space)</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>newest</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>rand (random)</string>
+                     </property>
+                    </item>
+                   </widget>
+                  </item>
+                 </layout>
                 </widget>
                </item>
                <item>
@@ -1370,18 +1302,15 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="QListWidget" name="listWidget_advance">
+        <widget class="QListWidget" name="listWidget_advanced">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+          <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <property name="minimumSize">
-          <size>
-           <width>150</width>
-           <height>0</height>
-          </size>
+         <property name="sortingEnabled">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -1398,7 +1327,7 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>98</width>
+            <width>800</width>
             <height>118</height>
            </rect>
           </property>

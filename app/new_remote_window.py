@@ -6,6 +6,28 @@ from PySide6.QtWidgets import QCheckBox, QComboBox, QDialog, QLineEdit, QListWid
 from app.main_window import QLabel
 from app.rclone import Rclone
 from app.views import new_remote_window
+from app.views.upstream_widget import Ui_Upstream
+
+
+class Upstream(QWidget):
+    def __init__(self, index, parent=None):
+        super().__init__(parent)
+        self.ui = Ui_Upstream()
+        self.ui.setupUi(self)
+
+        self.index = index
+        self.ui.label_number.setText(str(index + 1))
+        self.ui.comboBox_attribute.setItemData(
+            1, ':ro', Qt.ItemDataRole.ToolTipRole)
+        self.ui.comboBox_attribute.setItemData(
+            2, ':nc', Qt.ItemDataRole.ToolTipRole)
+        tip = self.tr('New files are first created in the specified layer, then (if needed) moved to the target layer.\nThis is useful if the primary layer is slow or unreliable, but you want to temporarily store files elsewhere.')
+        self.ui.comboBox_attribute.setItemData(
+            3, ':writeback\n' + tip, Qt.ItemDataRole.ToolTipRole)
+
+    def set_index(self, index: int):
+        self.index = index
+        self.ui.label_number.setText(str(index + 1))
 
 
 class NewRemoteWindow(QDialog):
@@ -18,6 +40,7 @@ class NewRemoteWindow(QDialog):
         self.providers = rc.providers()
         self.remote = {}
         self.edit_mode = edit_mode
+        self.upstreams = []
 
         self.setWindowIcon(
             QIcon(os.path.dirname(__file__) + '/resources/' + 'favicon.ico'))
@@ -26,15 +49,17 @@ class NewRemoteWindow(QDialog):
         self.ui.buttonBox.accepted.connect(
             lambda: self.new_remote(remote_name))
         self.ui.checkBox_ftp_tls.clicked.connect(self.set_view_ftp_tls_option)
+        self.ui.pushButton_union_add.clicked.connect(self.add_upstream)
 
         self.ui.listWidget_remotes.currentRowChanged.connect(
             self.ui.tabWidget.setCurrentIndex)
-        self.ui.listWidget_advance.currentRowChanged.connect(
+        self.ui.listWidget_advanced.currentItemChanged.connect(
             self.remote_view)
 
         reg_exp = QRegularExpression('[a-zA-ZА-Яа-яЁё0-9_\\.\\-\\+@\\* ]*$')
         validator = QRegularExpressionValidator(reg_exp)
         self.ui.lineEdit_name.setValidator(validator)
+        self.ui.groupBox_union_policies.hide()
 
         if edit_mode:
             self.setWindowTitle(self.tr('Edit') + ' ' + remote_name[:-1])
@@ -43,27 +68,68 @@ class NewRemoteWindow(QDialog):
             self.ui.lineEdit_name.setText(remote_name[:-1])
             self.ui.tabWidget_mode.tabBar().hide()
             self.ui.tabWidget_mode.setCurrentIndex(1)
-            self.ui.listWidget_advance.hide()
+            self.ui.listWidget_advanced.hide()
+            self.ui.listWidget_advanced.setSortingEnabled(False)
 
         for provider in self.providers:
             item = QListWidgetItem(f'{provider['Description']}')
             item.setToolTip(provider['Name'])
-            self.ui.listWidget_advance.addItem(item)
+            self.ui.listWidget_advanced.addItem(item)
             if edit_mode and remote_type == provider['Name']:
                 self.remote = config[remote_name[:-1]]
-                self.ui.listWidget_advance.setCurrentRow(
-                    self.ui.listWidget_advance.count() - 1)
+                self.ui.listWidget_advanced.setCurrentRow(
+                    self.ui.listWidget_advanced.count() - 1)
                 break
 
         if not edit_mode:
-            self.ui.listWidget_advance.setCurrentRow(0)
+            self.ui.listWidget_advanced.setCurrentRow(0)
 
     def set_view_ftp_tls_option(self, value):
         self.ui.radioButton_ftp_false.setEnabled(value)
         self.ui.radioButton_ftp_true.setEnabled(value)
 
-    def remote_view(self, index: int):
-        provider: dict[str, dict] = self.providers[index]
+    def add_upstream(self):
+        upstream = Upstream(len(self.upstreams))
+        self.ui.verticalLayout_union_container.addWidget(upstream)
+        self.upstreams.append(
+            {'widget': upstream, 'remote': '', 'attribute': ''})
+        upstream.destroyed.connect(
+            lambda: self.delete_upstream(upstream.index))
+        upstream.ui.lineEdit_remote.textChanged.connect(
+            lambda text: self.upstreams[upstream.index].__setitem__('remote', text))
+        upstream.ui.toolButton_up.clicked.connect(
+            lambda: self.up_upstream(upstream.index))
+        upstream.ui.toolButton_down.clicked.connect(
+            lambda: self.down_upstream(upstream.index))
+        upstream.ui.comboBox_attribute.currentIndexChanged.connect(
+            lambda index: self.upstreams[upstream.index].__setitem__('attribute', ['', ':ro', ':nc', ':writeback'][index]))
+
+    def delete_upstream(self, index):
+        self.upstreams.pop(index)
+        for i in range(len(self.upstreams)):
+            self.upstreams[i]['widget'].set_index(i)
+
+    def up_upstream(self, index):
+        if index > 0:
+            self.upstreams[index -
+                           1], self.upstreams[index] = self.upstreams[index], self.upstreams[index - 1]
+            self.ui.verticalLayout_union_container.insertWidget(
+                index, self.upstreams[index]['widget'])
+            self.upstreams[index]['widget'].set_index(index)
+            self.upstreams[index - 1]['widget'].set_index(index - 1)
+
+    def down_upstream(self, index):
+        if index < len(self.upstreams) - 1:
+            self.upstreams[index +
+                           1], self.upstreams[index] = self.upstreams[index], self.upstreams[index + 1]
+            self.ui.verticalLayout_union_container.insertWidget(
+                index, self.upstreams[index]['widget'])
+            self.upstreams[index]['widget'].set_index(index)
+            self.upstreams[index + 1]['widget'].set_index(index + 1)
+
+    def remote_view(self, item):
+        provider: dict[str, dict] = list(
+            filter(lambda x: x['Name'] == item.toolTip(), self.providers))[0]
 
         if not self.edit_mode:
             self.remote = {'type': provider['Name']}
@@ -80,15 +146,16 @@ class NewRemoteWindow(QDialog):
             self.ui.groupBox_not_required.layout().itemAt(i).widget().deleteLater()
 
         def toggle_content(value):
-            for child in self.ui.groupBox_advanced.findChildren(QWidget):
-                child.setVisible(value)
-                if value:
-                    self.ui.groupBox_advanced.setFocus()
+            for child in self.ui.groupBox_advanced.children():
+                if isinstance(child, QWidget):
+                    child.setVisible(value)
+            if value:
+                self.ui.groupBox_advanced.setFocus()
 
         self.ui.groupBox_advanced.toggled.connect(toggle_content)
 
         for option in provider['Options']:
-            label_help = QLabel(option['Help'])
+            label_help = QLabel(option['Help'], wordWrap=True)
             label_help.setEnabled(False)
 
             if option['Advanced']:
@@ -108,9 +175,15 @@ class NewRemoteWindow(QDialog):
                 layout.addWidget(label_help)
 
             match option['Type']:
-                case 'string':
+                case 'string' | 'SpaceSepList':
                     if not option.get('Examples', False):
-                        widget = QLineEdit(option['Default'])
+                        if option['Type'] == 'SpaceSepList' and option['Default'] is not None:
+                            s = ''
+                            for string in option['Default']:
+                                s += f'{string} '
+                            widget = QLineEdit(s.lstrip())
+                        else:
+                            widget = QLineEdit(option['Default'])
                         if option['IsPassword']:
                             widget .setEchoMode(QLineEdit.EchoMode.Password)
                         widget.textChanged.connect(
@@ -128,7 +201,13 @@ class NewRemoteWindow(QDialog):
                         if self.edit_mode and option['Name'] in self.remote:
                             widget.setCurrentText(self.remote[option['Name']])
                         else:
-                            widget.setCurrentText(option['Default'])
+                            if option['Type'] == 'SpaceSepList':
+                                s = ''
+                                for string in option['Default']:
+                                    s += f'"{string}" '
+                                widget.setCurrentText(s.lstrip())
+                            else:
+                                widget.setCurrentText(option['Default'])
                     layout.addWidget(widget)
                 case 'int':
                     line_edit = QLineEdit(str(option['Default']))
@@ -161,7 +240,7 @@ class NewRemoteWindow(QDialog):
         rc = Rclone()
 
         if name != '':
-            if remote_name_delete:
+            if remote_name_delete is not None and remote_name_delete != name:
                 rc.config('delete', f'"{remote_name_delete[:-1]}"')
             if self.ui.tabWidget_mode.currentIndex() == 0:
                 match self.ui.tabWidget.currentWidget().objectName():
@@ -244,6 +323,15 @@ class NewRemoteWindow(QDialog):
                             name, remote_type='alias', remote=self.ui.lineEdit_alias_path.text().strip())
                         self.close()
                     case 'tab_union':
+                        upstreams = ''
+                        for upstream in self.upstreams:
+                            upstreams += f'\\"{upstream['remote']}'
+                            if upstream['attribute'] != '':
+                                upstreams += f'{upstream['attribute']}\\" '
+                            else:
+                                upstreams += '\\" '
+                        rc.create_remote(
+                            name, remote_type='union', upstreams=upstreams)
                         self.close()
             else:
                 arg = ''
@@ -251,7 +339,7 @@ class NewRemoteWindow(QDialog):
                     if key != 'type':
                         match value:
                             case str():
-                                arg += f'{key}="{value}" '
+                                arg += f'{key}="{value.replace('"', '\\"')}" '
                             case int():
                                 arg += f'{key}={value} '
                             case bool():
